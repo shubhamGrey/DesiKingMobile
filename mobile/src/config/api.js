@@ -1,5 +1,5 @@
 // API configuration
-export const API_BASE_URL = 'https://api.agronexis.com'; // Replace with actual API URL
+export const API_BASE_URL = 'https://agronexis.com/api'; // Replace with actual API URL
 
 // API endpoints
 export const endpoints = {
