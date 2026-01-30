@@ -1,5 +1,7 @@
 // API configuration
-export const API_BASE_URL = 'https://agronexis.com/api'; // Replace with actual API URL
+// For production, set EXPO_PUBLIC_API_URL environment variable
+// Falls back to agronexis.com API if not set
+export const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'https://agronexis.com/api';
 
 // API endpoints
 export const endpoints = {
