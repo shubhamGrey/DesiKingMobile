@@ -37,7 +37,8 @@
     "extra": {
       "eas": {
         "projectId": "agro-nexis-mobile"
-      }
+      },
+      "apiUrl": "https://agronexis.com/api"
     }
   }
 }
