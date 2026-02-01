@@ -1,117 +1,121 @@
+# Agro Nexis Mobile App
 
-# 📘 Project Overview
+React Native mobile application for Agro Nexis - Premium Indian Spices E-commerce.
 
-This is a full-stack web application built with **Next.js (Pages Router)**, integrated with a **Nextcloud backend** for file uploads, and a **.NET backend API**. The project runs via **Docker Compose** and serves traffic through **NGINX** with automatic HTTPS support (Let's Encrypt).
+## Features
 
----
+- **Home Screen**: Featured products, categories, achievements, and company highlights
+- **Products**: Browse all products with category filtering
+- **Product Details**: Detailed product view with size selection and add to cart
+- **Cart**: Full cart management with quantity controls and checkout
+- **User Authentication**: Login and registration
+- **Profile**: User profile, orders, and settings
+- **About**: Company information and values
+- **Contact**: Contact form and company details
 
-## 🚀 Features
+## Tech Stack
 
-- ✅ Next.js frontend with Pages Router
-- 🔐 Secure NGINX reverse proxy with TLS for:
-  - `agronexis.com` (Next.js)
-  - `cloud.agronexis.com` (Nextcloud)
-- 🗃️ File upload to Nextcloud via WebDAV API
-- 🧠 Backend API (ASPNET Core) proxied through NGINX
-- 🐳 Full Docker Compose orchestration (frontend, backend, DBs, NGINX)
+- React Native with Expo
+- React Navigation (Bottom Tabs + Stack)
+- Context API for state management (Auth, Cart)
+- Async Storage for local persistence
+- Ionicons for icons
 
----
+## Getting Started
 
-## 🛠 Getting Started
+### Prerequisites
 
-### 1. Clone & Setup Environment
+- Node.js (v18+)
+- npm or yarn
+- Expo CLI
+- iOS Simulator (Mac) or Android Emulator
 
-```bash
-git clone https://your-repo-url.git
-cd your-project
-cp .env.example .env.local
-```
-
-Set environment variables like:
-
-```env
-NEXTCLOUD_URL=https://cloud.agronexis.com/remote.php/dav/files/<username>/
-NEXTCLOUD_USERNAME=your-username
-NEXTCLOUD_PASSWORD=your-app-password
-```
-
----
-
-### 2. Run with Docker
+### Installation
 
 ```bash
-docker-compose up --build
-```
+# Navigate to mobile directory
+cd mobile
 
-- App: [https://agronexis.com](https://agronexis.com)
-- Nextcloud: [https://cloud.agronexis.com](https://cloud.agronexis.com)
-- Backend API: proxied under `/api/` on the main domain
-
----
-
-### 3. Development (Optional)
-
-```bash
-cd UI
+# Install dependencies
 npm install
-npm run dev
+
+# Start the development server
+npm start
 ```
 
-Then open [http://localhost:3000](http://localhost:3000)
+### Running the App
 
----
+```bash
+# For iOS
+npm run ios
 
-## 📤 File Upload to Nextcloud
+# For Android
+npm run android
 
-- Files uploaded via the frontend are sent to `/api/upload`
-- The backend API uploads to Nextcloud using WebDAV
-- Uploaded file URL is returned in the response
-
----
-
-## 🔧 SSL Configuration
-
-- Certbot auto-generates certs via Let's Encrypt:
-  - `agronexis.com`: `/etc/letsencrypt/live/agronexis.com/`
-  - `cloud.agronexis.com`: `/etc/letsencrypt/live/cloud.agronexis.com/`
-- Mounted into Docker and used in NGINX config
-- Supports automatic HTTPS redirection
-
----
-
-## 📦 Tech Stack
-
-- **Frontend**: Next.js, TypeScript, React
-- **Backend**: ASP.NET Core API
-- **Storage**: Nextcloud, PostgreSQL, MariaDB
-- **Orchestration**: Docker Compose
-- **Proxy**: NGINX
-- **SSL**: Let's Encrypt + Certbot
-
----
-
-## 📁 Project Structure
-
-```
-UI/                 ← Next.js frontend
-Backend/            ← ASP.NET backend
-docker-compose.yml  ← Multi-service orchestration
-nginx/              ← NGINX reverse proxy config
+# For Web
+npm run web
 ```
 
----
+## Project Structure
 
-## 🔒 Security Tips
+```
+mobile/
+├── App.js                    # Main app entry point
+├── app.json                  # Expo configuration
+├── package.json
+├── assets/                   # Images, icons, splash
+└── src/
+    ├── components/
+    │   ├── common/           # Shared components (Header, Button, Input, etc.)
+    │   ├── products/         # Product-related components
+    │   └── cart/             # Cart-related components
+    ├── config/
+    │   ├── theme.js          # Colors, spacing, typography
+    │   └── api.js            # API configuration
+    ├── context/
+    │   ├── AuthContext.js    # Authentication state
+    │   └── CartContext.js    # Cart state management
+    ├── navigation/
+    │   └── AppNavigator.js   # Navigation configuration
+    ├── screens/
+    │   ├── HomeScreen.js
+    │   ├── ProductsScreen.js
+    │   ├── ProductDetailsScreen.js
+    │   ├── CartScreen.js
+    │   ├── LoginScreen.js
+    │   ├── ProfileScreen.js
+    │   ├── AboutScreen.js
+    │   └── ContactScreen.js
+    └── services/
+        └── api.js            # API service layer
+```
 
-- Use **Nextcloud app passwords**, not main passwords.
-- Don't store sensitive keys in code — use `.env` and Docker secrets.
-- Regularly renew and check certs: `sudo certbot renew --dry-run`
+## Color Theme
 
----
+Matches the Agro Nexis website:
+- Primary: #1f4f40 (Dark Green)
+- Secondary: #FF8C00 (Orange)
+- Background: #fffaf0 (Cream)
+- Text: #555555
 
-## 📚 Learn More
+## API Integration
 
-- [Next.js Docs](https://nextjs.org/docs)
-- [Nextcloud WebDAV API](https://docs.nextcloud.com/server/latest/user_manual/files/access_webdav.html)
-- [Docker Compose](https://docs.docker.com/compose/)
-- [Certbot](https://certbot.eff.org/instructions)
+The app connects to the Agro Nexis API. Update the `API_BASE_URL` in `src/config/api.js` with your actual API endpoint.
+
+## Building for Production
+
+### iOS
+
+```bash
+eas build --platform ios
+```
+
+### Android
+
+```bash
+eas build --platform android
+```
+
+## License
+
+© 2026 Agro Nexis India Overseas Private Limited. All rights reserved.
