@@ -37,8 +37,14 @@ const cartReducer = (state, action) => {
         itemCount: calculateItemCount(newItems),
       };
     }
+    case 'UPDATE_ITEM_ID': {
+      const newItems = state.items.map(item =>
+        item.id.toString() === action.payload.oldId.toString() ? { ...item, id: action.payload.newId } : item
+      );
+      return { ...state, items: newItems };
+    }
     case 'REMOVE_ITEM': {
-      const newItems = state.items.filter(item => item.id !== action.payload);
+      const newItems = state.items.filter(item => item.id.toString() !== action.payload.toString());
       return {
         ...state,
         items: newItems,
@@ -51,7 +57,7 @@ const cartReducer = (state, action) => {
         return cartReducer(state, { type: 'REMOVE_ITEM', payload: action.payload.id });
       }
       const newItems = state.items.map(item =>
-        item.id === action.payload.id
+        item.id.toString() === action.payload.id.toString()
           ? { ...item, quantity: action.payload.quantity }
           : item
       );
@@ -105,6 +111,8 @@ export const CartProvider = ({ children }) => {
             return;
           }
         }
+      } else {
+        dispatch({ type: 'CLEAR_CART' });
       }
       
       const savedCart = await AsyncStorage.getItem('cart');
@@ -112,7 +120,7 @@ export const CartProvider = ({ children }) => {
         dispatch({ type: 'SET_ITEMS', payload: JSON.parse(savedCart) });
       }
     } catch (error) {
-      console.error('Error loading cart:', error);
+      console.error('Cart Load Error:', error);
       const savedCart = await AsyncStorage.getItem('cart');
       if (savedCart) {
         dispatch({ type: 'SET_ITEMS', payload: JSON.parse(savedCart) });
@@ -131,61 +139,30 @@ export const CartProvider = ({ children }) => {
       try {
         await AsyncStorage.setItem('cart', JSON.stringify(state.items));
       } catch (e) {
-        console.error('Failed to save cart to local storage', e);
+        console.error('Failed to save to local storage', e);
       }
     };
     saveToLocal();
   }, [state.items]);
 
-  const addItem = useCallback(async (item) => {
-    // Generate a temporary local ID
-    const cartItem = {
-      ...item,
-      id: item.id || `temp-${item.productId}-${Date.now()}`,
-    };
-    dispatch({ type: 'ADD_ITEM', payload: cartItem });
-    
+  const clearCart = useCallback(async () => {
+    dispatch({ type: 'CLEAR_CART' });
+    await AsyncStorage.removeItem('cart');
+
     if (isAuthenticated) {
       try {
         const userId = await getUserId();
-        await apiService.addToCart({
-          cart: {
-            productId: item.productId,
-            quantity: item.quantity,
-            userId: userId,
-            sku: item.sku,
-            price: item.price
-          }
-        });
-        // Refresh to get the actual database IDs for new items
-        await loadCart();
+        await apiService.request(`/cart/${userId}`, { method: 'DELETE' });
       } catch (error) {
-        console.error('Failed to sync cart item with API:', error);
+        console.error('Failed to clear cart on server:', error);
       }
     }
-  }, [isAuthenticated, getUserId, loadCart]);
-
-  const removeItem = useCallback(async (id) => {
-    // Optimistically remove locally
-    dispatch({ type: 'REMOVE_ITEM', payload: id });
-    
-    if (isAuthenticated) {
-      try {
-        await apiService.removeFromCart(id);
-      } catch (error) {
-        console.error('Failed to remove item from API:', error);
-        // Optional: reload cart to revert if server delete failed
-        loadCart();
-      }
-    }
-  }, [isAuthenticated, loadCart]);
+  }, [isAuthenticated, getUserId]);
 
   const updateQuantity = useCallback(async (id, quantity) => {
-    if (quantity <= 0) {
-      return removeItem(id);
-    }
+    if (quantity <= 0) return removeItem(id);
 
-    const item = state.items.find(i => i.id === id);
+    const item = state.items.find(i => i.id.toString() === id.toString());
     if (!item) return;
 
     dispatch({ type: 'UPDATE_QUANTITY', payload: { id, quantity } });
@@ -193,26 +170,66 @@ export const CartProvider = ({ children }) => {
     if (isAuthenticated) {
       try {
         const userId = await getUserId();
-        await apiService.addToCart({
-          cart: {
-            productId: item.productId,
-            quantity: quantity,
-            userId: userId,
-            sku: item.sku,
-            price: item.price
-          }
-        });
+        const payload = {
+          id: id.toString().startsWith('temp-') ? "00000000-0000-0000-0000-000000000000" : id,
+          productId: item.productId,
+          quantity: quantity,
+          userId: userId,
+          sku: item.sku,
+          price: item.price
+        };
+        await apiService.addToCart(payload);
       } catch (error) {
-        console.error('Failed to update cart quantity on API:', error);
-        loadCart();
+        console.error('Failed to sync quantity:', error);
       }
     }
-  }, [isAuthenticated, getUserId, state.items, removeItem, loadCart]);
+  }, [isAuthenticated, getUserId, state.items]);
 
-  const clearCart = useCallback(async () => {
-    dispatch({ type: 'CLEAR_CART' });
-    await AsyncStorage.removeItem('cart');
-  }, []);
+  const removeItem = useCallback(async (id) => {
+    dispatch({ type: 'REMOVE_ITEM', payload: id });
+    
+    if (isAuthenticated && !id.toString().startsWith('temp-')) {
+      try {
+        await apiService.removeFromCart(id);
+      } catch (error) {
+        console.error('Failed to remove item:', error);
+      }
+    }
+  }, [isAuthenticated]);
+
+  const addItem = useCallback(async (item) => {
+    const existingItem = state.items.find(i =>
+      i.productId === item.productId && i.sku === item.sku
+    );
+
+    if (existingItem) {
+      return updateQuantity(existingItem.id, existingItem.quantity + (item.quantity || 1));
+    }
+
+    const tempId = `temp-${Date.now()}`;
+    dispatch({ type: 'ADD_ITEM', payload: { ...item, id: tempId } });
+
+    if (isAuthenticated) {
+      try {
+        const userId = await getUserId();
+        const payload = {
+          productId: item.productId,
+          quantity: item.quantity || 1,
+          userId: userId,
+          sku: item.sku,
+          price: item.price
+        };
+        const response = await apiService.addToCart(payload);
+
+        const result = response.data || response;
+        if (result?.id) {
+          dispatch({ type: 'UPDATE_ITEM_ID', payload: { oldId: tempId, newId: result.id } });
+        }
+      } catch (error) {
+        console.error('Failed to sync add item:', error);
+      }
+    }
+  }, [isAuthenticated, getUserId, state.items, updateQuantity]);
 
   const isInCart = useCallback((productId) => {
     return state.items.some(item => item.productId === productId);

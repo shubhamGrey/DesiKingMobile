@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Alert, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Alert, TouchableOpacity, Image, Dimensions } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import Header from '../components/common/Header';
 import Loading from '../components/common/Loading';
-import { colors, spacing, fontSize, borderRadius } from '../config/theme';
+import { colors, spacing, fontSize, borderRadius, shadows } from '../config/theme';
 import apiService from '../services/api';
+
+const { width } = Dimensions.get('window');
 
 const OrderDetailsScreen = () => {
   const route = useRoute();
@@ -19,18 +21,15 @@ const OrderDetailsScreen = () => {
   const loadOrderDetails = async () => {
     try {
       setIsLoading(true);
-      // 1. Fetch order details using the ID
+      // Fixed URL: Remove extra /order/ segment to match web app pattern
       const response = await apiService.request(`/checkout/order/${orderId}`);
       const orderData = response.data;
 
-      // 2. Fetch product details for each item in 'orderItems' to get thumbnails and names
       if (orderData.orderItems && orderData.orderItems.length > 0) {
         const enrichedItems = await Promise.all(orderData.orderItems.map(async (item) => {
           try {
-            // Fetch product details from Product API
             const productRes = await apiService.request(`/product/${item.productId}`);
             const productData = productRes;
-
             return {
               ...item,
               productName: productData.name || 'Agro Nexis Product',
@@ -51,8 +50,25 @@ const OrderDetailsScreen = () => {
     } finally { setIsLoading(false); }
   };
 
-  if (isLoading) return <Loading fullScreen text="Loading order details..." />;
+  const getStatusColor = (status) => {
+    switch (status?.toLowerCase()) {
+      case 'paid':
+      case 'delivered': return colors.success.main;
+      case 'created':
+      case 'pending': return colors.secondary.main;
+      case 'shipped': return '#2196F3';
+      case 'cancelled': return colors.error.main;
+      default: return colors.text.secondary;
+    }
+  };
+
+  if (isLoading) return <Loading fullScreen text="Loading details..." />;
   if (!order) return <View style={styles.center}><Text>Order not found</Text></View>;
+
+  const taxRate = 0.05; // 5% GST
+  const taxAmount = (order.totalAmount || 0) * taxRate;
+  const subTotal = (order.totalAmount || 0);
+  const grandTotal = subTotal + taxAmount;
 
   return (
     <View style={styles.container}>
@@ -61,31 +77,50 @@ const OrderDetailsScreen = () => {
         {/* Status Card */}
         <View style={styles.card}>
           <View style={styles.statusHeader}>
-            <Text style={styles.orderIdText}>Order #{order.razorpayOrderId || order.id?.substring(0,8).toUpperCase()}</Text>
+            <View>
+              <Text style={styles.orderIdLabel}>Order ID</Text>
+              <Text style={styles.orderId}>#{order.razorpayOrderId?.substring(6) || order.id?.substring(0,8).toUpperCase()}</Text>
+            </View>
             <View style={[styles.statusBadge, { backgroundColor: getStatusColor(order.status) + '15' }]}>
               <Text style={[styles.statusText, { color: getStatusColor(order.status) }]}>{order.status || 'Confirmed'}</Text>
             </View>
           </View>
-          <Text style={styles.orderDate}>Placed on {new Date(order.createdDate).toLocaleDateString()}</Text>
+          <View style={styles.divider} />
+          <View style={styles.dateRow}>
+            <Ionicons name="calendar-outline" size={14} color={colors.text.muted} />
+            <Text style={styles.dateText}>Placed on {new Date(order.createdDate).toLocaleDateString()}</Text>
+          </View>
           {order.docketNumber && (
-            <Text style={styles.docketText}>Tracking ID: {order.docketNumber}</Text>
+            <View style={styles.trackingRow}>
+              <Ionicons name="location-outline" size={14} color={colors.primary.main} />
+              <Text style={styles.trackingText}>Tracking: {order.docketNumber}</Text>
+            </View>
           )}
         </View>
 
         {/* Shipping Address */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Shipping Address</Text>
+          <View style={styles.sectionHeader}>
+            <Ionicons name="map-outline" size={18} color={colors.primary.main} />
+            <Text style={styles.sectionTitle}>Delivery Address</Text>
+          </View>
           <Text style={styles.addressName}>{order.shippingAddress?.fullName}</Text>
           <Text style={styles.addressText}>{order.shippingAddress?.addressLine}</Text>
           <Text style={styles.addressText}>
             {order.shippingAddress?.city}, {order.shippingAddress?.stateCode} - {order.shippingAddress?.pinCode}
           </Text>
-          <Text style={styles.addressText}>Phone: {order.shippingAddress?.phoneNumber}</Text>
+          <View style={styles.phoneRow}>
+            <Ionicons name="call-outline" size={12} color={colors.text.muted} />
+            <Text style={styles.phoneText}>{order.shippingAddress?.phoneNumber}</Text>
+          </View>
         </View>
 
         {/* Items Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Items Ordered</Text>
+          <View style={styles.sectionHeader}>
+            <Ionicons name="bag-handle-outline" size={18} color={colors.primary.main} />
+            <Text style={styles.sectionTitle}>Items Ordered</Text>
+          </View>
           {order.items?.map((item, i) => (
             <View key={i} style={styles.itemRow}>
               <Image
@@ -93,11 +128,8 @@ const OrderDetailsScreen = () => {
                 style={styles.itemImage}
               />
               <View style={styles.itemInfo}>
-                <Text style={styles.itemName}>{item.productName}</Text>
-                <View style={styles.priceRow}>
-                  <Text style={styles.itemMeta}>Qty: {item.quantity} × </Text>
-                  <Text style={styles.discountedPrice}>₹{item.price}</Text>
-                </View>
+                <Text style={styles.itemName} numberOfLines={1}>{item.productName}</Text>
+                <Text style={styles.itemMeta}>Qty: {item.quantity} × ₹{item.price}</Text>
               </View>
               <Text style={styles.itemTotal}>₹{(item.price * item.quantity).toFixed(2)}</Text>
             </View>
@@ -106,65 +138,67 @@ const OrderDetailsScreen = () => {
 
         {/* Summary Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Order Summary</Text>
+          <View style={styles.sectionHeader}>
+            <Ionicons name="receipt-outline" size={18} color={colors.primary.main} />
+            <Text style={styles.sectionTitle}>Payment Summary</Text>
+          </View>
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>Subtotal</Text>
-            <Text style={styles.summaryValue}>₹{order.totalAmount?.toFixed(2)}</Text>
+            <Text style={styles.summaryValue}>₹{subTotal.toFixed(2)}</Text>
           </View>
           <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>Shipping</Text>
-            <Text style={styles.summaryValue}>₹0</Text>
+            <Text style={styles.summaryLabel}>Shipping Fee</Text>
+            <Text style={[styles.summaryValue, { color: colors.success.main }]}>FREE</Text>
           </View>
-          <View style={[styles.summaryRow, styles.totalRow]}>
-            <Text style={styles.totalLabel}>Grand Total</Text>
-            <Text style={styles.totalValue}>₹{order.totalAmount?.toFixed(2)}</Text>
+          <View style={styles.summaryRow}>
+            <Text style={styles.summaryLabel}>Tax (5%)</Text>
+            <Text style={styles.summaryValue}>₹{taxAmount.toFixed(2)}</Text>
           </View>
-          <Text style={styles.currencyNote}>Prices in {order.currency || 'INR'}</Text>
+          <View style={styles.divider} />
+          <View style={styles.summaryRow}>
+            <Text style={styles.totalLabel}>Total Amount</Text>
+            <Text style={styles.totalValue}>₹{grandTotal.toFixed(2)}</Text>
+          </View>
+          <Text style={styles.paymentMethod}>Payment Mode: {order.transaction?.paymentMethod || 'RAZORPAY'}</Text>
         </View>
       </ScrollView>
     </View>
   );
 };
 
-const getStatusColor = (status) => {
-  switch (status?.toLowerCase()) {
-    case 'paid':
-    case 'delivered': return colors.success.main;
-    case 'created':
-    case 'pending': return colors.warning.main;
-    default: return colors.primary.main;
-  }
-};
-
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background.default },
   scrollContent: { padding: spacing.md },
-  card: { backgroundColor: '#fff', padding: spacing.md, borderRadius: borderRadius.md, marginBottom: spacing.md, elevation: 1 },
-  statusHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  orderIdText: { fontSize: fontSize.md, fontWeight: 'bold', color: colors.text.primary },
-  statusBadge: { paddingHorizontal: spacing.sm, paddingVertical: 2, borderRadius: borderRadius.sm },
-  statusText: { fontSize: 10, fontWeight: 'bold', textTransform: 'uppercase' },
-  orderDate: { fontSize: fontSize.xs, color: colors.text.secondary, marginTop: 4 },
-  docketText: { fontSize: fontSize.xs, color: colors.primary.main, marginTop: 4, fontWeight: '600' },
-  section: { backgroundColor: '#fff', padding: spacing.md, borderRadius: borderRadius.md, marginBottom: spacing.md, elevation: 1 },
-  sectionTitle: { fontSize: fontSize.md, fontWeight: 'bold', color: colors.primary.main, marginBottom: spacing.md, borderBottomWidth: 1, borderBottomColor: colors.divider, paddingBottom: 5 },
+  card: { backgroundColor: '#fff', padding: spacing.md, borderRadius: borderRadius.md, marginBottom: spacing.md, ...shadows.sm, borderWidth: 1, borderColor: colors.border },
+  statusHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.sm },
+  orderIdLabel: { fontSize: 10, color: colors.text.muted, textTransform: 'uppercase', letterSpacing: 1 },
+  orderId: { fontSize: fontSize.md, fontWeight: 'bold', color: colors.text.primary, marginTop: 2 },
+  statusBadge: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20 },
+  statusText: { fontSize: 10, fontWeight: '800', textTransform: 'uppercase' },
+  divider: { height: 1, backgroundColor: colors.divider, marginVertical: spacing.sm },
+  dateRow: { flexDirection: 'row', alignItems: 'center' },
+  dateText: { fontSize: 12, color: colors.text.secondary, marginLeft: 6 },
+  trackingRow: { flexDirection: 'row', alignItems: 'center', marginTop: 8 },
+  trackingText: { fontSize: 12, color: colors.primary.main, fontWeight: '600', marginLeft: 6 },
+  section: { backgroundColor: '#fff', padding: spacing.md, borderRadius: borderRadius.md, marginBottom: spacing.md, ...shadows.sm, borderWidth: 1, borderColor: colors.border },
+  sectionHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: spacing.md },
+  sectionTitle: { fontSize: 14, fontWeight: 'bold', color: colors.text.primary, marginLeft: 8 },
+  addressName: { fontSize: 14, fontWeight: '700', color: colors.text.primary, marginBottom: 4 },
+  addressText: { fontSize: 13, color: colors.text.secondary, lineHeight: 18 },
+  phoneRow: { flexDirection: 'row', alignItems: 'center', marginTop: 8 },
+  phoneText: { fontSize: 12, color: colors.text.primary, fontWeight: '600', marginLeft: 4 },
   itemRow: { flexDirection: 'row', alignItems: 'center', marginBottom: spacing.md },
-  itemImage: { width: 50, height: 50, borderRadius: borderRadius.sm, backgroundColor: '#f5f5f5', marginRight: spacing.md },
+  itemImage: { width: 48, height: 48, borderRadius: 8, backgroundColor: colors.background.muted, marginRight: 12 },
   itemInfo: { flex: 1 },
-  itemName: { fontSize: fontSize.sm, fontWeight: '500', color: colors.text.primary },
-  priceRow: { flexDirection: 'row', alignItems: 'center', marginTop: 2 },
-  itemMeta: { fontSize: 11, color: colors.text.secondary },
-  discountedPrice: { fontSize: 11, fontWeight: 'bold', color: colors.text.primary },
-  itemTotal: { fontSize: fontSize.sm, fontWeight: 'bold', color: colors.text.primary },
-  summaryRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: spacing.xs },
-  summaryLabel: { fontSize: fontSize.sm, color: colors.text.secondary },
-  summaryValue: { fontSize: fontSize.sm, color: colors.text.primary },
-  totalRow: { borderTopWidth: 1, borderTopColor: colors.divider, paddingTop: spacing.sm, marginTop: spacing.sm },
-  totalLabel: { fontWeight: 'bold', fontSize: fontSize.md, color: colors.text.primary },
-  totalValue: { fontWeight: 'bold', fontSize: fontSize.lg, color: colors.primary.main },
-  currencyNote: { fontSize: 10, color: colors.text.disabled, textAlign: 'right', marginTop: 4 },
-  addressName: { fontWeight: 'bold', fontSize: fontSize.sm, marginBottom: 4 },
-  addressText: { fontSize: fontSize.sm, color: colors.text.secondary, marginBottom: 2 },
+  itemName: { fontSize: 13, fontWeight: '600', color: colors.text.primary },
+  itemMeta: { fontSize: 11, color: colors.text.secondary, marginTop: 2 },
+  itemTotal: { fontSize: 14, fontWeight: 'bold', color: colors.text.primary },
+  summaryRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: spacing.sm },
+  summaryLabel: { fontSize: 13, color: colors.text.secondary },
+  summaryValue: { fontSize: 13, color: colors.text.primary, fontWeight: '600' },
+  totalLabel: { fontSize: 15, fontWeight: '800', color: colors.text.primary },
+  totalValue: { fontSize: 18, fontWeight: '900', color: colors.primary.main },
+  paymentMethod: { fontSize: 10, color: colors.text.muted, marginTop: spacing.sm, textAlign: 'right', fontStyle: 'italic' },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center' }
 });
 

@@ -6,6 +6,8 @@ import {
   FlatList,
   TouchableOpacity,
   Alert,
+  Image,
+  RefreshControl,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
@@ -13,25 +15,43 @@ import Header from '../components/common/Header';
 import CartItem from '../components/cart/CartItem';
 import Button from '../components/common/Button';
 import Loading from '../components/common/Loading';
-import { colors, spacing, fontSize, borderRadius } from '../config/theme';
+import { colors, spacing, fontSize, borderRadius, shadows } from '../config/theme';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import apiService from '../services/api';
 
 const CartScreen = () => {
   const navigation = useNavigation();
-  const { items, itemCount, removeItem, updateQuantity, clearCart } = useCart();
+  const { items, itemCount, removeItem, updateQuantity, clearCart, refreshCart } = useCart();
   const { isAuthenticated } = useAuth();
 
   const [enrichedItems, setEnrichedItems] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [cartTotal, setCartTotal] = useState(0);
+  const [totalDiscount, setTotalDiscount] = useState(0);
 
   const currencySymbol = '₹';
-  const shipping = 0;
+  const shippingFees = 0;
   const taxRate = 0.05; // 5% GST
   const taxAmount = cartTotal * taxRate;
-  const orderTotal = cartTotal + shipping + taxAmount;
+  const orderTotal = cartTotal + shippingFees + taxAmount;
+
+  useEffect(() => {
+    syncCartData();
+  }, []);
+
+  const syncCartData = async () => {
+    if (isAuthenticated) {
+      await refreshCart();
+    }
+  };
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await syncCartData();
+    setRefreshing(false);
+  };
 
   useEffect(() => {
     enrichCartItems();
@@ -41,32 +61,36 @@ const CartScreen = () => {
     if (items.length === 0) {
       setEnrichedItems([]);
       setCartTotal(0);
+      setTotalDiscount(0);
       return;
     }
 
     try {
       setIsLoading(true);
       let runningTotal = 0;
+      let runningDiscount = 0;
 
-      // Fetch full product details for each item in the cart to ensure fresh images/names/prices
       const enriched = await Promise.all(items.map(async (item) => {
         try {
           const productData = await apiService.getProductById(item.productId);
-
-          // Match the SKU to get the current actual price
           const matchingSku = productData.pricesAndSkus?.find(
             sku => sku.skuNumber === item.sku || sku.discountedAmount === item.price || sku.price === item.price
           ) || productData.pricesAndSkus?.[0];
 
           const currentPrice = matchingSku ? (matchingSku.isDiscounted ? matchingSku.discountedAmount : matchingSku.price) : item.price;
+          const originalPrice = matchingSku ? matchingSku.price : (item.originalPrice || currentPrice);
 
           runningTotal += (currentPrice * item.quantity);
+          if (originalPrice > currentPrice) {
+            runningDiscount += (originalPrice - currentPrice) * item.quantity;
+          }
 
           return {
             ...item,
             name: productData.name || item.name,
             image: productData.thumbnailUrl || (productData.imageUrls && productData.imageUrls[0]) || item.image,
             price: currentPrice,
+            originalPrice: originalPrice,
             quantity: item.quantity
           };
         } catch (err) {
@@ -78,6 +102,7 @@ const CartScreen = () => {
 
       setEnrichedItems(enriched);
       setCartTotal(runningTotal);
+      setTotalDiscount(runningDiscount);
     } catch (error) {
       console.error('Error enriching cart:', error);
     } finally {
@@ -87,45 +112,26 @@ const CartScreen = () => {
 
   const handleCheckout = () => {
     if (!isAuthenticated) {
-      Alert.alert(
-        'Login Required',
-        'Please login to proceed with checkout.',
-        [
-          { text: 'Cancel', style: 'cancel' },
-          { text: 'Login', onPress: () => navigation.navigate('Login') },
-        ]
-      );
+      Alert.alert('Login Required', 'Please login to proceed.', [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Login', onPress: () => navigation.navigate('Login') },
+      ]);
       return;
     }
     navigation.navigate('Checkout');
   };
 
-  const handleClearCart = () => {
-    Alert.alert(
-      'Clear Cart',
-      'Are you sure you want to remove all items from your cart?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Clear', style: 'destructive', onPress: clearCart },
-      ]
-    );
-  };
-
   if (items.length === 0) {
     return (
       <View style={styles.container}>
-        <Header title="Cart" showBack showCart={false} />
-        <View style={styles.emptyContainer}>
-          <Ionicons name="cart-outline" size={80} color={colors.text.disabled} />
+        <Header title="My Cart" showBack showCart={false} />
+        <View style={styles.emptyState}>
+          <View style={styles.emptyIconCircle}>
+            <Ionicons name="cart-outline" size={50} color={colors.text.disabled} />
+          </View>
           <Text style={styles.emptyTitle}>Your cart is empty</Text>
-          <Text style={styles.emptySubtitle}>
-            Looks like you haven't added any items yet.
-          </Text>
-          <Button
-            title="Start Shopping"
-            onPress={() => navigation.navigate('Products')}
-            style={styles.shopButton}
-          />
+          <Text style={styles.emptySubtitle}>Let's find some amazing spices for your kitchen!</Text>
+          <Button title="Start Shopping" onPress={() => navigation.navigate('Products')} style={styles.shopBtn} />
         </View>
       </View>
     );
@@ -133,61 +139,52 @@ const CartScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Header title="Cart" showBack showCart={false} />
+      <Header title="My Cart" showBack showCart={false} />
       
-      <View style={styles.headerRow}>
-        <Text style={styles.headerTitle}>
-          {itemCount} {itemCount === 1 ? 'item' : 'items'}
-        </Text>
-        <TouchableOpacity onPress={handleClearCart}>
-          <Text style={styles.clearText}>Clear All</Text>
-        </TouchableOpacity>
-      </View>
-
       <FlatList
         data={enrichedItems.length > 0 ? enrichedItems : items}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <CartItem
-            item={item}
-            onRemove={removeItem}
-            onUpdateQuantity={updateQuantity}
-          />
+          <CartItem item={item} onRemove={removeItem} onUpdateQuantity={updateQuantity} />
         )}
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={styles.listContainer}
         showsVerticalScrollIndicator={false}
+        ListHeaderComponent={<Text style={styles.itemCountText}>{itemCount} Items in Cart</Text>}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary.main]} />}
       />
 
-      {/* Order Summary */}
-      <View style={styles.summaryContainer}>
+      {/* Modern Summary Sheet */}
+      <View style={styles.summarySheet}>
         <View style={styles.summaryRow}>
           <Text style={styles.summaryLabel}>Subtotal</Text>
-          <Text style={styles.summaryValue}>{currencySymbol}{cartTotal.toFixed(2)}</Text>
+          <Text style={styles.summaryValue}>{currencySymbol}{(cartTotal + totalDiscount).toFixed(2)}</Text>
         </View>
+
+        {totalDiscount > 0 && (
+          <View style={styles.summaryRow}>
+            <Text style={styles.summaryLabel}>Total Savings</Text>
+            <Text style={[styles.summaryValue, { color: colors.success }]}>-{currencySymbol}{totalDiscount.toFixed(2)}</Text>
+          </View>
+        )}
+
         <View style={styles.summaryRow}>
-          <Text style={styles.summaryLabel}>Shipping</Text>
-          <Text style={[styles.summaryValue, { color: colors.success.main }]}>FREE</Text>
+          <Text style={styles.summaryLabel}>Shipping Fees</Text>
+          <Text style={[styles.summaryValue, { color: colors.success }]}>FREE</Text>
         </View>
+
         <View style={styles.summaryRow}>
-          <Text style={styles.summaryLabel}>Tax (5%)</Text>
+          <Text style={styles.summaryLabel}>Tax (5% GST)</Text>
           <Text style={styles.summaryValue}>{currencySymbol}{taxAmount.toFixed(2)}</Text>
         </View>
+
         <View style={styles.divider} />
-        <View style={styles.summaryRow}>
-          <Text style={styles.totalLabel}>Total Amount</Text>
-          <Text style={styles.totalValue}>{currencySymbol}{orderTotal.toFixed(2)}</Text>
-        </View>
-        
-        <Button
-          title="Proceed to Checkout"
-          onPress={handleCheckout}
-          fullWidth
-          style={styles.checkoutButton}
-        />
-        
-        <View style={styles.secureRow}>
-          <Ionicons name="shield-checkmark" size={16} color={colors.success.main} />
-          <Text style={styles.secureText}>Secure Checkout by Agro Nexis</Text>
+
+        <View style={styles.totalRow}>
+          <View>
+            <Text style={styles.totalLabel}>Total Payable</Text>
+            <Text style={styles.totalValue}>{currencySymbol}{orderTotal.toFixed(2)}</Text>
+          </View>
+          <Button title="Checkout" onPress={handleCheckout} style={styles.checkoutBtn} />
         </View>
       </View>
     </View>
@@ -195,103 +192,34 @@ const CartScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background.default,
+  container: { flex: 1, backgroundColor: colors.background.default },
+  listContainer: { padding: spacing.md, paddingBottom: 280 },
+  itemCountText: { fontSize: 12, fontWeight: '700', color: colors.text.muted, textTransform: 'uppercase', marginBottom: spacing.md, letterSpacing: 1 },
+  emptyState: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xl },
+  emptyIconCircle: { width: 100, height: 100, borderRadius: 50, backgroundColor: colors.background.muted, alignItems: 'center', justifyContent: 'center', marginBottom: spacing.lg },
+  emptyTitle: { fontSize: 20, fontWeight: 'bold', color: colors.text.primary, marginBottom: 8 },
+  emptySubtitle: { fontSize: 14, color: colors.text.secondary, textAlign: 'center', marginBottom: spacing.xl },
+  shopBtn: { paddingHorizontal: 40 },
+  summarySheet: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    padding: spacing.lg,
+    paddingBottom: spacing.xl,
+    ...shadows.dark,
   },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    backgroundColor: colors.background.paper,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.divider,
-  },
-  headerTitle: {
-    fontSize: fontSize.md,
-    fontWeight: '600',
-    color: colors.text.primary,
-  },
-  clearText: {
-    fontSize: fontSize.sm,
-    color: colors.error.main,
-  },
-  listContent: {
-    padding: spacing.md,
-  },
-  emptyContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: spacing.xl,
-  },
-  emptyTitle: {
-    fontSize: fontSize.xl,
-    fontWeight: '600',
-    color: colors.text.primary,
-    marginTop: spacing.lg,
-    marginBottom: spacing.sm,
-  },
-  emptySubtitle: {
-    fontSize: fontSize.md,
-    color: colors.text.secondary,
-    textAlign: 'center',
-    marginBottom: spacing.xl,
-  },
-  shopButton: {
-    paddingHorizontal: spacing.xl,
-  },
-  summaryContainer: {
-    backgroundColor: colors.background.paper,
-    padding: spacing.md,
-    borderTopWidth: 1,
-    borderTopColor: colors.divider,
-  },
-  summaryRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: spacing.xs,
-  },
-  summaryLabel: {
-    fontSize: fontSize.md,
-    color: colors.text.secondary,
-  },
-  summaryValue: {
-    fontSize: fontSize.md,
-    color: colors.text.primary,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: colors.divider,
-    marginVertical: spacing.sm,
-  },
-  totalLabel: {
-    fontSize: fontSize.lg,
-    fontWeight: '600',
-    color: colors.text.primary,
-  },
-  totalValue: {
-    fontSize: fontSize.xl,
-    fontWeight: 'bold',
-    color: colors.primary.main,
-  },
-  checkoutButton: {
-    marginTop: spacing.md,
-  },
-  secureRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: spacing.sm,
-  },
-  secureText: {
-    fontSize: fontSize.sm,
-    color: colors.text.secondary,
-    marginLeft: spacing.xs,
-  },
+  summaryRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 },
+  summaryLabel: { fontSize: 13, color: colors.text.secondary, fontWeight: '500' },
+  summaryValue: { fontSize: 13, fontWeight: '700', color: colors.text.primary },
+  divider: { height: 1, backgroundColor: colors.border, marginVertical: spacing.md },
+  totalRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  totalLabel: { fontSize: 12, color: colors.text.muted, fontWeight: '600' },
+  totalValue: { fontSize: 22, fontWeight: '900', color: colors.primary.main },
+  checkoutBtn: { paddingHorizontal: 30, height: 50 },
 });
 
 export default CartScreen;

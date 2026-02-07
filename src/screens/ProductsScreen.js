@@ -7,13 +7,15 @@ import {
   RefreshControl,
   TouchableOpacity,
   TextInput,
+  StatusBar,
+  ScrollView,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import Header from '../components/common/Header';
 import ProductCard from '../components/products/ProductCard';
 import Loading from '../components/common/Loading';
-import { colors, spacing, fontSize, borderRadius } from '../config/theme';
+import { colors, spacing, fontSize, borderRadius, shadows } from '../config/theme';
 import apiService from '../services/api';
 
 const ProductsScreen = () => {
@@ -33,9 +35,7 @@ const ProductsScreen = () => {
   }, []);
 
   useEffect(() => {
-    if (categoryId) {
-      setSelectedCategory(categoryId);
-    }
+    if (categoryId) setSelectedCategory(categoryId);
   }, [categoryId]);
 
   const loadData = async () => {
@@ -46,11 +46,11 @@ const ProductsScreen = () => {
         apiService.getCategories(),
       ]);
 
-      const prods = Array.isArray(productsRes) ? productsRes : productsRes.data || [];
+      const prods = productsRes.data || productsRes || [];
       setProducts(prods.filter(p => p.isActive));
 
-      const cats = Array.isArray(categoriesRes) ? categoriesRes : categoriesRes.data || [];
-      setCategories([{ id: null, name: 'All' }, ...cats.filter(c => c.isActive)]);
+      const cats = categoriesRes.data || categoriesRes || [];
+      setCategories([{ id: null, name: 'All Spices' }, ...cats.filter(c => c.isActive)]);
     } catch (error) {
       console.error('Error loading products:', error);
     } finally {
@@ -67,111 +67,82 @@ const ProductsScreen = () => {
   const filteredProducts = useMemo(() => {
     return products.filter(p => {
       const matchesCategory = selectedCategory ? p.categoryId === selectedCategory : true;
-      const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                           (p.description && p.description.toLowerCase().includes(searchQuery.toLowerCase()));
+      const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
       return matchesCategory && matchesSearch;
     });
   }, [products, selectedCategory, searchQuery]);
 
-  const renderHeader = () => (
-    <View style={styles.headerAccessory}>
-      {/* Search Bar */}
-      <View style={styles.searchContainer}>
-        <Ionicons name="search-outline" size={20} color={colors.text.secondary} style={styles.searchIcon} />
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search spices, powders..."
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          placeholderTextColor={colors.text.disabled}
-        />
-        {searchQuery.length > 0 && (
-          <TouchableOpacity onPress={() => setSearchQuery('')}>
-            <Ionicons name="close-circle" size={20} color={colors.text.secondary} />
-          </TouchableOpacity>
-        )}
-      </View>
-
-      {/* Category Filter */}
-      <View style={styles.filterContainer}>
-        <FlatList
-          horizontal
-          data={categories}
-          keyExtractor={(item) => item.id?.toString() || 'all'}
-          showsHorizontalScrollIndicator={false}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={[
-                styles.filterChip,
-                selectedCategory === item.id && styles.filterChipActive,
-              ]}
-              onPress={() => setSelectedCategory(item.id)}
-            >
-              <Text
-                style={[
-                  styles.filterChipText,
-                  selectedCategory === item.id && styles.filterChipTextActive,
-                ]}
-              >
-                {item.name}
-              </Text>
-            </TouchableOpacity>
-          )}
-        />
-      </View>
-    </View>
-  );
-
-  const renderProduct = useCallback(
-    ({ item }) => (
-      <ProductCard
-        product={item}
-        onPress={() => navigation.navigate('ProductDetails', { productId: item.id })}
-      />
-    ),
-    [navigation]
-  );
-
-  if (isLoading && !refreshing) {
-    return (
-      <View style={styles.container}>
-        <Header title="Products" showBack />
-        <Loading fullScreen text="Loading spices..." />
-      </View>
-    );
-  }
+  if (isLoading && !refreshing) return <Loading fullScreen />;
 
   return (
     <View style={styles.container}>
-      <Header title="Our Products" showBack />
+      <StatusBar barStyle="dark-content" />
+      <Header title="Our Catalog" showBack />
+
       <FlatList
         data={filteredProducts}
         numColumns={2}
         keyExtractor={(item) => item.id.toString()}
-        renderItem={renderProduct}
-        ListHeaderComponent={renderHeader}
-        contentContainerStyle={styles.listContent}
-        columnWrapperStyle={styles.row}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            colors={[colors.primary.main]}
+        renderItem={({ item }) => (
+          <ProductCard
+            product={item}
+            onPress={() => navigation.navigate('ProductDetails', { productId: item.id })}
           />
+        )}
+        // Inlined the header to prevent component remounting and keyboard closing
+        ListHeaderComponent={
+          <View style={styles.filterSection}>
+            <View style={styles.searchRow}>
+              <View style={styles.searchBar}>
+                <Ionicons name="search" size={18} color={colors.text.muted} />
+                <TextInput
+                  style={styles.searchInput}
+                  placeholder="Search premium spices..."
+                  value={searchQuery}
+                  onChangeText={setSearchQuery}
+                  placeholderTextColor={colors.text.muted}
+                  autoCorrect={false}
+                />
+                {searchQuery !== '' && (
+                  <TouchableOpacity onPress={() => setSearchQuery('')}>
+                    <Ionicons name="close-circle" size={18} color={colors.text.muted} />
+                  </TouchableOpacity>
+                )}
+              </View>
+            </View>
+
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipList}>
+              {categories.map((item) => (
+                <TouchableOpacity
+                  key={item.id?.toString() || 'all'}
+                  style={[
+                    styles.chip,
+                    selectedCategory === item.id && styles.chipActive,
+                  ]}
+                  onPress={() => setSelectedCategory(item.id)}
+                >
+                  <Text style={[styles.chipText, selectedCategory === item.id && styles.chipTextActive]}>
+                    {item.name}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+
+            <View style={styles.resultsHeader}>
+              <Text style={styles.resultsCount}>{filteredProducts.length} Products Found</Text>
+            </View>
+          </View>
         }
+        contentContainerStyle={styles.listContainer}
+        columnWrapperStyle={styles.row}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary.main]} />}
         ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Ionicons name="search-outline" size={64} color={colors.text.disabled} />
-            <Text style={styles.emptyText}>No products found matching "{searchQuery}"</Text>
-            <TouchableOpacity
-              style={styles.resetButton}
-              onPress={() => {
-                setSearchQuery('');
-                setSelectedCategory(null);
-              }}
-            >
-              <Text style={styles.resetButtonText}>Clear Filters</Text>
-            </TouchableOpacity>
+          <View style={styles.emptyState}>
+            <View style={styles.emptyIconCircle}>
+              <Ionicons name="search-outline" size={40} color={colors.text.disabled} />
+            </View>
+            <Text style={styles.emptyTitle}>No results found</Text>
+            <Text style={styles.emptySubtitle}>Try adjusting your search or filters</Text>
           </View>
         }
       />
@@ -180,91 +151,43 @@ const ProductsScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background.default,
-  },
-  headerAccessory: {
-    backgroundColor: colors.background.paper,
-    paddingBottom: spacing.sm,
-  },
-  searchContainer: {
+  container: { flex: 1, backgroundColor: colors.background.default },
+  filterSection: { paddingBottom: spacing.md },
+  searchRow: { paddingHorizontal: spacing.md, marginTop: spacing.sm },
+  searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#f5f5f5',
-    marginHorizontal: spacing.md,
-    marginTop: spacing.md,
-    marginBottom: spacing.sm,
-    paddingHorizontal: spacing.sm,
+    backgroundColor: '#fff',
+    height: 50,
     borderRadius: borderRadius.md,
-    height: 45,
+    paddingHorizontal: spacing.md,
+    ...shadows.light,
     borderWidth: 1,
-    borderColor: colors.divider,
+    borderColor: '#f0f0f0',
   },
-  searchIcon: {
-    marginRight: spacing.xs,
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: fontSize.md,
-    color: colors.text.primary,
-  },
-  filterContainer: {
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
-  },
-  filterChip: {
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs + 2,
+  searchInput: { flex: 1, marginLeft: 10, fontSize: 14, color: colors.text.primary, fontWeight: '500' },
+  chipList: { paddingHorizontal: spacing.md, marginTop: spacing.md, paddingBottom: 4 },
+  chip: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
     borderRadius: borderRadius.full,
-    backgroundColor: '#f0f0f0',
-    marginRight: spacing.sm,
+    backgroundColor: '#fff',
+    marginRight: 10,
+    ...shadows.light,
     borderWidth: 1,
-    borderColor: colors.divider,
+    borderColor: '#f0f0f0',
   },
-  filterChipActive: {
-    backgroundColor: colors.primary.main,
-    borderColor: colors.primary.main,
-  },
-  filterChipText: {
-    fontSize: fontSize.sm,
-    color: colors.text.primary,
-  },
-  filterChipTextActive: {
-    color: '#fff',
-    fontWeight: '600',
-  },
-  listContent: {
-    paddingBottom: spacing.xl,
-  },
-  row: {
-    justifyContent: 'space-between',
-    paddingHorizontal: spacing.md,
-  },
-  emptyContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingTop: 60,
-    paddingHorizontal: spacing.xl,
-  },
-  emptyText: {
-    fontSize: fontSize.md,
-    color: colors.text.secondary,
-    textAlign: 'center',
-    marginTop: spacing.md,
-  },
-  resetButton: {
-    marginTop: spacing.lg,
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.xl,
-    backgroundColor: colors.secondary.main,
-    borderRadius: borderRadius.md,
-  },
-  resetButtonText: {
-    color: '#fff',
-    fontWeight: '600',
-  },
+  chipActive: { backgroundColor: colors.primary.main, borderColor: colors.primary.main },
+  chipText: { fontSize: 13, fontWeight: '600', color: colors.text.secondary },
+  chipTextActive: { color: '#fff' },
+  resultsHeader: { paddingHorizontal: spacing.md, marginTop: spacing.lg },
+  resultsCount: { fontSize: 12, fontWeight: '700', color: colors.text.muted, textTransform: 'uppercase', letterSpacing: 1 },
+  listContainer: { paddingBottom: 100 },
+  row: { justifyContent: 'space-between', paddingHorizontal: spacing.md, marginTop: spacing.md },
+  emptyState: { flex: 1, alignItems: 'center', justifyContent: 'center', marginTop: 80 },
+  emptyIconCircle: { width: 80, height: 80, borderRadius: 40, backgroundColor: colors.background.muted, alignItems: 'center', justifyContent: 'center', marginBottom: spacing.md },
+  emptyTitle: { fontSize: 18, fontWeight: 'bold', color: colors.text.primary },
+  emptySubtitle: { fontSize: 14, color: colors.text.secondary, marginTop: 4 },
 });
 
 export default ProductsScreen;

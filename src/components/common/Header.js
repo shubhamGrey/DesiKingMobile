@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { colors, spacing, fontSize } from '../../config/theme';
+import { colors, spacing, fontSize, borderRadius, shadows } from '../../config/theme';
 import { useCart } from '../../context/CartContext';
 
 const Header = ({ title, showBack = false, showCart = true, rightIcon, onRightPress }) => {
@@ -15,17 +15,18 @@ const Header = ({ title, showBack = false, showCart = true, rightIcon, onRightPr
         {showBack ? (
           <TouchableOpacity
             onPress={() => navigation.goBack()}
-            style={styles.iconButton}
-            testID="header-back-btn"
+            style={styles.backButton}
           >
-            <Ionicons name="arrow-back" size={24} color={colors.primary.contrastText} />
+            <Ionicons name="chevron-back" size={24} color={colors.text.primary} />
           </TouchableOpacity>
         ) : (
-          <Image
-            source={require('../../../assets/AgroNexisWhite.png')}
-            style={styles.logo}
-            resizeMode="contain"
-          />
+          <View style={styles.logoContainer}>
+            <Image
+              source={require('../../../assets/DesiKing.png')}
+              style={styles.logo}
+              resizeMode="contain"
+            />
+          </View>
         )}
       </View>
 
@@ -33,7 +34,7 @@ const Header = ({ title, showBack = false, showCart = true, rightIcon, onRightPr
         {title ? (
           <Text style={styles.title} numberOfLines={1}>{title}</Text>
         ) : !showBack ? (
-          <Text style={styles.brandTitle}>AGRO NEXIS</Text>
+          <Text style={styles.brandTitle}>DESI KING</Text>
         ) : null}
       </View>
 
@@ -41,24 +42,25 @@ const Header = ({ title, showBack = false, showCart = true, rightIcon, onRightPr
         {rightIcon ? (
           <TouchableOpacity
             onPress={onRightPress}
-            style={styles.iconButton}
+            style={styles.actionButton}
           >
-            <Ionicons name={rightIcon} size={24} color={colors.primary.contrastText} />
+            <Ionicons name={rightIcon} size={22} color={colors.text.primary} />
           </TouchableOpacity>
         ) : showCart ? (
           <TouchableOpacity
             onPress={() => navigation.navigate('Cart')}
-            style={styles.iconButton}
-            testID="header-cart-btn"
+            style={styles.actionButton}
           >
-            <Ionicons name="cart-outline" size={24} color={colors.primary.contrastText} />
+            <Ionicons name="cart-outline" size={22} color={colors.text.primary} />
             {itemCount > 0 && (
               <View style={styles.badge}>
                 <Text style={styles.badgeText}>{itemCount > 99 ? '99+' : itemCount}</Text>
               </View>
             )}
           </TouchableOpacity>
-        ) : null}
+        ) : (
+          <View style={{ width: 40 }} />
+        )}
       </View>
     </View>
   );
@@ -69,12 +71,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: colors.primary.main,
+    backgroundColor: colors.background.default,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
-    paddingTop: 50, // Safe area
-    borderBottomWidth: 0.5,
-    borderBottomColor: 'rgba(255,255,255,0.1)',
+    paddingTop: Platform.OS === 'ios' ? 60 : 40,
+    height: Platform.OS === 'ios' ? 110 : 90,
   },
   leftSection: {
     flex: 1,
@@ -88,39 +89,65 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'flex-end',
   },
-  logo: {
+  backButton: {
     width: 40,
     height: 40,
+    borderRadius: 20,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...shadows.light,
+  },
+  logoContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#fff',
+    padding: 4,
+    ...shadows.light,
+  },
+  logo: {
+    width: '100%',
+    height: '100%',
   },
   title: {
-    fontSize: fontSize.lg,
-    fontWeight: '600',
-    color: colors.primary.contrastText,
+    fontSize: 18,
+    fontWeight: '800',
+    color: colors.text.primary,
+    letterSpacing: -0.5,
   },
   brandTitle: {
-    fontSize: fontSize.lg,
-    fontWeight: 'bold',
-    color: colors.primary.contrastText,
+    fontSize: 16,
+    fontWeight: '900',
+    color: colors.primary.main,
     letterSpacing: 1,
   },
-  iconButton: {
-    padding: spacing.xs,
+  actionButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...shadows.light,
     position: 'relative',
   },
   badge: {
     position: 'absolute',
-    top: 0,
-    right: 0,
+    top: -2,
+    right: -2,
     backgroundColor: colors.secondary.main,
     borderRadius: 10,
     minWidth: 18,
     height: 18,
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#fff',
   },
   badgeText: {
     color: '#fff',
-    fontSize: 10,
+    fontSize: 8,
     fontWeight: 'bold',
   },
 });

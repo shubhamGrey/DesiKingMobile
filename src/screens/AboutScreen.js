@@ -128,7 +128,7 @@ const AboutScreen = () => {
           </View>
 
           <View style={styles.founderContainer}>
-            <Image source={require('../../assets/Director.jpg')} style={styles.founderThumb} />
+            <Image source={require('../../assets/Co Founder.jpg')} style={styles.founderThumb} />
             <View style={styles.founderInfo}>
               <Text style={styles.founderName}>Shri Vijay Sharma</Text>
               <Text style={styles.founderBio}>

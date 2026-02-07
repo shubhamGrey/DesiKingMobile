@@ -6,18 +6,21 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
-  ActivityIndicator,
   Image,
+  Dimensions,
+  StatusBar,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import Header from '../components/common/Header';
 import Button from '../components/common/Button';
 import Loading from '../components/common/Loading';
-import { colors, spacing, fontSize, borderRadius } from '../config/theme';
+import { colors, spacing, fontSize, borderRadius, shadows } from '../config/theme';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import apiService from '../services/api';
+
+const { width } = Dimensions.get('window');
 
 const CheckoutScreen = () => {
   const navigation = useNavigation();
@@ -30,12 +33,12 @@ const CheckoutScreen = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
   const [checkoutTotal, setCheckoutTotal] = useState(0);
+  const [totalDiscount, setTotalDiscount] = useState(0);
 
   const currencySymbol = '₹';
-  const shipping = 0;
-  const taxRate = 0.05; // 5% GST
+  const taxRate = 0.05;
   const taxAmount = checkoutTotal * taxRate;
-  const grandTotal = checkoutTotal + shipping + taxAmount;
+  const grandTotal = checkoutTotal + taxAmount;
 
   useEffect(() => {
     loadInitialData();
@@ -44,8 +47,6 @@ const CheckoutScreen = () => {
   const loadInitialData = async () => {
     try {
       setIsLoading(true);
-
-      // Load addresses
       if (user?.id) {
         const addrRes = await apiService.addressByUser(user.id);
         const addrData = addrRes.data || [];
@@ -53,8 +54,9 @@ const CheckoutScreen = () => {
         if (addrData.length > 0) setSelectedAddress(addrData[0].id);
       }
 
-      // Enrich items with product details
-      let totalValue = 0;
+      let runningTotal = 0;
+      let runningDiscount = 0;
+
       const enriched = await Promise.all(items.map(async (item) => {
         try {
           const productData = await apiService.getProductById(item.productId);
@@ -63,25 +65,32 @@ const CheckoutScreen = () => {
           ) || productData.pricesAndSkus?.[0];
 
           const currentPrice = matchingSku ? (matchingSku.isDiscounted ? matchingSku.discountedAmount : matchingSku.price) : item.price;
-          totalValue += (currentPrice * item.quantity);
+          const originalPrice = matchingSku ? matchingSku.price : (item.originalPrice || currentPrice);
+
+          runningTotal += (currentPrice * item.quantity);
+          if (originalPrice > currentPrice) {
+            runningDiscount += (originalPrice - currentPrice) * item.quantity;
+          }
 
           return {
             ...item,
             name: productData.name || item.name,
             image: productData.thumbnailUrl || (productData.imageUrls && productData.imageUrls[0]) || item.image,
-            price: currentPrice
+            price: currentPrice,
+            originalPrice: originalPrice
           };
         } catch (err) {
           console.error(`Error enriching item ${item.productId}:`, err);
-          totalValue += (item.price * item.quantity);
+          runningTotal += (item.price * item.quantity);
           return item;
         }
       }));
 
       setEnrichedItems(enriched);
-      setCheckoutTotal(totalValue);
+      setCheckoutTotal(runningTotal);
+      setTotalDiscount(runningDiscount);
     } catch (error) {
-      console.error('Checkout initialization error:', error);
+      console.error('Checkout error:', error);
     } finally {
       setIsLoading(false);
     }
@@ -93,116 +102,148 @@ const CheckoutScreen = () => {
       return;
     }
 
+    const fullSelectedAddress = addresses.find(addr => addr.id === selectedAddress);
+
     try {
       setIsProcessing(true);
       const orderData = {
         userId: user.id,
-        addressId: selectedAddress,
+        shippingAddress: {
+          id: fullSelectedAddress.id,
+          userId: user.id,
+          fullName: `${user.firstName} ${user.lastName}`,
+          phoneNumber: user.phoneNumber || "",
+          addressLine: fullSelectedAddress.fullAddress,
+          city: "Pune",
+          stateCode: "MH",
+          countryCode: "IN",
+          pinCode: "411014"
+        },
         items: items.map(item => ({
           productId: item.productId,
           quantity: item.quantity,
           sku: item.sku,
+          price: item.price
         })),
         amount: grandTotal,
       };
 
       await apiService.createOrder(orderData);
 
-      Alert.alert('Success', 'Order placed successfully!', [
-        { text: 'OK', onPress: () => {
-          clearCart();
-          navigation.reset({
-            index: 0,
-            routes: [{ name: 'MainTabs' }],
-          });
+      // Delete each item individually from the server cart
+      try {
+        await Promise.all(items.map(item => apiService.removeFromCart(item.id)));
+      } catch (cartError) {
+        console.warn('Silent failure clearing some items from server cart:', cartError.message);
+      }
+
+      Alert.alert('Success', 'Your premium spices are on the way!', [
+        { text: 'Continue Shopping', onPress: () => {
+          clearCart(); // Clears local state and async storage
+          navigation.reset({ index: 0, routes: [{ name: 'MainTabs', params: { screen: 'Home' } }] });
         }}
       ]);
     } catch (error) {
-      console.error('Checkout Error:', error);
-      Alert.alert('Error', 'Failed to process checkout. Please try again.');
+      console.error('Order creation failed:', error);
+      Alert.alert('Error', 'Failed to process order. Please try again.');
     } finally {
       setIsProcessing(false);
     }
   };
 
-  if (isLoading) return <Loading fullScreen text="Preparing checkout..." />;
+  if (isLoading) return <Loading fullScreen />;
 
   return (
     <View style={styles.container}>
-      <Header title="Checkout" showBack />
+      <StatusBar barStyle="dark-content" />
+      <Header title="Secure Checkout" showBack />
 
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+
         {/* Address Section */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Delivery Address</Text>
-            <TouchableOpacity onPress={() => navigation.navigate('AddressBook')}>
-              <Text style={styles.addLink}>Change</Text>
-            </TouchableOpacity>
-          </View>
-
-          {addresses.length > 0 ? (
-            addresses.map((addr) => (
-              <TouchableOpacity
-                key={addr.id}
-                style={[styles.addressCard, selectedAddress === addr.id && styles.selectedCard]}
-                onPress={() => setSelectedAddress(addr.id)}
-              >
-                <Ionicons
-                  name={selectedAddress === addr.id ? "radio-button-on" : "radio-button-off"}
-                  size={20}
-                  color={selectedAddress === addr.id ? colors.primary.main : colors.text.disabled}
-                  style={{ marginRight: spacing.sm }}
-                />
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.addressType}>Saved Address</Text>
-                  <Text style={styles.addressText}>{addr.fullAddress}</Text>
-                </View>
-              </TouchableOpacity>
-            ))
-          ) : (
-            <Button title="Add Address" onPress={() => navigation.navigate('AddressBook')} variant="outline" />
-          )}
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Delivery To</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('AddressBook')}>
+            <Text style={styles.editLink}>Change</Text>
+          </TouchableOpacity>
         </View>
 
-        {/* Items Summary Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Order Items</Text>
+        {addresses.length > 0 ? (
+          addresses.map((addr) => (
+            <TouchableOpacity
+              key={addr.id}
+              style={[styles.addressCard, selectedAddress === addr.id && styles.selectedCard]}
+              onPress={() => setSelectedAddress(addr.id)}
+            >
+              <View style={[styles.radio, selectedAddress === addr.id && styles.radioActive]}>
+                {selectedAddress === addr.id && <View style={styles.radioInner} />}
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.addressType}>Saved Location</Text>
+                <Text style={styles.addressText} numberOfLines={2}>{addr.fullAddress}</Text>
+              </View>
+            </TouchableOpacity>
+          ))
+        ) : (
+          <View style={styles.emptyAddress}>
+            <Text style={styles.emptyText}>No addresses found.</Text>
+            <Button title="Add New Address" onPress={() => navigation.navigate('AddressBook')} variant="outline" />
+          </View>
+        )}
+
+        {/* Order Preview */}
+        <Text style={[styles.sectionTitle, { marginTop: spacing.xl, marginBottom: spacing.md }]}>Order Preview</Text>
+        <View style={styles.previewContainer}>
           {enrichedItems.map((item) => (
             <View key={item.id} style={styles.itemRow}>
               <Image source={{ uri: item.image }} style={styles.itemThumb} />
               <View style={{ flex: 1 }}>
-                <Text style={styles.itemName} numberOfLines={1}>{item.name}</Text>
-                <Text style={styles.itemMeta}>Qty: {item.quantity}</Text>
+                <Text style={styles.itemName}>{item.name}</Text>
+                <Text style={styles.itemMeta}>Quantity: {item.quantity}</Text>
               </View>
-              <Text style={styles.itemPrice}>
-                {currencySymbol}{(item.price * item.quantity).toFixed(2)}
-              </Text>
+              <View style={{ alignItems: 'flex-end' }}>
+                <Text style={styles.itemPrice}>{currencySymbol}{(item.price * item.quantity).toFixed(2)}</Text>
+                {item.originalPrice > item.price && (
+                  <Text style={styles.strikedPrice}>₹{(item.originalPrice * item.quantity).toFixed(0)}</Text>
+                )}
+              </View>
             </View>
           ))}
         </View>
 
-        {/* Summary Card */}
-        <View style={styles.section}>
-          <View style={styles.summaryCard}>
-            <View style={styles.summaryRow}>
-              <Text style={styles.summaryLabel}>Subtotal</Text>
-              <Text style={styles.summaryValue}>{currencySymbol}{checkoutTotal.toFixed(2)}</Text>
-            </View>
-            <View style={styles.summaryRow}>
-              <Text style={styles.summaryLabel}>Shipping</Text>
-              <Text style={[styles.summaryValue, { color: colors.success.main }]}>FREE</Text>
-            </View>
-            <View style={styles.summaryRow}>
-              <Text style={styles.summaryLabel}>Tax (5%)</Text>
-              <Text style={styles.summaryValue}>{currencySymbol}{taxAmount.toFixed(2)}</Text>
-            </View>
-            <View style={styles.divider} />
-            <View style={styles.summaryRow}>
-              <Text style={styles.totalLabel}>Grand Total</Text>
-              <Text style={styles.totalValue}>{currencySymbol}{grandTotal.toFixed(2)}</Text>
-            </View>
+        {/* Breakdown Card */}
+        <View style={styles.breakdownCard}>
+          <View style={styles.summaryRow}>
+            <Text style={styles.summaryLabel}>Subtotal</Text>
+            <Text style={styles.summaryValue}>{currencySymbol}{(checkoutTotal + totalDiscount).toFixed(2)}</Text>
           </View>
+
+          {totalDiscount > 0 && (
+            <View style={styles.summaryRow}>
+              <Text style={styles.summaryLabel}>Total Savings</Text>
+              <Text style={[styles.summaryValue, { color: colors.success }]}>-{currencySymbol}{totalDiscount.toFixed(2)}</Text>
+            </View>
+          )}
+
+          <View style={styles.summaryRow}>
+            <Text style={styles.summaryLabel}>Shipping Fee</Text>
+            <Text style={[styles.summaryValue, { color: colors.success }]}>FREE</Text>
+          </View>
+
+          <View style={styles.summaryRow}>
+            <Text style={styles.summaryLabel}>GST (5%)</Text>
+            <Text style={styles.summaryValue}>{currencySymbol}{taxAmount.toFixed(2)}</Text>
+          </View>
+          <View style={styles.divider} />
+          <View style={styles.summaryRow}>
+            <Text style={styles.grandTotalLabel}>Grand Total</Text>
+            <Text style={styles.grandTotalValue}>{currencySymbol}{grandTotal.toFixed(2)}</Text>
+          </View>
+        </View>
+
+        <View style={styles.secureNote}>
+          <Ionicons name="lock-closed" size={14} color={colors.text.muted} />
+          <Text style={styles.secureText}>Payments are encrypted and secured by Razorpay</Text>
         </View>
       </ScrollView>
 
@@ -212,6 +253,7 @@ const CheckoutScreen = () => {
           onPress={handlePlaceOrder}
           fullWidth
           loading={isProcessing}
+          style={styles.placeOrderBtn}
         />
       </View>
     </View>
@@ -221,26 +263,45 @@ const CheckoutScreen = () => {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background.default },
   scrollView: { flex: 1 },
-  section: { padding: spacing.md },
-  sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: spacing.sm },
-  sectionTitle: { fontSize: fontSize.lg, fontWeight: '700', color: colors.text.primary },
-  addLink: { color: colors.primary.main, fontWeight: '600' },
-  addressCard: { flexDirection: 'row', backgroundColor: '#fff', padding: spacing.md, borderRadius: borderRadius.md, borderWidth: 1, borderColor: colors.divider, marginBottom: spacing.sm },
+  scrollContent: { padding: spacing.md, paddingBottom: 120 },
+  sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.md },
+  sectionTitle: { fontSize: 18, fontWeight: '800', color: colors.text.primary, letterSpacing: -0.5 },
+  editLink: { color: colors.secondary.main, fontWeight: '700', fontSize: 14 },
+  addressCard: {
+    flexDirection: 'row',
+    backgroundColor: '#fff',
+    padding: spacing.lg,
+    borderRadius: borderRadius.lg,
+    borderWidth: 1,
+    borderColor: '#f0f0f0',
+    marginBottom: spacing.md,
+    ...shadows.light,
+    alignItems: 'center',
+  },
   selectedCard: { borderColor: colors.primary.main, backgroundColor: '#f1f8e9' },
-  addressType: { fontSize: 10, fontWeight: 'bold', color: colors.primary.main, marginBottom: 2, textTransform: 'uppercase' },
-  addressText: { fontSize: fontSize.sm, color: colors.text.primary },
-  itemRow: { flexDirection: 'row', alignItems: 'center', marginBottom: spacing.sm, backgroundColor: '#fff', padding: spacing.sm, borderRadius: borderRadius.sm },
-  itemThumb: { width: 40, height: 40, borderRadius: 4, marginRight: spacing.sm },
-  itemName: { fontSize: fontSize.sm, fontWeight: '500', flex: 1 },
-  itemMeta: { fontSize: 11, color: colors.text.secondary },
-  itemPrice: { fontSize: fontSize.sm, fontWeight: '600', marginLeft: spacing.sm },
-  summaryCard: { backgroundColor: '#fff', padding: spacing.md, borderRadius: borderRadius.md, borderWidth: 1, borderColor: colors.divider },
-  summaryRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: spacing.xs },
-  summaryLabel: { color: colors.text.secondary },
-  divider: { height: 1, backgroundColor: colors.divider, marginVertical: spacing.sm },
-  totalLabel: { fontSize: fontSize.md, fontWeight: 'bold' },
-  totalValue: { fontSize: fontSize.lg, fontWeight: 'bold', color: colors.primary.main },
-  footer: { padding: spacing.md, backgroundColor: '#fff', borderTopWidth: 1, borderTopColor: colors.divider },
+  radio: { width: 20, height: 20, borderRadius: 10, borderWidth: 2, borderColor: colors.text.disabled, marginRight: 15, alignItems: 'center', justifyContent: 'center' },
+  radioActive: { borderColor: colors.primary.main },
+  radioInner: { width: 10, height: 10, borderRadius: 5, backgroundColor: colors.primary.main },
+  addressType: { fontSize: 10, fontWeight: 'bold', color: colors.primary.main, textTransform: 'uppercase', marginBottom: 4 },
+  addressText: { fontSize: 14, color: colors.text.secondary, lineHeight: 20 },
+  previewContainer: { backgroundColor: '#fff', borderRadius: borderRadius.lg, padding: spacing.md, ...shadows.light },
+  itemRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: spacing.sm, borderBottomWidth: 1, borderBottomColor: '#f9f9f9' },
+  itemThumb: { width: 45, height: 45, borderRadius: 8, marginRight: 12, backgroundColor: colors.background.muted },
+  itemName: { fontSize: 13, fontWeight: '600', color: colors.text.primary, flex: 1 },
+  itemMeta: { fontSize: 11, color: colors.text.muted, marginTop: 2 },
+  itemPrice: { fontSize: 14, fontWeight: '700', color: colors.text.primary },
+  strikedPrice: { fontSize: 10, color: colors.text.muted, textDecorationLine: 'line-through' },
+  breakdownCard: { marginTop: spacing.xl, padding: spacing.lg, backgroundColor: '#fff', borderRadius: borderRadius.lg, ...shadows.medium },
+  summaryRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12 },
+  summaryLabel: { color: colors.text.secondary, fontSize: 14 },
+  summaryValue: { fontWeight: '600', color: colors.text.primary, fontSize: 14 },
+  divider: { height: 1, backgroundColor: '#f0f0f0', marginVertical: spacing.sm },
+  grandTotalLabel: { fontSize: 16, fontWeight: '800', color: colors.text.primary },
+  grandTotalValue: { fontSize: 20, fontWeight: '900', color: colors.primary.main },
+  secureNote: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 24, opacity: 0.6 },
+  secureText: { fontSize: 11, color: colors.text.muted, marginLeft: 6 },
+  footer: { position: 'absolute', bottom: 0, left: 0, right: 0, padding: spacing.lg, backgroundColor: '#fff', borderTopLeftRadius: 24, borderTopRightRadius: 24, ...shadows.dark },
+  placeOrderBtn: { height: 56, borderRadius: borderRadius.md },
 });
 
 export default CheckoutScreen;
