@@ -18,6 +18,7 @@ import CheckoutScreen from '../screens/CheckoutScreen';
 import OrderHistoryScreen from '../screens/OrderHistoryScreen';
 import AddressBookScreen from '../screens/AddressBookScreen';
 import OrderDetailsScreen from '../screens/OrderDetailsScreen';
+import ManageAddressScreen from '../screens/ManageAddressScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -51,6 +52,7 @@ const ProfileStack = () => (
     <Stack.Screen name="OrderHistory" component={OrderHistoryScreen} />
     <Stack.Screen name="OrderDetails" component={OrderDetailsScreen} />
     <Stack.Screen name="AddressBook" component={AddressBookScreen} />
+    <Stack.Screen name="ManageAddress" component={ManageAddressScreen} />
     <Stack.Screen name="About" component={AboutScreen} />
     <Stack.Screen name="Contact" component={ContactScreen} />
   </Stack.Navigator>
@@ -113,6 +115,7 @@ const AppNavigator = () => {
         <Stack.Screen name="OrderHistory" component={OrderHistoryScreen} />
         <Stack.Screen name="OrderDetails" component={OrderDetailsScreen} />
         <Stack.Screen name="AddressBook" component={AddressBookScreen} />
+        <Stack.Screen name="ManageAddress" component={ManageAddressScreen} />
         <Stack.Screen name="About" component={AboutScreen} />
         <Stack.Screen name="Contact" component={ContactScreen} />
         <Stack.Screen name="ProductDetails" component={ProductDetailsScreen} />

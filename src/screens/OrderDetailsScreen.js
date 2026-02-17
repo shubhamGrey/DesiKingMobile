@@ -65,10 +65,11 @@ const OrderDetailsScreen = () => {
   if (isLoading) return <Loading fullScreen text="Loading details..." />;
   if (!order) return <View style={styles.center}><Text>Order not found</Text></View>;
 
+  const shippingFees = 100;
   const taxRate = 0.05; // 5% GST
   const taxAmount = (order.totalAmount || 0) * taxRate;
   const subTotal = (order.totalAmount || 0);
-  const grandTotal = subTotal + taxAmount;
+  const grandTotal = subTotal + taxAmount + shippingFees;
 
   return (
     <View style={styles.container}>
@@ -148,7 +149,7 @@ const OrderDetailsScreen = () => {
           </View>
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>Shipping Fee</Text>
-            <Text style={[styles.summaryValue, { color: colors.success.main }]}>FREE</Text>
+            <Text style={styles.summaryValue}>₹{shippingFees.toFixed(2)}</Text>
           </View>
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>Tax (5%)</Text>

@@ -128,6 +128,15 @@ class ApiService {
     });
   }
 
+  // Common / Dropdown Data
+  async getCountries() {
+    return this.request(endpoints.countries, { includeAuth: false });
+  }
+
+  async getStates(countryCode) {
+    return this.request(endpoints.statesByCountry(countryCode), { includeAuth: false });
+  }
+
   // Orders
   async createOrder(orderData) {
     return this.request(endpoints.createRazorpayOrder, {

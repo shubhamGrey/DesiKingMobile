@@ -32,7 +32,7 @@ const CartScreen = () => {
   const [totalDiscount, setTotalDiscount] = useState(0);
 
   const currencySymbol = '₹';
-  const shippingFees = 0;
+  const shippingFees = 100; // Updated from 0 to 100
   const taxRate = 0.05; // 5% GST
   const taxAmount = cartTotal * taxRate;
   const orderTotal = cartTotal + shippingFees + taxAmount;
@@ -169,7 +169,7 @@ const CartScreen = () => {
 
         <View style={styles.summaryRow}>
           <Text style={styles.summaryLabel}>Shipping Fees</Text>
-          <Text style={[styles.summaryValue, { color: colors.success }]}>FREE</Text>
+          <Text style={styles.summaryValue}>{currencySymbol}{shippingFees.toFixed(2)}</Text>
         </View>
 
         <View style={styles.summaryRow}>

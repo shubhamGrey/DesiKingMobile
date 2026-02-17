@@ -37,8 +37,9 @@ const CheckoutScreen = () => {
 
   const currencySymbol = '₹';
   const taxRate = 0.05;
+  const shippingFees = 100;
   const taxAmount = checkoutTotal * taxRate;
-  const grandTotal = checkoutTotal + taxAmount;
+  const grandTotal = checkoutTotal + taxAmount + shippingFees;
 
   useEffect(() => {
     loadInitialData();
@@ -227,7 +228,7 @@ const CheckoutScreen = () => {
 
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>Shipping Fee</Text>
-            <Text style={[styles.summaryValue, { color: colors.success }]}>FREE</Text>
+            <Text style={styles.summaryValue}>{currencySymbol}{shippingFees.toFixed(2)}</Text>
           </View>
 
           <View style={styles.summaryRow}>

@@ -24,8 +24,11 @@ const AddressBookScreen = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    loadAddresses();
-  }, []);
+    const unsubscribe = navigation.addListener('focus', () => {
+      loadAddresses();
+    });
+    return unsubscribe;
+  }, [navigation]);
 
   const loadAddresses = async () => {
     try {
@@ -75,7 +78,10 @@ const AddressBookScreen = () => {
       <Text style={styles.fullAddress}>{item.fullAddress}</Text>
 
       <View style={styles.cardFooter}>
-        <TouchableOpacity style={styles.editBtn}>
+        <TouchableOpacity
+          style={styles.editBtn}
+          onPress={() => navigation.navigate('ManageAddress', { address: item })}
+        >
           <Text style={styles.editBtnText}>Edit Details</Text>
         </TouchableOpacity>
       </View>
@@ -107,7 +113,12 @@ const AddressBookScreen = () => {
       )}
 
       <View style={styles.floatingFooter}>
-        <Button title="+ Add New Location" onPress={() => {}} fullWidth style={styles.addBtn} />
+        <Button
+          title="+ Add New Location"
+          onPress={() => navigation.navigate('ManageAddress')}
+          fullWidth
+          style={styles.addBtn}
+        />
       </View>
     </View>
   );
