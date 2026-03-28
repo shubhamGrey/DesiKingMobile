@@ -22,21 +22,20 @@ const Card = ({ children, style, onPress, elevation = 2, testID }) => {
 };
 
 const getShadowStyle = (elevation) => ({
-  shadowColor: '#000',
-  shadowOffset: {
-    width: 0,
-    height: elevation,
-  },
-  shadowOpacity: 0.1 + elevation * 0.02,
-  shadowRadius: elevation * 1.5,
+  shadowColor: '#1f4f40',
+  shadowOffset: { width: 0, height: elevation * 1.5 },
+  shadowOpacity: 0.06 + elevation * 0.015,
+  shadowRadius: elevation * 2.5,
   elevation: elevation,
 });
 
 const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.background.paper,
-    borderRadius: borderRadius.md,
+    borderRadius: borderRadius.lg,
     padding: spacing.md,
+    borderWidth: 1,
+    borderColor: colors.divider,
   },
 });
 

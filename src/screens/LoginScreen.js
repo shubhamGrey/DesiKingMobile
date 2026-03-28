@@ -4,78 +4,71 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  Image,
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
   Alert,
+  StatusBar,
+  Dimensions,
 } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import Header from '../components/common/Header';
+import { useNavigation } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
 import Input from '../components/common/Input';
 import Button from '../components/common/Button';
-import { colors, spacing, fontSize, borderRadius } from '../config/theme';
+import { colors, spacing, fontSize, borderRadius, shadows } from '../config/theme';
 import { useAuth } from '../context/AuthContext';
+
+const { height } = Dimensions.get('window');
 
 const LoginScreen = () => {
   const navigation = useNavigation();
-  const route = useRoute();
   const { login, register } = useAuth();
-  
+
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  
-  // Login form
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  
-  // Register form
+
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [mobile, setMobile] = useState('');
   const [regEmail, setRegEmail] = useState('');
   const [regPassword, setRegPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-
   const [errors, setErrors] = useState({});
 
   const validateLogin = () => {
-    const newErrors = {};
-    if (!email.trim()) newErrors.email = 'Email is required';
-    else if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = 'Invalid email';
-    if (!password.trim()) newErrors.password = 'Password is required';
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    const e = {};
+    if (!email.trim()) e.email = 'Email is required';
+    else if (!/\S+@\S+\.\S+/.test(email)) e.email = 'Invalid email address';
+    if (!password.trim()) e.password = 'Password is required';
+    setErrors(e);
+    return Object.keys(e).length === 0;
   };
 
   const validateRegister = () => {
-    const newErrors = {};
-    if (!firstName.trim()) newErrors.firstName = 'First name is required';
-    if (!lastName.trim()) newErrors.lastName = 'Last name is required';
-    if (!mobile.trim()) newErrors.mobile = 'Mobile number is required';
-    else if (!/^[6-9]\d{9}$/.test(mobile)) newErrors.mobile = 'Invalid mobile number';
-    if (!regEmail.trim()) newErrors.regEmail = 'Email is required';
-    else if (!/\S+@\S+\.\S+/.test(regEmail)) newErrors.regEmail = 'Invalid email';
-    if (!regPassword.trim()) newErrors.regPassword = 'Password is required';
-    else if (regPassword.length < 6) newErrors.regPassword = 'Password must be at least 6 characters';
-    if (regPassword !== confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    const e = {};
+    if (!firstName.trim()) e.firstName = 'Required';
+    if (!lastName.trim()) e.lastName = 'Required';
+    if (!mobile.trim()) e.mobile = 'Mobile is required';
+    else if (!/^[6-9]\d{9}$/.test(mobile)) e.mobile = 'Invalid mobile number';
+    if (!regEmail.trim()) e.regEmail = 'Email is required';
+    else if (!/\S+@\S+\.\S+/.test(regEmail)) e.regEmail = 'Invalid email';
+    if (!regPassword.trim()) e.regPassword = 'Password is required';
+    else if (regPassword.length < 6) e.regPassword = 'Min. 6 characters';
+    if (regPassword !== confirmPassword) e.confirmPassword = 'Passwords do not match';
+    setErrors(e);
+    return Object.keys(e).length === 0;
   };
 
   const handleLogin = async () => {
     if (!validateLogin()) return;
-    
     setIsLoading(true);
     const result = await login({ email, password });
     setIsLoading(false);
-    
     if (result.success) {
-      // Use 'MainTabs' as the target route for navigation reset
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'MainTabs' }],
-      });
+      navigation.reset({ index: 0, routes: [{ name: 'MainTabs' }] });
     } else {
       Alert.alert('Login Failed', result.error || 'Please check your credentials');
     }
@@ -83,7 +76,6 @@ const LoginScreen = () => {
 
   const handleRegister = async () => {
     if (!validateRegister()) return;
-    
     setIsLoading(true);
     const result = await register({
       firstName,
@@ -92,12 +84,11 @@ const LoginScreen = () => {
       email: regEmail,
       password: regPassword,
       username: regEmail,
-      roleId: '00000000-0000-0000-0000-000000000002', // Default customer role
+      roleId: '00000000-0000-0000-0000-000000000002',
     });
     setIsLoading(false);
-    
     if (result.success) {
-      Alert.alert('Success', result.message || 'Registration successful! Please login.');
+      Alert.alert('Welcome!', result.message || 'Account created. Please login.');
       setIsLogin(true);
       setEmail(regEmail);
     } else {
@@ -106,41 +97,67 @@ const LoginScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Header title={isLogin ? 'Login' : 'Sign Up'} showBack showCart={false} />
+    <View style={styles.root}>
+      <StatusBar barStyle="light-content" backgroundColor={colors.primary.main} />
+
+      {/* Hero banner */}
+      <View style={styles.heroBanner}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
+          <Ionicons name="chevron-back" size={22} color="#fff" />
+        </TouchableOpacity>
+        <View style={styles.heroContent}>
+          <View style={styles.logoCircle}>
+            <Ionicons name="leaf" size={32} color={colors.secondary.main} />
+          </View>
+          <Text style={styles.heroTitle}>DESI KING</Text>
+          <Text style={styles.heroSub}>Premium Spices, Pure Tradition</Text>
+        </View>
+        {/* Decorative circles */}
+        <View style={styles.decCircle1} />
+        <View style={styles.decCircle2} />
+      </View>
+
+      {/* Card */}
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.keyboardView}
+        style={styles.cardWrapper}
       >
         <ScrollView
-          contentContainerStyle={styles.scrollContent}
+          style={styles.card}
+          contentContainerStyle={styles.cardContent}
           showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
         >
-          {/* Logo */}
-          <View style={styles.logoContainer}>
-            <Image
-              source={{ uri: 'https://www.agronexis.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FAgroNexisGreen.b28ec27e.png&w=384&q=75' }}
-              style={styles.logo}
-              resizeMode="contain"
-            />
+          {/* Tab switcher */}
+          <View style={styles.tabRow}>
+            <TouchableOpacity
+              style={[styles.tab, isLogin && styles.tabActive]}
+              onPress={() => { setIsLogin(true); setErrors({}); }}
+            >
+              <Text style={[styles.tabText, isLogin && styles.tabTextActive]}>Login</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.tab, !isLogin && styles.tabActive]}
+              onPress={() => { setIsLogin(false); setErrors({}); }}
+            >
+              <Text style={[styles.tabText, !isLogin && styles.tabTextActive]}>Sign Up</Text>
+            </TouchableOpacity>
           </View>
 
-          <Text style={styles.title}>{isLogin ? 'Welcome Back' : 'Create Account'}</Text>
-          <Text style={styles.subtitle}>
-            {isLogin ? 'Login to continue shopping' : 'Sign up to start shopping'}
-          </Text>
-
           {isLogin ? (
-            // Login Form
-            <View style={styles.form}>
+            <View>
+              <Text style={styles.formTitle}>Welcome back</Text>
+              <Text style={styles.formSub}>Sign in to continue shopping</Text>
+
               <Input
-                label="Email"
+                label="Email Address"
                 value={email}
                 onChangeText={setEmail}
-                placeholder="Enter your email"
+                placeholder="you@example.com"
                 keyboardType="email-address"
                 autoCapitalize="none"
                 error={errors.email}
+                leftIcon={<Ionicons name="mail-outline" size={18} color={colors.text.muted} />}
                 testID="login-email-input"
               />
               <Input
@@ -150,6 +167,7 @@ const LoginScreen = () => {
                 placeholder="Enter your password"
                 secureTextEntry
                 error={errors.password}
+                leftIcon={<Ionicons name="lock-closed-outline" size={18} color={colors.text.muted} />}
                 testID="login-password-input"
               />
               <Button
@@ -157,30 +175,33 @@ const LoginScreen = () => {
                 onPress={handleLogin}
                 loading={isLoading}
                 fullWidth
-                style={styles.submitButton}
+                size="large"
+                style={styles.submitBtn}
                 testID="login-submit-btn"
               />
             </View>
           ) : (
-            // Register Form
-            <View style={styles.form}>
-              <View style={styles.row}>
-                <View style={styles.halfInput}>
+            <View>
+              <Text style={styles.formTitle}>Create account</Text>
+              <Text style={styles.formSub}>Join thousands of spice lovers</Text>
+
+              <View style={styles.nameRow}>
+                <View style={{ flex: 1, marginRight: spacing.sm }}>
                   <Input
                     label="First Name"
                     value={firstName}
                     onChangeText={setFirstName}
-                    placeholder="First name"
+                    placeholder="First"
                     error={errors.firstName}
                     testID="register-firstname-input"
                   />
                 </View>
-                <View style={styles.halfInput}>
+                <View style={{ flex: 1 }}>
                   <Input
                     label="Last Name"
                     value={lastName}
                     onChangeText={setLastName}
-                    placeholder="Last name"
+                    placeholder="Last"
                     error={errors.lastName}
                     testID="register-lastname-input"
                   />
@@ -190,37 +211,41 @@ const LoginScreen = () => {
                 label="Mobile Number"
                 value={mobile}
                 onChangeText={setMobile}
-                placeholder="10-digit mobile number"
+                placeholder="10-digit mobile"
                 keyboardType="phone-pad"
                 error={errors.mobile}
+                leftIcon={<Ionicons name="call-outline" size={18} color={colors.text.muted} />}
                 testID="register-mobile-input"
               />
               <Input
-                label="Email"
+                label="Email Address"
                 value={regEmail}
                 onChangeText={setRegEmail}
-                placeholder="Enter your email"
+                placeholder="you@example.com"
                 keyboardType="email-address"
                 autoCapitalize="none"
                 error={errors.regEmail}
+                leftIcon={<Ionicons name="mail-outline" size={18} color={colors.text.muted} />}
                 testID="register-email-input"
               />
               <Input
                 label="Password"
                 value={regPassword}
                 onChangeText={setRegPassword}
-                placeholder="Create a password"
+                placeholder="Create a strong password"
                 secureTextEntry
                 error={errors.regPassword}
+                leftIcon={<Ionicons name="lock-closed-outline" size={18} color={colors.text.muted} />}
                 testID="register-password-input"
               />
               <Input
                 label="Confirm Password"
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
-                placeholder="Confirm your password"
+                placeholder="Repeat your password"
                 secureTextEntry
                 error={errors.confirmPassword}
+                leftIcon={<Ionicons name="shield-checkmark-outline" size={18} color={colors.text.muted} />}
                 testID="register-confirm-password-input"
               />
               <Button
@@ -228,88 +253,174 @@ const LoginScreen = () => {
                 onPress={handleRegister}
                 loading={isLoading}
                 fullWidth
-                style={styles.submitButton}
+                size="large"
+                style={styles.submitBtn}
                 testID="register-submit-btn"
               />
             </View>
           )}
 
-          {/* Toggle Login/Register */}
-          <View style={styles.toggleContainer}>
+          {/* Toggle */}
+          <View style={styles.toggleRow}>
             <Text style={styles.toggleText}>
               {isLogin ? "Don't have an account? " : 'Already have an account? '}
             </Text>
-            <TouchableOpacity onPress={() => setIsLogin(!isLogin)}>
+            <TouchableOpacity onPress={() => { setIsLogin(!isLogin); setErrors({}); }}>
               <Text style={styles.toggleLink}>
-                {isLogin ? 'Create account' : 'Log in'}
+                {isLogin ? 'Sign Up' : 'Log in'}
               </Text>
             </TouchableOpacity>
           </View>
+
+          <View style={{ height: 30 }} />
         </ScrollView>
       </KeyboardAvoidingView>
     </View>
   );
 };
 
+const HERO_HEIGHT = height * 0.32;
+
 const styles = StyleSheet.create({
-  container: {
+  root: {
     flex: 1,
-    backgroundColor: colors.background.default,
+    backgroundColor: colors.background.paper,
   },
-  keyboardView: {
-    flex: 1,
+  heroBanner: {
+    height: HERO_HEIGHT,
+    backgroundColor: colors.primary.main,
+    justifyContent: 'flex-end',
+    paddingBottom: spacing.xl,
+    paddingHorizontal: spacing.lg,
+    overflow: 'hidden',
   },
-  scrollContent: {
-    padding: spacing.lg,
-  },
-  logoContainer: {
+  backBtn: {
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? 54 : 36,
+    left: spacing.md,
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: 'rgba(255,255,255,0.15)',
     alignItems: 'center',
-    marginBottom: spacing.lg,
+    justifyContent: 'center',
+    zIndex: 10,
   },
-  logo: {
-    width: 100,
-    height: 100,
+  heroContent: {
+    alignItems: 'center',
   },
-  title: {
-    fontSize: fontSize.xxl,
-    fontWeight: '700',
-    color: colors.primary.main,
-    textAlign: 'center',
-    marginBottom: spacing.xs,
+  logoCircle: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: 'rgba(255,255,255,0.12)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.sm,
+    borderWidth: 1.5,
+    borderColor: 'rgba(255,255,255,0.25)',
   },
-  subtitle: {
-    fontSize: fontSize.md,
-    color: colors.text.secondary,
-    textAlign: 'center',
+  heroTitle: {
+    fontSize: 26,
+    fontWeight: '900',
+    color: '#fff',
+    letterSpacing: 4,
+  },
+  heroSub: {
+    fontSize: 12,
+    color: 'rgba(255,255,255,0.7)',
+    marginTop: 4,
+    letterSpacing: 0.5,
+  },
+  decCircle1: {
+    position: 'absolute',
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    top: -60,
+    right: -40,
+  },
+  decCircle2: {
+    position: 'absolute',
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: 'rgba(188,129,65,0.2)',
+    bottom: -30,
+    right: 40,
+  },
+  cardWrapper: {
+    flex: 1,
+    marginTop: -24,
+  },
+  card: {
+    flex: 1,
+    backgroundColor: colors.background.paper,
+    borderTopLeftRadius: borderRadius.xxl,
+    borderTopRightRadius: borderRadius.xxl,
+  },
+  cardContent: {
+    padding: spacing.lg,
+    paddingTop: spacing.xl,
+  },
+  tabRow: {
+    flexDirection: 'row',
+    backgroundColor: colors.accent.lightGray,
+    borderRadius: borderRadius.full,
+    padding: 4,
     marginBottom: spacing.xl,
   },
-  form: {
+  tab: {
+    flex: 1,
+    paddingVertical: spacing.sm + 2,
+    borderRadius: borderRadius.full,
+    alignItems: 'center',
+  },
+  tabActive: {
+    backgroundColor: colors.background.paper,
+    ...shadows.sm,
+  },
+  tabText: {
+    fontSize: fontSize.sm,
+    fontWeight: '600',
+    color: colors.text.muted,
+  },
+  tabTextActive: {
+    color: colors.primary.main,
+    fontWeight: '800',
+  },
+  formTitle: {
+    fontSize: fontSize.xl,
+    fontWeight: '800',
+    color: colors.text.primary,
+    marginBottom: 4,
+  },
+  formSub: {
+    fontSize: fontSize.sm,
+    color: colors.text.muted,
     marginBottom: spacing.lg,
   },
-  row: {
+  nameRow: {
     flexDirection: 'row',
-    marginHorizontal: -spacing.xs,
   },
-  halfInput: {
-    flex: 1,
-    marginHorizontal: spacing.xs,
+  submitBtn: {
+    marginTop: spacing.sm,
   },
-  submitButton: {
-    marginTop: spacing.md,
-  },
-  toggleContainer: {
+  toggleRow: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: spacing.lg,
   },
   toggleText: {
-    fontSize: fontSize.md,
-    color: colors.text.secondary,
+    fontSize: fontSize.sm,
+    color: colors.text.muted,
   },
   toggleLink: {
-    fontSize: fontSize.md,
+    fontSize: fontSize.sm,
     color: colors.primary.main,
-    fontWeight: '600',
+    fontWeight: '800',
   },
 });
 

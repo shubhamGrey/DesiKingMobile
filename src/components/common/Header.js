@@ -11,16 +11,14 @@ const Header = ({ title, showBack = false, showCart = true, rightIcon, onRightPr
 
   return (
     <View style={styles.container}>
-      <View style={styles.leftSection}>
+      {/* Left */}
+      <View style={styles.side}>
         {showBack ? (
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            style={styles.backButton}
-          >
-            <Ionicons name="chevron-back" size={24} color={colors.text.primary} />
+          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconBtn}>
+            <Ionicons name="chevron-back" size={22} color={colors.text.primary} />
           </TouchableOpacity>
         ) : (
-          <View style={styles.logoContainer}>
+          <View style={styles.logoWrap}>
             <Image
               source={require('../../../assets/DesiKing.png')}
               style={styles.logo}
@@ -30,7 +28,8 @@ const Header = ({ title, showBack = false, showCart = true, rightIcon, onRightPr
         )}
       </View>
 
-      <View style={styles.centerSection}>
+      {/* Center */}
+      <View style={styles.center}>
         {title ? (
           <Text style={styles.title} numberOfLines={1}>{title}</Text>
         ) : !showBack ? (
@@ -38,18 +37,16 @@ const Header = ({ title, showBack = false, showCart = true, rightIcon, onRightPr
         ) : null}
       </View>
 
-      <View style={styles.rightSection}>
+      {/* Right */}
+      <View style={[styles.side, styles.sideRight]}>
         {rightIcon ? (
-          <TouchableOpacity
-            onPress={onRightPress}
-            style={styles.actionButton}
-          >
+          <TouchableOpacity onPress={onRightPress} style={styles.iconBtn}>
             <Ionicons name={rightIcon} size={22} color={colors.text.primary} />
           </TouchableOpacity>
         ) : showCart ? (
           <TouchableOpacity
             onPress={() => navigation.navigate('Cart')}
-            style={styles.actionButton}
+            style={styles.iconBtn}
           >
             <Ionicons name="cart-outline" size={22} color={colors.text.primary} />
             {itemCount > 0 && (
@@ -74,81 +71,76 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background.default,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
-    paddingTop: Platform.OS === 'ios' ? 60 : 40,
-    height: Platform.OS === 'ios' ? 110 : 90,
+    paddingTop: Platform.OS === 'ios' ? 56 : 38,
+    height: Platform.OS === 'ios' ? 106 : 86,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.divider,
   },
-  leftSection: {
-    flex: 1,
-    alignItems: 'flex-start',
+  side: {
+    width: 44,
   },
-  centerSection: {
-    flex: 2,
-    alignItems: 'center',
-  },
-  rightSection: {
-    flex: 1,
+  sideRight: {
     alignItems: 'flex-end',
   },
-  backButton: {
+  center: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  iconBtn: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#fff',
+    backgroundColor: colors.background.paper,
     alignItems: 'center',
     justifyContent: 'center',
-    ...shadows.light,
+    ...shadows.sm,
+    position: 'relative',
   },
-  logoContainer: {
+  logoWrap: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#fff',
-    padding: 4,
-    ...shadows.light,
+    backgroundColor: colors.background.paper,
+    padding: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...shadows.sm,
+    overflow: 'hidden',
   },
   logo: {
     width: '100%',
     height: '100%',
   },
   title: {
-    fontSize: 18,
+    fontSize: fontSize.lg,
     fontWeight: '800',
     color: colors.text.primary,
-    letterSpacing: -0.5,
+    letterSpacing: -0.3,
   },
   brandTitle: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '900',
     color: colors.primary.main,
-    letterSpacing: 1,
-  },
-  actionButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    ...shadows.light,
-    position: 'relative',
+    letterSpacing: 2.5,
   },
   badge: {
     position: 'absolute',
     top: -2,
     right: -2,
     backgroundColor: colors.secondary.main,
-    borderRadius: 10,
+    borderRadius: 9,
     minWidth: 18,
     height: 18,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
-    borderColor: '#fff',
+    borderColor: colors.background.default,
+    paddingHorizontal: 3,
   },
   badgeText: {
     color: '#fff',
-    fontSize: 8,
-    fontWeight: 'bold',
+    fontSize: 9,
+    fontWeight: '800',
   },
 });
 

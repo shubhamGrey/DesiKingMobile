@@ -23,21 +23,25 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 
 const { width } = Dimensions.get('window');
-const HERO_CARD_WIDTH = width - 40;
+const HERO_WIDTH = width - 32;
 
-// Modern Shimmer Skeleton Component
-const SkeletonCard = () => {
-  const animatedValue = useRef(new Animated.Value(0)).current;
+// Shimmer skeleton
+const SkeletonBlock = ({ w, h, radius = 12, style }) => {
+  const anim = useRef(new Animated.Value(0)).current;
   useEffect(() => {
     Animated.loop(
       Animated.sequence([
-        Animated.timing(animatedValue, { toValue: 1, duration: 1000, useNativeDriver: true }),
-        Animated.timing(animatedValue, { toValue: 0, duration: 1000, useNativeDriver: true }),
+        Animated.timing(anim, { toValue: 1, duration: 900, useNativeDriver: true }),
+        Animated.timing(anim, { toValue: 0, duration: 900, useNativeDriver: true }),
       ])
     ).start();
   }, []);
-  const opacity = animatedValue.interpolate({ inputRange: [0, 1], outputRange: [0.3, 0.6] });
-  return <Animated.View style={[styles.skeletonCard, { opacity }]} />;
+  const opacity = anim.interpolate({ inputRange: [0, 1], outputRange: [0.25, 0.55] });
+  return (
+    <Animated.View
+      style={[{ width: w, height: h, borderRadius: radius, backgroundColor: '#D4CBBA', opacity }, style]}
+    />
+  );
 };
 
 const HomeScreen = () => {
@@ -55,38 +59,31 @@ const HomeScreen = () => {
   const [heroIndex, setHeroIndex] = useState(0);
 
   const heroItems = [
-    { id: 'brand', type: 'brand', title: 'AGRO NEXIS', bg: 'https://images.unsplash.com/photo-15336306755ef-04900966bc0a?q=80&w=1000&auto=format&fit=crop' },
-    { id: '1', title: 'Premium Spices', bg: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?q=80&w=1000&auto=format&fit=crop' },
-    { id: '2', title: 'Farm Fresh Direct', bg: 'https://images.unsplash.com/photo-1509358271058-acd22cc93898?q=80&w=1000&auto=format&fit=crop' },
+    { id: '1', title: 'Premium Spices', sub: 'Straight from the farm to your kitchen', bg: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?q=80&w=1000&auto=format&fit=crop' },
+    { id: '2', title: 'Pure. Natural. Authentic.', sub: 'No additives. No preservatives.', bg: 'https://images.unsplash.com/photo-1509358271058-acd22cc93898?q=80&w=1000&auto=format&fit=crop' },
+    { id: '3', title: 'Farm Fresh Direct', sub: 'Sourced from top Indian farms', bg: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?q=80&w=1000&auto=format&fit=crop' },
   ];
 
-  useEffect(() => {
-    loadData();
-  }, []);
+  useEffect(() => { loadData(); }, []);
 
-  // Auto-scrolling carousel logic
   useEffect(() => {
-    if (!isLoading && heroItems.length > 0) {
-      const interval = setInterval(() => {
-        let nextIndex = (heroIndex + 1) % heroItems.length;
-        setHeroIndex(nextIndex);
-        heroScrollRef.current?.scrollTo({ x: nextIndex * (HERO_CARD_WIDTH + 10), animated: true });
-      }, 4500);
-      return () => clearInterval(interval);
-    }
+    if (isLoading) return;
+    const interval = setInterval(() => {
+      const next = (heroIndex + 1) % heroItems.length;
+      setHeroIndex(next);
+      heroScrollRef.current?.scrollTo({ x: next * (HERO_WIDTH + 12), animated: true });
+    }, 4500);
+    return () => clearInterval(interval);
   }, [heroIndex, isLoading]);
 
   const loadData = async () => {
     try {
       setIsLoading(true);
-      const [productsRes, categoriesRes] = await Promise.all([
-        apiService.getProducts(),
-        apiService.getCategories(),
-      ]);
-      setAllProducts((productsRes.data || productsRes || []).filter(p => p.isActive));
-      setCategories((categoriesRes.data || categoriesRes || []).filter(c => c.isActive));
-    } catch (error) {
-      console.error('Error loading data:', error);
+      const [pRes, cRes] = await Promise.all([apiService.getProducts(), apiService.getCategories()]);
+      setAllProducts((pRes.data || pRes || []).filter(p => p.isActive));
+      setCategories((cRes.data || cRes || []).filter(c => c.isActive));
+    } catch (err) {
+      console.error('Home load error:', err);
     } finally {
       setIsLoading(false);
     }
@@ -98,18 +95,15 @@ const HomeScreen = () => {
     setRefreshing(false);
   };
 
-  const filteredProducts = useMemo(() => {
-    return allProducts.filter(p => {
-      const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesCategory = activeCategory === 'All' || p.categoryName === activeCategory;
-      return matchesSearch && matchesCategory;
-    });
-  }, [allProducts, searchQuery, activeCategory]);
+  const filteredProducts = useMemo(() => allProducts.filter(p => {
+    const q = searchQuery.toLowerCase();
+    return p.name.toLowerCase().includes(q) && (activeCategory === 'All' || p.categoryName === activeCategory);
+  }), [allProducts, searchQuery, activeCategory]);
 
-  const dailyEssentials = useMemo(() => allProducts.filter(p => p.isFeatured).slice(0, 6), [allProducts]);
-  const immunityBoosters = useMemo(() => allProducts.filter(p => p.name.toLowerCase().includes('turmeric') || p.name.toLowerCase().includes('pepper') || p.name.toLowerCase().includes('ginger')).slice(0, 6), [allProducts]);
-  const digestiveAids = useMemo(() => allProducts.filter(p => p.name.toLowerCase().includes('cumin') || p.name.toLowerCase().includes('fennel')).slice(0, 6), [allProducts]);
-  const desiKingSpecials = useMemo(() => allProducts.filter(p => p.name.toLowerCase().includes('masala') || p.name.toLowerCase().includes('blend')).slice(0, 6), [allProducts]);
+  const dailyEssentials = useMemo(() => allProducts.filter(p => p.isFeatured).slice(0, 8), [allProducts]);
+  const immunityBoosters = useMemo(() => allProducts.filter(p => ['turmeric', 'pepper', 'ginger'].some(k => p.name.toLowerCase().includes(k))).slice(0, 8), [allProducts]);
+  const digestiveAids = useMemo(() => allProducts.filter(p => ['cumin', 'fennel'].some(k => p.name.toLowerCase().includes(k))).slice(0, 8), [allProducts]);
+  const desiKingSpecials = useMemo(() => allProducts.filter(p => ['masala', 'blend'].some(k => p.name.toLowerCase().includes(k))).slice(0, 8), [allProducts]);
 
   const handleAddToCart = (product) => {
     const pricing = product.pricesAndSkus?.[0];
@@ -117,39 +111,59 @@ const HomeScreen = () => {
       productId: product.id,
       name: product.name,
       price: pricing?.discountedAmount || pricing?.price || 0,
-      image: product.thumbnailUrl || (product.imageUrls && product.imageUrls[0]),
+      image: product.thumbnailUrl || product.imageUrls?.[0],
       sku: pricing?.skuNumber,
       quantity: 1,
     });
   };
 
-  const renderProductRow = (title, productList) => {
-    if (productList.length === 0) return null;
+  const renderSection = (title, emoji, productList) => {
+    if (!productList.length) return null;
     return (
-      <View style={{ marginBottom: spacing.md }}>
+      <View style={styles.section}>
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>{title}</Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Products')}><Text style={styles.viewAllText}>View All</Text></TouchableOpacity>
+          <View style={styles.sectionTitleRow}>
+            <Text style={styles.sectionEmoji}>{emoji}</Text>
+            <Text style={styles.sectionTitle}>{title}</Text>
+          </View>
+          <TouchableOpacity onPress={() => navigation.navigate('Products')}>
+            <Text style={styles.viewAll}>View All</Text>
+          </TouchableOpacity>
         </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalList} style={{ paddingBottom: 15 }}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.rowList}
+        >
           {productList.map((product) => {
             const pricing = product.pricesAndSkus?.[0];
-            const priceToPay = pricing?.discountedAmount || pricing?.price || 0;
-            const originalPrice = pricing?.price || 0;
+            const pay = pricing?.discountedAmount || pricing?.price || 0;
+            const orig = pricing?.price || 0;
+            const hasDis = pricing?.isDiscounted && orig > pay;
             return (
-              <TouchableOpacity key={product.id} style={styles.curatedCard} onPress={() => navigation.navigate('ProductDetails', { productId: product.id })}>
-                <View style={styles.curatedImageContainer}>
-                  <Image source={{ uri: product.thumbnailUrl }} style={styles.curatedImage} resizeMode="cover" />
+              <TouchableOpacity
+                key={product.id}
+                style={styles.rowCard}
+                onPress={() => navigation.navigate('ProductDetails', { productId: product.id })}
+                activeOpacity={0.9}
+              >
+                <View style={styles.rowCardImg}>
+                  <Image source={{ uri: product.thumbnailUrl }} style={styles.rowCardImage} resizeMode="cover" />
+                  {hasDis && (
+                    <View style={styles.rowBadge}>
+                      <Text style={styles.rowBadgeText}>{Math.round(pricing.discountPercentage)}%</Text>
+                    </View>
+                  )}
                 </View>
-                <Text style={styles.curatedName} numberOfLines={1}>{product.name}</Text>
-                <View style={styles.curatedFooter}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Text style={styles.curatedPrice}>₹{priceToPay}</Text>
-                    {pricing?.isDiscounted && <Text style={styles.strikedPrice}>₹{originalPrice}</Text>}
+                <View style={styles.rowCardBody}>
+                  <Text style={styles.rowCardName} numberOfLines={1}>{product.name}</Text>
+                  <View style={styles.rowCardFooter}>
+                    <Text style={styles.rowCardPrice}>₹{pay}</Text>
+                    {hasDis && <Text style={styles.rowCardStrike}>₹{orig}</Text>}
+                    <TouchableOpacity style={styles.rowAddBtn} onPress={() => handleAddToCart(product)}>
+                      <Ionicons name="add" size={16} color="#fff" />
+                    </TouchableOpacity>
                   </View>
-                  <TouchableOpacity style={styles.quickAdd} onPress={() => handleAddToCart(product)}>
-                    <Ionicons name="add" size={18} color="#fff" />
-                  </TouchableOpacity>
                 </View>
               </TouchableOpacity>
             );
@@ -159,15 +173,26 @@ const HomeScreen = () => {
     );
   };
 
+  const greeting = () => {
+    const h = new Date().getHours();
+    if (h < 12) return 'Good Morning';
+    if (h < 17) return 'Good Afternoon';
+    return 'Good Evening';
+  };
+
   if (isLoading && !refreshing) {
     return (
       <View style={styles.container}>
         <Header />
-        <View style={{ padding: spacing.md }}>
-          <SkeletonCard />
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 20 }}>
-            <View style={{ width: '48%', height: 180, backgroundColor: '#eee', borderRadius: 16 }} />
-            <View style={{ width: '48%', height: 180, backgroundColor: '#eee', borderRadius: 16 }} />
+        <View style={{ padding: spacing.md, gap: 16 }}>
+          <SkeletonBlock w={200} h={24} radius={8} />
+          <SkeletonBlock w={HERO_WIDTH} h={180} radius={20} />
+          <View style={{ flexDirection: 'row', gap: 10 }}>
+            {[1, 2, 3, 4].map(i => <SkeletonBlock key={i} w={60} h={28} radius={14} />)}
+          </View>
+          <View style={{ flexDirection: 'row', gap: 12 }}>
+            <SkeletonBlock w={(width - 56) / 2} h={200} radius={16} />
+            <SkeletonBlock w={(width - 56) / 2} h={200} radius={16} />
           </View>
         </View>
       </View>
@@ -180,57 +205,65 @@ const HomeScreen = () => {
       <Header />
 
       <ScrollView
-        style={styles.scrollView}
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary.main]} />}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary.main]} />
+        }
       >
-        {/* Hello Section - Reduced Spacing */}
-        <View style={styles.headerGreeting}>
+        {/* Greeting */}
+        <View style={styles.greeting}>
           <View>
-            <Text style={styles.greetingText}>Hello, {user?.firstName || 'Guest'} 👋</Text>
-            <Text style={styles.subGreetingText}>Bring purity to your kitchen today.</Text>
+            <Text style={styles.greetHi}>{greeting()}, {user?.firstName || 'Guest'} 👋</Text>
+            <Text style={styles.greetSub}>Bring purity to your kitchen today.</Text>
           </View>
-          {/*<TouchableOpacity onPress={() => navigation.navigate('Profile')}>
-            <Image source={{ uri: 'https://i.pravatar.cc/100' }} style={styles.profileImage} />
-          </TouchableOpacity>*/}
         </View>
 
-        {/* Search Bar */}
-        {/*<View style={styles.searchSection}>
+        {/* Search bar */}
+        <View style={styles.searchWrap}>
           <View style={styles.searchBar}>
-            <Ionicons name="search-outline" size={20} color={colors.text.muted} />
+            <Ionicons name="search-outline" size={18} color={colors.text.muted} />
             <TextInput
               placeholder="Search premium spices..."
               style={styles.searchInput}
               value={searchQuery}
               onChangeText={setSearchQuery}
+              placeholderTextColor={colors.text.disabled}
             />
             {searchQuery.length > 0 && (
               <TouchableOpacity onPress={() => setSearchQuery('')}>
-                <Ionicons name="close-circle" size={20} color={colors.text.muted} />
+                <Ionicons name="close-circle" size={18} color={colors.text.muted} />
               </TouchableOpacity>
             )}
           </View>
-        </View>*/}
+        </View>
 
-        {/* Hero Carousel - Fixed alignment */}
+        {/* Hero carousel */}
         <ScrollView
           ref={heroScrollRef}
           horizontal
           showsHorizontalScrollIndicator={false}
-          style={styles.carouselContainer}
-          snapToInterval={HERO_CARD_WIDTH + 10}
+          snapToInterval={HERO_WIDTH + 12}
           snapToAlignment="center"
           decelerationRate="fast"
-          contentContainerStyle={{ paddingHorizontal: 20 }}
+          contentContainerStyle={{ paddingHorizontal: 16 }}
+          style={styles.heroScroll}
         >
-          {heroItems.map((item) => (
-            <View key={item.id} style={{ width: HERO_CARD_WIDTH, marginRight: 10 }}>
-              <ImageBackground source={{ uri: item.bg }} style={styles.heroCard} imageStyle={{ borderRadius: borderRadius.lg }}>
-                <View style={[styles.heroOverlay, item.type === 'brand' && styles.brandOverlay]}>
+          {heroItems.map((item, idx) => (
+            <View key={item.id} style={{ width: HERO_WIDTH, marginRight: 12 }}>
+              <ImageBackground
+                source={{ uri: item.bg }}
+                style={styles.heroCard}
+                imageStyle={{ borderRadius: borderRadius.xl }}
+              >
+                <View style={styles.heroOverlay}>
+                  <View style={styles.heroPill}>
+                    <Text style={styles.heroPillText}>NEW ARRIVAL</Text>
+                  </View>
                   <Text style={styles.heroTitle}>{item.title}</Text>
-                  <TouchableOpacity style={styles.shopNowBtn} onPress={() => navigation.navigate('Products')}>
-                    <Text style={styles.shopNowText}>Shop Now</Text>
+                  <Text style={styles.heroSub}>{item.sub}</Text>
+                  <TouchableOpacity style={styles.heroBtn} onPress={() => navigation.navigate('Products')}>
+                    <Text style={styles.heroBtnText}>Shop Now</Text>
+                    <Ionicons name="arrow-forward" size={14} color={colors.primary.main} />
                   </TouchableOpacity>
                 </View>
               </ImageBackground>
@@ -238,67 +271,286 @@ const HomeScreen = () => {
           ))}
         </ScrollView>
 
-        {/* Categories Chips */}
-        <View style={styles.categoriesSection}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoriesList}>
-            {['All', ...categories.map(c => c.name)].map((cat, index) => (
-              <TouchableOpacity
-                key={index}
-                style={[styles.categoryChip, activeCategory === cat && styles.categoryChipActive]}
-                onPress={() => setActiveCategory(cat)}
-              >
-                <Text style={[styles.categoryChipText, activeCategory === cat && styles.categoryChipTextActive]}>{cat}</Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
+        {/* Dots indicator */}
+        <View style={styles.dots}>
+          {heroItems.map((_, i) => (
+            <View key={i} style={[styles.dot, i === heroIndex && styles.dotActive]} />
+          ))}
         </View>
 
-        {/* Filtered Rows */}
-        {renderProductRow('Daily Essentials 🔥', dailyEssentials)}
-        {renderProductRow('Immunity Boosters 🛡️', immunityBoosters)}
-        {renderProductRow('Digestive Aids 🍃', digestiveAids)}
-        {renderProductRow('The "DesiKing" Specials ✨', desiKingSpecials)}
+        {/* Category chips */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.chipList}
+          style={styles.chipScroll}
+        >
+          {['All', ...categories.map(c => c.name)].map((cat, i) => (
+            <TouchableOpacity
+              key={i}
+              style={[styles.chip, activeCategory === cat && styles.chipActive]}
+              onPress={() => setActiveCategory(cat)}
+            >
+              <Text style={[styles.chipText, activeCategory === cat && styles.chipTextActive]}>{cat}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
 
-        <View style={{ height: 100 }} />
+        {/* Product sections */}
+        {renderSection('Daily Essentials', '🔥', dailyEssentials)}
+        {renderSection('Immunity Boosters', '🛡️', immunityBoosters)}
+        {renderSection('Digestive Aids', '🍃', digestiveAids)}
+        {renderSection('DesiKing Specials', '✨', desiKingSpecials)}
+
+        <View style={{ height: 120 }} />
       </ScrollView>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background.default },
-  headerGreeting: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: spacing.md, paddingTop: 5, paddingBottom: spacing.sm },
-  greetingText: { fontSize: 18, fontWeight: '800', color: colors.text.primary },
-  subGreetingText: { fontSize: 13, color: colors.text.secondary },
-  profileImage: { width: 45, height: 45, borderRadius: 22.5, borderWidth: 2, borderColor: '#fff' },
-  searchSection: { paddingHorizontal: spacing.md, marginBottom: spacing.sm },
-  searchBar: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', height: 50, borderRadius: borderRadius.md, paddingHorizontal: spacing.md, ...shadows.light },
-  searchInput: { flex: 1, marginLeft: 10, fontSize: 14, color: colors.text.primary },
-  carouselContainer: { marginVertical: spacing.sm },
-  heroCard: { width: '100%', height: 160, overflow: 'hidden', borderRadius: borderRadius.lg },
-  heroOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', padding: spacing.lg, justifyContent: 'center' },
-  heroTitle: { color: '#fff', fontSize: 24, fontWeight: '900' },
-  shopNowBtn: { backgroundColor: '#fff', paddingHorizontal: 20, paddingVertical: 10, borderRadius: 8, alignSelf: 'flex-start', marginTop: 10 },
-  shopNowText: { color: colors.primary.main, fontWeight: 'bold', fontSize: 12 },
-  categoriesSection: { marginVertical: spacing.xs },
-  sectionTitle: { fontSize: 18, fontWeight: '800', color: colors.text.primary },
-  categoriesList: { paddingHorizontal: spacing.md, paddingVertical: spacing.sm },
-  categoryChip: { paddingHorizontal: 20, paddingVertical: 10, borderRadius: borderRadius.full, backgroundColor: '#fff', marginRight: 10, borderWidth: 1, borderColor: '#eee' },
-  categoryChipActive: { backgroundColor: colors.primary.main, borderColor: colors.primary.main },
-  categoryChipText: { color: colors.text.primary, fontWeight: '600', fontSize: 13 },
-  categoryChipTextActive: { color: '#fff' },
-  sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: spacing.md, marginTop: 5, marginBottom: 10, alignItems: 'center' },
-  viewAllText: { fontSize: 13, color: colors.secondary.main, fontWeight: '700' },
-  horizontalList: { paddingLeft: spacing.md },
-  curatedCard: { backgroundColor: '#fff', width: 160, borderRadius: 20, padding: spacing.sm, marginRight: spacing.md, ...shadows.light },
-  curatedImageContainer: { height: 120, backgroundColor: colors.accent.lightGray, borderRadius: 16, overflow: 'hidden' },
-  curatedImage: { width: '100%', height: '100%' },
-  curatedName: { fontSize: 14, fontWeight: '700', color: colors.text.primary, marginTop: 8 },
-  curatedFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 4 },
-  curatedPrice: { fontSize: 15, fontWeight: '800', color: colors.text.primary },
-  strikedPrice: { fontSize: 11, color: colors.text.muted, textDecorationLine: 'line-through', marginLeft: 6 },
-  quickAdd: { backgroundColor: colors.primary.main, width: 30, height: 30, borderRadius: 15, alignItems: 'center', justifyContent: 'center' },
-  skeletonCard: { width: width - 32, height: 180, backgroundColor: '#eee', borderRadius: 16, alignSelf: 'center' }
+  container: {
+    flex: 1,
+    backgroundColor: colors.background.default,
+  },
+  greeting: {
+    paddingHorizontal: spacing.md,
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.xs,
+  },
+  greetHi: {
+    fontSize: fontSize.xl,
+    fontWeight: '900',
+    color: colors.text.primary,
+    letterSpacing: -0.3,
+  },
+  greetSub: {
+    fontSize: fontSize.sm,
+    color: colors.text.muted,
+    marginTop: 3,
+  },
+  searchWrap: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+  },
+  searchBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.background.paper,
+    height: 48,
+    borderRadius: borderRadius.full,
+    paddingHorizontal: spacing.md,
+    gap: 8,
+    ...shadows.sm,
+    borderWidth: 1,
+    borderColor: colors.divider,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: fontSize.sm,
+    color: colors.text.primary,
+  },
+  heroScroll: {
+    marginTop: spacing.xs,
+  },
+  heroCard: {
+    width: '100%',
+    height: 180,
+    overflow: 'hidden',
+    borderRadius: borderRadius.xl,
+  },
+  heroOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.42)',
+    padding: spacing.lg,
+    justifyContent: 'flex-end',
+  },
+  heroPill: {
+    backgroundColor: colors.secondary.main,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: borderRadius.full,
+    alignSelf: 'flex-start',
+    marginBottom: 8,
+  },
+  heroPillText: {
+    color: '#fff',
+    fontSize: 9,
+    fontWeight: '900',
+    letterSpacing: 1,
+  },
+  heroTitle: {
+    color: '#fff',
+    fontSize: 22,
+    fontWeight: '900',
+    letterSpacing: -0.3,
+    lineHeight: 26,
+  },
+  heroSub: {
+    color: 'rgba(255,255,255,0.75)',
+    fontSize: 12,
+    marginTop: 4,
+    marginBottom: 12,
+  },
+  heroBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: borderRadius.full,
+    alignSelf: 'flex-start',
+    gap: 6,
+  },
+  heroBtnText: {
+    color: colors.primary.main,
+    fontWeight: '800',
+    fontSize: 12,
+  },
+  dots: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 6,
+    marginTop: spacing.sm,
+  },
+  dot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: colors.divider,
+  },
+  dotActive: {
+    width: 18,
+    backgroundColor: colors.primary.main,
+  },
+  chipScroll: {
+    marginTop: spacing.md,
+  },
+  chipList: {
+    paddingHorizontal: spacing.md,
+    gap: 8,
+  },
+  chip: {
+    paddingHorizontal: 18,
+    paddingVertical: 9,
+    borderRadius: borderRadius.full,
+    backgroundColor: colors.background.paper,
+    borderWidth: 1.5,
+    borderColor: colors.divider,
+  },
+  chipActive: {
+    backgroundColor: colors.primary.main,
+    borderColor: colors.primary.main,
+  },
+  chipText: {
+    color: colors.text.secondary,
+    fontWeight: '600',
+    fontSize: 13,
+  },
+  chipTextActive: {
+    color: '#fff',
+    fontWeight: '800',
+  },
+  section: {
+    marginTop: spacing.lg,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: spacing.md,
+    marginBottom: spacing.sm,
+  },
+  sectionTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  sectionEmoji: {
+    fontSize: 18,
+  },
+  sectionTitle: {
+    fontSize: fontSize.lg,
+    fontWeight: '800',
+    color: colors.text.primary,
+    letterSpacing: -0.2,
+  },
+  viewAll: {
+    fontSize: 13,
+    color: colors.secondary.main,
+    fontWeight: '800',
+  },
+  rowList: {
+    paddingLeft: spacing.md,
+    paddingRight: spacing.sm,
+    paddingBottom: 4,
+  },
+  rowCard: {
+    backgroundColor: colors.background.paper,
+    width: 155,
+    borderRadius: borderRadius.lg,
+    marginRight: spacing.md,
+    ...shadows.sm,
+    borderWidth: 1,
+    borderColor: colors.divider,
+    overflow: 'hidden',
+  },
+  rowCardImg: {
+    height: 115,
+    backgroundColor: colors.accent.lightGray,
+    position: 'relative',
+  },
+  rowCardImage: {
+    width: '100%',
+    height: '100%',
+  },
+  rowBadge: {
+    position: 'absolute',
+    top: 6,
+    left: 6,
+    backgroundColor: colors.secondary.main,
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+    borderRadius: borderRadius.full,
+  },
+  rowBadgeText: {
+    color: '#fff',
+    fontSize: 9,
+    fontWeight: '900',
+  },
+  rowCardBody: {
+    padding: spacing.sm,
+  },
+  rowCardName: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: colors.text.primary,
+    marginBottom: 6,
+  },
+  rowCardFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  rowCardPrice: {
+    fontSize: 15,
+    fontWeight: '900',
+    color: colors.primary.main,
+    flex: 1,
+  },
+  rowCardStrike: {
+    fontSize: 10,
+    color: colors.text.disabled,
+    textDecorationLine: 'line-through',
+    marginRight: 6,
+  },
+  rowAddBtn: {
+    backgroundColor: colors.primary.main,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });
 
 export default HomeScreen;

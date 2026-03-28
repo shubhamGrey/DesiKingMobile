@@ -24,13 +24,13 @@ const Input = ({
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
 
-  const handleTogglePassword = () => {
-    setIsPasswordVisible(!isPasswordVisible);
-  };
-
   return (
     <View style={[styles.container, style]}>
-      {label && <Text style={styles.label}>{label}</Text>}
+      {label && (
+        <Text style={[styles.label, isFocused && styles.labelFocused, error && styles.labelError]}>
+          {label}
+        </Text>
+      )}
       <View
         style={[
           styles.inputContainer,
@@ -63,13 +63,13 @@ const Input = ({
         />
         {secureTextEntry && (
           <TouchableOpacity
-            onPress={handleTogglePassword}
+            onPress={() => setIsPasswordVisible(!isPasswordVisible)}
             style={styles.eyeIcon}
           >
             <Ionicons
               name={isPasswordVisible ? 'eye-off-outline' : 'eye-outline'}
               size={20}
-              color={colors.text.secondary}
+              color={isFocused ? colors.primary.main : colors.text.disabled}
             />
           </TouchableOpacity>
         )}
@@ -89,27 +89,35 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: fontSize.sm,
-    fontWeight: '500',
-    color: colors.text.primary,
+    fontWeight: '600',
+    color: colors.text.secondary,
     marginBottom: spacing.xs,
+    letterSpacing: 0.2,
+  },
+  labelFocused: {
+    color: colors.primary.main,
+  },
+  labelError: {
+    color: colors.error.main,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.background.paper,
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: colors.divider,
     borderRadius: borderRadius.md,
   },
   inputFocused: {
     borderColor: colors.primary.main,
-    borderWidth: 2,
+    backgroundColor: '#fff',
   },
   inputError: {
     borderColor: colors.error.main,
   },
   inputDisabled: {
-    backgroundColor: '#f5f5f5',
+    backgroundColor: colors.background.muted,
+    borderColor: colors.divider,
   },
   input: {
     flex: 1,
@@ -129,12 +137,13 @@ const styles = StyleSheet.create({
     paddingLeft: spacing.md,
   },
   eyeIcon: {
-    padding: spacing.sm,
+    padding: spacing.sm + 2,
   },
   helperText: {
     fontSize: fontSize.xs,
-    color: colors.text.secondary,
+    color: colors.text.muted,
     marginTop: spacing.xs,
+    marginLeft: 2,
   },
   errorText: {
     color: colors.error.main,

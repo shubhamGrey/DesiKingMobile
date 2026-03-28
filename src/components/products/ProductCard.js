@@ -10,13 +10,13 @@ const CARD_WIDTH = (width - spacing.md * 3) / 2;
 const ProductCard = ({ product, onPress }) => {
   const { addItem, isInCart } = useCart();
   const inCart = isInCart(product.id);
-  
+
   const pricing = product.pricesAndSkus?.[0];
   const price = pricing?.price || 0;
   const discountedPrice = pricing?.discountedAmount;
   const hasDiscount = pricing?.isDiscounted && discountedPrice;
-  const currencySymbol = '₹';
   const weightLabel = pricing ? `${pricing.weightValue}${pricing.weightUnit}` : '';
+  const discountPct = hasDiscount ? Math.round(pricing.discountPercentage) : 0;
 
   const handleAddToCart = () => {
     addItem({
@@ -30,67 +30,61 @@ const ProductCard = ({ product, onPress }) => {
   };
 
   return (
-    <TouchableOpacity
-      style={styles.container}
-      onPress={onPress}
-      activeOpacity={0.9}
-    >
+    <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.9}>
+      {/* Image */}
       <View style={styles.imageContainer}>
         <Image
           source={{ uri: product.thumbnailUrl || product.imageUrls?.[0] || 'https://via.placeholder.com/150' }}
           style={styles.image}
           resizeMode="contain"
         />
-        {/* Modern Pill-Shaped Micro-Tags */}
-        <View style={styles.tagContainer}>
+
+        {/* Badges */}
+        <View style={styles.badges}>
           {hasDiscount && (
-            <View style={[styles.microTag, { backgroundColor: colors.secondary.main }]}>
-              <Text style={styles.microTagText}>{Math.round(pricing.discountPercentage)}% OFF</Text>
+            <View style={styles.discountBadge}>
+              <Text style={styles.discountText}>{discountPct}% OFF</Text>
             </View>
           )}
-          {product.isFeatured && (
-            <View style={[styles.microTag, { backgroundColor: colors.primary.main }]}>
-              <Text style={styles.microTagText}>BESTSELLER</Text>
+          {product.isFeatured && !hasDiscount && (
+            <View style={styles.featuredBadge}>
+              <Text style={styles.featuredText}>★ TOP</Text>
             </View>
           )}
         </View>
+
+        {/* Cart button */}
+        <TouchableOpacity
+          style={[styles.cartBtn, inCart && styles.cartBtnAdded]}
+          onPress={handleAddToCart}
+          activeOpacity={0.85}
+        >
+          <Ionicons name={inCart ? 'checkmark' : 'add'} size={16} color="#fff" />
+        </TouchableOpacity>
       </View>
-      
-      <View style={styles.content}>
-        <Text style={styles.category}>{product.categoryName || 'Spices'}</Text>
-        <Text style={styles.name} numberOfLines={1}>
+
+      {/* Info */}
+      <View style={styles.info}>
+        <Text style={styles.category} numberOfLines={1}>
+          {product.categoryName || 'Spices'}
+        </Text>
+        <Text style={styles.name} numberOfLines={2}>
           {product.name}
         </Text>
 
-        {/* Social Proof: Star Ratings */}
         <View style={styles.ratingRow}>
-          <Ionicons name="star" size={10} color="#FFD700" />
-          <Text style={styles.ratingText}>4.8</Text>
-          <Text style={styles.reviewText}>(120 reviews)</Text>
+          <Ionicons name="star" size={10} color={colors.accent.saffron} />
+          <Text style={styles.ratingText}> 4.8 </Text>
+          <Text style={styles.ratingCount}>(120)</Text>
         </View>
 
-        <View style={styles.footer}>
-          <View style={styles.priceContainer}>
-            <Text style={styles.price}>
-              {currencySymbol}{hasDiscount ? discountedPrice : price}
-            </Text>
-            {hasDiscount && (
-              <Text style={styles.originalPrice}>
-                {currencySymbol}{price}
-              </Text>
-            )}
-          </View>
-
-          <TouchableOpacity
-            style={[styles.addButton, inCart && styles.addedButton]}
-            onPress={handleAddToCart}
-          >
-            <Ionicons
-              name={inCart ? 'checkmark' : 'cart-outline'}
-              size={16}
-              color="#fff"
-            />
-          </TouchableOpacity>
+        <View style={styles.priceRow}>
+          <Text style={styles.price}>
+            ₹{hasDiscount ? discountedPrice : price}
+          </Text>
+          {hasDiscount && (
+            <Text style={styles.strikePrice}>₹{price}</Text>
+          )}
         </View>
       </View>
     </TouchableOpacity>
@@ -100,105 +94,115 @@ const ProductCard = ({ product, onPress }) => {
 const styles = StyleSheet.create({
   container: {
     width: CARD_WIDTH,
-    backgroundColor: '#fff',
-    borderRadius: borderRadius.md,
+    backgroundColor: colors.background.paper,
+    borderRadius: borderRadius.lg,
     marginBottom: spacing.md,
-    ...shadows.sm,
+    ...shadows.light,
     borderWidth: 1,
-    borderColor: '#f0f0f0',
+    borderColor: colors.divider,
+    overflow: 'hidden',
   },
   imageContainer: {
     width: '100%',
-    height: CARD_WIDTH * 0.85,
-    backgroundColor: '#fff',
-    borderTopLeftRadius: borderRadius.md,
-    borderTopRightRadius: borderRadius.md,
-    padding: spacing.sm,
+    height: CARD_WIDTH * 0.88,
+    backgroundColor: colors.accent.lightGray,
     position: 'relative',
   },
   image: {
     width: '100%',
     height: '100%',
   },
-  tagContainer: {
+  badges: {
     position: 'absolute',
     top: spacing.xs,
     left: spacing.xs,
     gap: 4,
   },
-  microTag: {
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: borderRadius.xs,
+  discountBadge: {
+    backgroundColor: colors.secondary.main,
+    paddingHorizontal: 7,
+    paddingVertical: 3,
+    borderRadius: borderRadius.full,
   },
-  microTagText: {
+  discountText: {
     color: '#fff',
-    fontSize: 8,
+    fontSize: 9,
     fontWeight: '800',
-    letterSpacing: 0.5,
+    letterSpacing: 0.4,
   },
-  content: {
+  featuredBadge: {
+    backgroundColor: colors.primary.main,
+    paddingHorizontal: 7,
+    paddingVertical: 3,
+    borderRadius: borderRadius.full,
+  },
+  featuredText: {
+    color: '#fff',
+    fontSize: 9,
+    fontWeight: '800',
+    letterSpacing: 0.3,
+  },
+  cartBtn: {
+    position: 'absolute',
+    bottom: spacing.xs,
+    right: spacing.xs,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: colors.primary.main,
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...shadows.sm,
+  },
+  cartBtnAdded: {
+    backgroundColor: colors.success,
+  },
+  info: {
     padding: spacing.sm,
-    paddingTop: 0,
+    paddingTop: spacing.xs + 2,
   },
   category: {
     fontSize: 9,
     color: colors.text.muted,
     textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    letterSpacing: 0.8,
     marginBottom: 2,
   },
   name: {
     fontSize: fontSize.sm,
     fontWeight: '700',
     color: colors.text.primary,
-    marginBottom: 2,
+    lineHeight: 18,
+    marginBottom: 4,
   },
   ratingRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: spacing.sm,
+    marginBottom: 6,
   },
   ratingText: {
     fontSize: 10,
-    fontWeight: 'bold',
+    fontWeight: '700',
     color: colors.text.primary,
-    marginLeft: 2,
   },
-  reviewText: {
+  ratingCount: {
     fontSize: 9,
     color: colors.text.muted,
-    marginLeft: 2,
   },
-  footer: {
+  priceRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  priceContainer: {
-    flex: 1,
+    gap: 6,
   },
   price: {
     fontSize: fontSize.md,
-    fontWeight: 'bold',
-    color: colors.text.primary,
+    fontWeight: '800',
+    color: colors.primary.main,
   },
-  originalPrice: {
-    fontSize: 10,
-    color: colors.text.muted,
+  strikePrice: {
+    fontSize: 11,
+    color: colors.text.disabled,
     textDecorationLine: 'line-through',
-  },
-  addButton: {
-    backgroundColor: colors.primary.main,
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-    ...shadows.sm,
-  },
-  addedButton: {
-    backgroundColor: colors.success,
   },
 });
 

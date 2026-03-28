@@ -1,9 +1,11 @@
 import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
-import { colors } from '../config/theme';
+import { colors, shadows, borderRadius } from '../config/theme';
+import { useCart } from '../context/CartContext';
 
 // Screens
 import HomeScreen from '../screens/HomeScreen';
@@ -22,6 +24,64 @@ import ManageAddressScreen from '../screens/ManageAddressScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+
+const TAB_CONFIG = [
+  { name: 'Home',     icon: 'home',       iconOutline: 'home-outline',     label: 'Home' },
+  { name: 'Products', icon: 'grid',        iconOutline: 'grid-outline',      label: 'Shop' },
+  { name: 'Cart',     icon: 'cart',        iconOutline: 'cart-outline',      label: 'Cart' },
+  { name: 'Profile',  icon: 'person',      iconOutline: 'person-outline',    label: 'Profile' },
+];
+
+const CustomTabBar = ({ state, descriptors, navigation }) => {
+  const { itemCount } = useCart();
+
+  return (
+    <View style={styles.tabBarWrapper}>
+      <View style={styles.tabBar}>
+        {state.routes.map((route, index) => {
+          const { options } = descriptors[route.key];
+          const focused = state.index === index;
+          const cfg = TAB_CONFIG.find(t => t.name === route.name) || TAB_CONFIG[0];
+
+          const onPress = () => {
+            const event = navigation.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
+            if (!focused && !event.defaultPrevented) {
+              navigation.navigate(route.name);
+            }
+          };
+
+          const isCart = route.name === 'Cart';
+          const cartBadge = isCart && itemCount > 0;
+
+          return (
+            <TouchableOpacity
+              key={route.key}
+              onPress={onPress}
+              activeOpacity={0.8}
+              style={styles.tabItem}
+            >
+              <View style={[styles.tabIconWrap, focused && styles.tabIconWrapActive]}>
+                <Ionicons
+                  name={focused ? cfg.icon : cfg.iconOutline}
+                  size={22}
+                  color={focused ? '#fff' : colors.text.muted}
+                />
+                {cartBadge && (
+                  <View style={styles.badge}>
+                    <Text style={styles.badgeText}>{itemCount > 99 ? '99+' : itemCount}</Text>
+                  </View>
+                )}
+              </View>
+              <Text style={[styles.tabLabel, focused && styles.tabLabelActive]}>
+                {cfg.label}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+    </View>
+  );
+};
 
 const HomeStack = () => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -60,44 +120,8 @@ const ProfileStack = () => (
 
 const TabNavigator = () => (
   <Tab.Navigator
-    screenOptions={({ route }) => ({
-      headerShown: false,
-      tabBarIcon: ({ focused, color, size }) => {
-        let iconName;
-
-        switch (route.name) {
-          case 'Home':
-            iconName = focused ? 'home' : 'home-outline';
-            break;
-          case 'Products':
-            iconName = focused ? 'grid' : 'grid-outline';
-            break;
-          case 'Cart':
-            iconName = focused ? 'cart' : 'cart-outline';
-            break;
-          case 'Profile':
-            iconName = focused ? 'person' : 'person-outline';
-            break;
-          default:
-            iconName = 'ellipse';
-        }
-
-        return <Ionicons name={iconName} size={size} color={color} />;
-      },
-      tabBarActiveTintColor: colors.primary.main,
-      tabBarInactiveTintColor: colors.text.secondary,
-      tabBarStyle: {
-        backgroundColor: colors.background.paper,
-        borderTopColor: colors.divider,
-        paddingBottom: 5,
-        paddingTop: 5,
-        height: 60,
-      },
-      tabBarLabelStyle: {
-        fontSize: 11,
-        fontWeight: '500',
-      },
-    })}
+    tabBar={(props) => <CustomTabBar {...props} />}
+    screenOptions={{ headerShown: false }}
   >
     <Tab.Screen name="Home" component={HomeStack} />
     <Tab.Screen name="Products" component={ProductsStack} />
@@ -106,23 +130,91 @@ const TabNavigator = () => (
   </Tab.Navigator>
 );
 
-const AppNavigator = () => {
-  return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="MainTabs" component={TabNavigator} />
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="OrderHistory" component={OrderHistoryScreen} />
-        <Stack.Screen name="OrderDetails" component={OrderDetailsScreen} />
-        <Stack.Screen name="AddressBook" component={AddressBookScreen} />
-        <Stack.Screen name="ManageAddress" component={ManageAddressScreen} />
-        <Stack.Screen name="About" component={AboutScreen} />
-        <Stack.Screen name="Contact" component={ContactScreen} />
-        <Stack.Screen name="ProductDetails" component={ProductDetailsScreen} />
-        <Stack.Screen name="Checkout" component={CheckoutScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
-};
+const AppNavigator = () => (
+  <NavigationContainer>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="MainTabs" component={TabNavigator} />
+      <Stack.Screen name="Login" component={LoginScreen} />
+      <Stack.Screen name="OrderHistory" component={OrderHistoryScreen} />
+      <Stack.Screen name="OrderDetails" component={OrderDetailsScreen} />
+      <Stack.Screen name="AddressBook" component={AddressBookScreen} />
+      <Stack.Screen name="ManageAddress" component={ManageAddressScreen} />
+      <Stack.Screen name="About" component={AboutScreen} />
+      <Stack.Screen name="Contact" component={ContactScreen} />
+      <Stack.Screen name="ProductDetails" component={ProductDetailsScreen} />
+      <Stack.Screen name="Checkout" component={CheckoutScreen} />
+    </Stack.Navigator>
+  </NavigationContainer>
+);
+
+const styles = StyleSheet.create({
+  tabBarWrapper: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingHorizontal: 16,
+    paddingBottom: Platform.OS === 'ios' ? 24 : 12,
+    paddingTop: 8,
+    backgroundColor: 'transparent',
+  },
+  tabBar: {
+    flexDirection: 'row',
+    backgroundColor: '#fff',
+    borderRadius: borderRadius.xxl,
+    paddingVertical: 8,
+    paddingHorizontal: 8,
+    ...shadows.dark,
+    borderWidth: 1,
+    borderColor: colors.divider,
+  },
+  tabItem: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 4,
+  },
+  tabIconWrap: {
+    width: 44,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  tabIconWrapActive: {
+    backgroundColor: colors.primary.main,
+  },
+  badge: {
+    position: 'absolute',
+    top: -4,
+    right: -4,
+    backgroundColor: colors.secondary.main,
+    borderRadius: 9,
+    minWidth: 18,
+    height: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#fff',
+    paddingHorizontal: 3,
+  },
+  badgeText: {
+    color: '#fff',
+    fontSize: 9,
+    fontWeight: '800',
+  },
+  tabLabel: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: colors.text.muted,
+    marginTop: 2,
+    letterSpacing: 0.3,
+  },
+  tabLabelActive: {
+    color: colors.primary.main,
+    fontWeight: '800',
+  },
+});
 
 export default AppNavigator;

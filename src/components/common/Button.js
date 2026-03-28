@@ -1,6 +1,7 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import { colors, spacing, fontSize, borderRadius } from '../../config/theme';
+import { TouchableOpacity, Text, StyleSheet, ActivityIndicator, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { colors, spacing, fontSize, borderRadius, shadows } from '../../config/theme';
 
 const Button = ({
   title,
@@ -10,6 +11,7 @@ const Button = ({
   disabled = false,
   loading = false,
   fullWidth = false,
+  icon,
   style,
   textStyle,
   testID,
@@ -17,35 +19,36 @@ const Button = ({
   const buttonStyles = [
     styles.button,
     styles[variant],
-    styles[size],
+    styles[`${size}Size`],
     fullWidth && styles.fullWidth,
-    disabled && styles.disabled,
+    (disabled || loading) && styles.disabled,
     style,
   ];
 
-  const textStyles = [
-    styles.text,
-    styles[`${variant}Text`],
-    styles[`${size}Text`],
-    disabled && styles.disabledText,
+  const labelStyles = [
+    styles.label,
+    styles[`${variant}Label`],
+    styles[`${size}Label`],
     textStyle,
   ];
+
+  const spinnerColor = variant === 'primary' || variant === 'secondary' ? '#fff' : colors.primary.main;
 
   return (
     <TouchableOpacity
       style={buttonStyles}
       onPress={onPress}
       disabled={disabled || loading}
-      activeOpacity={0.8}
+      activeOpacity={0.82}
       testID={testID}
     >
       {loading ? (
-        <ActivityIndicator
-          color={variant === 'primary' ? '#fff' : colors.primary.main}
-          size="small"
-        />
+        <ActivityIndicator color={spinnerColor} size="small" />
       ) : (
-        <Text style={textStyles}>{title}</Text>
+        <View style={styles.inner}>
+          {icon && <Ionicons name={icon} size={18} color={spinnerColor} style={styles.icon} />}
+          <Text style={labelStyles}>{title}</Text>
+        </View>
       )}
     </TouchableOpacity>
   );
@@ -53,73 +56,78 @@ const Button = ({
 
 const styles = StyleSheet.create({
   button: {
-    borderRadius: borderRadius.md,
+    borderRadius: borderRadius.full,
     alignItems: 'center',
     justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  inner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  icon: {
+    marginRight: 6,
   },
   fullWidth: {
     width: '100%',
   },
-  // Variants
+  disabled: {
+    opacity: 0.48,
+  },
+
+  // --- Variants ---
   primary: {
     backgroundColor: colors.primary.main,
+    ...shadows.light,
   },
   secondary: {
     backgroundColor: colors.secondary.main,
+    ...shadows.gold,
   },
   outline: {
     backgroundColor: 'transparent',
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: colors.primary.main,
   },
-  text: {
-    backgroundColor: 'transparent',
+  ghost: {
+    backgroundColor: colors.background.muted,
   },
-  // Sizes
-  small: {
-    paddingVertical: spacing.xs,
+  danger: {
+    backgroundColor: colors.error.main,
+  },
+
+  // --- Labels ---
+  label: {
+    fontWeight: '700',
+    letterSpacing: 0.3,
+  },
+  primaryLabel: { color: '#fff' },
+  secondaryLabel: { color: '#fff' },
+  outlineLabel: { color: colors.primary.main },
+  ghostLabel: { color: colors.primary.main },
+  dangerLabel: { color: '#fff' },
+
+  // --- Sizes ---
+  smallSize: {
+    paddingVertical: spacing.xs + 2,
     paddingHorizontal: spacing.md,
+    minHeight: 36,
   },
-  medium: {
-    paddingVertical: spacing.sm + 2,
+  mediumSize: {
+    paddingVertical: spacing.sm + 4,
     paddingHorizontal: spacing.lg,
+    minHeight: 48,
   },
-  large: {
+  largeSize: {
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.xl,
+    minHeight: 56,
   },
-  // Text styles
-  text: {
-    fontWeight: '600',
-  },
-  primaryText: {
-    color: '#fff',
-  },
-  secondaryText: {
-    color: '#fff',
-  },
-  outlineText: {
-    color: colors.primary.main,
-  },
-  textText: {
-    color: colors.primary.main,
-  },
-  smallText: {
-    fontSize: fontSize.sm,
-  },
-  mediumText: {
-    fontSize: fontSize.md,
-  },
-  largeText: {
-    fontSize: fontSize.lg,
-  },
-  // Disabled
-  disabled: {
-    opacity: 0.5,
-  },
-  disabledText: {
-    opacity: 0.7,
-  },
+
+  smallLabel: { fontSize: fontSize.xs },
+  mediumLabel: { fontSize: fontSize.md },
+  largeLabel: { fontSize: fontSize.lg },
 });
 
 export default Button;
