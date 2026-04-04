@@ -145,6 +145,14 @@ class ApiService {
     });
   }
 
+  async getOrdersByUser(userId) {
+    return this.request(endpoints.orderByUser(userId));
+  }
+
+  async getOrderById(orderId) {
+    return this.request(`${endpoints.orders}/order/${orderId}`);
+  }
+
   // Contact
   async sendContactMessage(data) {
     return this.request(endpoints.contact, {
