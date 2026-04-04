@@ -98,7 +98,10 @@ const ProfileScreen = () => {
             <View style={styles.avatar}>
               <Text style={styles.avatarInitials}>{initials}</Text>
             </View>
-            <TouchableOpacity style={styles.cameraBtn}>
+            <TouchableOpacity
+              style={styles.cameraBtn}
+              onPress={() => Alert.alert('Coming Soon', 'Profile photo upload will be available in a future update.')}
+            >
               <Ionicons name="camera" size={13} color="#fff" />
             </TouchableOpacity>
           </View>
