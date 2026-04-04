@@ -10,6 +10,8 @@ import {
   Alert,
   StatusBar,
   Dimensions,
+  Image,
+  ImageBackground,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
@@ -101,21 +103,44 @@ const LoginScreen = () => {
       <StatusBar barStyle="light-content" backgroundColor={colors.primary.main} />
 
       {/* Hero banner */}
-      <View style={styles.heroBanner}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-          <Ionicons name="chevron-back" size={22} color="#fff" />
-        </TouchableOpacity>
-        <View style={styles.heroContent}>
-          <View style={styles.logoCircle}>
-            <Ionicons name="leaf" size={32} color={colors.secondary.main} />
+      <ImageBackground
+        source={require('../../assets/Login.png')}
+        style={styles.heroBanner}
+        resizeMode="cover"
+      >
+        <View style={styles.heroImageOverlay}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.backBtn}
+            accessibilityLabel="Go back"
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <Ionicons name="chevron-back" size={22} color="#fff" />
+          </TouchableOpacity>
+          <View style={styles.heroContent}>
+            <View style={styles.logoCircle}>
+              <Image
+                source={require('../../assets/AgroNexisWhite.png')}
+                style={{ width: 40, height: 40 }}
+                resizeMode="contain"
+                accessibilityLabel="Agro Nexis logo"
+              />
+            </View>
+            <Text style={styles.heroTitle}>DESI KING</Text>
+            <Text style={styles.heroSub}>Premium Spices, Pure Tradition</Text>
           </View>
-          <Text style={styles.heroTitle}>DESI KING</Text>
-          <Text style={styles.heroSub}>Premium Spices, Pure Tradition</Text>
+          {/* Decorative circles */}
+          <View style={styles.decCircle1} />
+          <View style={styles.decCircle2} />
+          {/* Premium watermark */}
+          <Image
+            source={require('../../assets/premium symbol.png')}
+            style={styles.premiumWatermark}
+            resizeMode="contain"
+            accessibilityIgnoresInvertColors
+          />
         </View>
-        {/* Decorative circles */}
-        <View style={styles.decCircle1} />
-        <View style={styles.decCircle2} />
-      </View>
+      </ImageBackground>
 
       {/* Card */}
       <KeyboardAvoidingView
@@ -288,11 +313,22 @@ const styles = StyleSheet.create({
   },
   heroBanner: {
     height: HERO_HEIGHT,
-    backgroundColor: colors.primary.main,
+    overflow: 'hidden',
+  },
+  heroImageOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(27,77,62,0.88)',
     justifyContent: 'flex-end',
     paddingBottom: spacing.xl,
     paddingHorizontal: spacing.lg,
-    overflow: 'hidden',
+  },
+  premiumWatermark: {
+    position: 'absolute',
+    bottom: spacing.lg,
+    right: spacing.lg,
+    width: 40,
+    height: 40,
+    opacity: 0.22,
   },
   backBtn: {
     position: 'absolute',
