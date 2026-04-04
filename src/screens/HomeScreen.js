@@ -112,6 +112,7 @@ const HomeScreen = () => {
       name: product.name,
       price: pricing?.discountedAmount || pricing?.price || 0,
       image: product.thumbnailUrl || product.imageUrls?.[0],
+      brandId: product.brandId,
       sku: pricing?.skuNumber,
       quantity: 1,
     });

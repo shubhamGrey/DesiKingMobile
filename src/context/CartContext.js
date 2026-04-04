@@ -173,10 +173,9 @@ export const CartProvider = ({ children }) => {
         const payload = {
           id: id.toString().startsWith('temp-') ? "00000000-0000-0000-0000-000000000000" : id,
           productId: item.productId,
+          brandId: item.brandId,
           quantity: quantity,
           userId: userId,
-          sku: item.sku,
-          price: item.price
         };
         await apiService.addToCart(payload);
       } catch (error) {
@@ -214,10 +213,9 @@ export const CartProvider = ({ children }) => {
         const userId = await getUserId();
         const payload = {
           productId: item.productId,
+          brandId: item.brandId,
           quantity: item.quantity || 1,
           userId: userId,
-          sku: item.sku,
-          price: item.price
         };
         const response = await apiService.addToCart(payload);
 
