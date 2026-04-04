@@ -18,9 +18,10 @@ export const colors = {
     lightGray: '#F4F4F6',
     saffron: '#F5A623',
     turmeric: '#E8B84B',
+    orange: '#E85D04',
   },
   background: {
-    default: '#F5EFE1',
+    default: '#FAFAF9',
     paper: '#FFFFFF',
     dark: '#0D1B15',
     muted: '#EEE8DC',
