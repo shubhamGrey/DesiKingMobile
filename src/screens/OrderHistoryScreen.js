@@ -34,7 +34,7 @@ const OrderHistoryScreen = () => {
   const loadOrders = async () => {
     try {
       setIsLoading(true);
-      const response = await apiService.request(`/checkout/user/${user.id}`);
+      const response = await apiService.getOrdersByUser(user.id);
       let orderData = response.data || [];
 
       const enrichedOrders = await Promise.all(orderData.map(async (order) => {
