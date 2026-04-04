@@ -279,7 +279,7 @@ const styles = StyleSheet.create({
   titleRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.sm },
   title: { fontSize: fontSize.xxl, fontWeight: '800', color: colors.text.primary, flex: 1, marginRight: 10 },
   badge: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#e8f5e9', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 20 },
-  badgeText: { fontSize: 10, color: colors.success.main, fontWeight: 'bold', marginLeft: 4 },
+  badgeText: { fontSize: 10, color: colors.success, fontWeight: 'bold', marginLeft: 4 },
   priceRow: { flexDirection: 'row', alignItems: 'center', marginBottom: spacing.lg },
   price: { fontSize: 28, fontWeight: 'bold', color: colors.primary.main },
   originalPrice: { fontSize: 18, color: colors.text.muted, textDecorationLine: 'line-through', marginLeft: spacing.sm },

@@ -76,7 +76,7 @@ const OrderHistoryScreen = () => {
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
       case 'paid':
-      case 'delivered': return colors.success.main;
+      case 'delivered': return colors.success;
       case 'created':
       case 'pending': return colors.secondary.main;
       case 'shipped': return '#2196F3';
