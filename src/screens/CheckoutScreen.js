@@ -103,30 +103,20 @@ const CheckoutScreen = () => {
       return;
     }
 
-    const fullSelectedAddress = addresses.find(addr => addr.id === selectedAddress);
-
     try {
       setIsProcessing(true);
       const orderData = {
         userId: user.id,
-        shippingAddress: {
-          id: fullSelectedAddress.id,
-          userId: user.id,
-          fullName: `${user.firstName} ${user.lastName}`,
-          phoneNumber: user.phoneNumber || "",
-          addressLine: fullSelectedAddress.fullAddress,
-          city: "Pune",
-          stateCode: "MH",
-          countryCode: "IN",
-          pinCode: "411014"
-        },
+        totalAmount: grandTotal,
+        currency: 'INR',
+        paymentMethod: 'RAZORPAY',
+        shippingAddressId: selectedAddress,
+        billingAddressId: selectedAddress,
         items: items.map(item => ({
           productId: item.productId,
           quantity: item.quantity,
-          sku: item.sku,
-          price: item.price
+          price: item.price,
         })),
-        amount: grandTotal,
       };
 
       await apiService.createOrder(orderData);
