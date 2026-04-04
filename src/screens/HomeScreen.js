@@ -117,6 +117,18 @@ const HomeScreen = () => {
     });
   };
 
+  const renderSearchResults = () => {
+    if (filteredProducts.length === 0) {
+      return (
+        <View style={styles.emptySearch}>
+          <Ionicons name="search-outline" size={40} color={colors.text.disabled} />
+          <Text style={styles.emptySearchText}>No results for "{searchQuery}"</Text>
+        </View>
+      );
+    }
+    return renderSection('Search Results', '🔍', filteredProducts);
+  };
+
   const renderSection = (title, emoji, productList) => {
     if (!productList.length) return null;
     return (
@@ -297,10 +309,14 @@ const HomeScreen = () => {
         </ScrollView>
 
         {/* Product sections */}
-        {renderSection('Daily Essentials', '🔥', dailyEssentials)}
-        {renderSection('Immunity Boosters', '🛡️', immunityBoosters)}
-        {renderSection('Digestive Aids', '🍃', digestiveAids)}
-        {renderSection('DesiKing Specials', '✨', desiKingSpecials)}
+        {searchQuery.length > 0 ? renderSearchResults() : (
+          <>
+            {renderSection('Daily Essentials', '🔥', dailyEssentials)}
+            {renderSection('Immunity Boosters', '🛡️', immunityBoosters)}
+            {renderSection('Digestive Aids', '🍃', digestiveAids)}
+            {renderSection('DesiKing Specials', '✨', desiKingSpecials)}
+          </>
+        )}
 
         <View style={{ height: 120 }} />
       </ScrollView>
@@ -550,6 +566,17 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  emptySearch: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 60,
+    gap: 12,
+  },
+  emptySearchText: {
+    fontSize: fontSize.sm,
+    color: colors.text.muted,
+    textAlign: 'center',
   },
 });
 
