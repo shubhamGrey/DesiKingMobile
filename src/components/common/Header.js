@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import { colors, spacing, fontSize, borderRadius } from '../../config/theme';
 import { useCart } from '../../context/CartContext';
 
-const Header = ({ title, showBack = false, showCart = true, rightIcon, onRightPress }) => {
+const Header = ({ title, showBack = false, showCart = true, rightIcon, onRightPress, rightIconAccessibilityLabel = 'Action' }) => {
   const navigation = useNavigation();
   const { itemCount } = useCart();
 
@@ -55,7 +55,7 @@ const Header = ({ title, showBack = false, showCart = true, rightIcon, onRightPr
           <TouchableOpacity
             onPress={onRightPress}
             style={styles.iconBtn}
-            accessibilityLabel="Action"
+            accessibilityLabel={rightIconAccessibilityLabel}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
             <Ionicons name={rightIcon} size={22} color="#fff" />

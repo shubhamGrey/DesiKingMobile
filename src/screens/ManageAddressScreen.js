@@ -191,7 +191,7 @@ const ManageAddressScreen = () => {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" />
+      <StatusBar barStyle="light-content" backgroundColor="#1B4D3E" />
       <Header title={isEditing ? "Edit Location" : "Add New Location"} showBack />
 
       <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">

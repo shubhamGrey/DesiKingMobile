@@ -97,7 +97,7 @@ const CartScreen = () => {
   if (items.length === 0) {
     return (
       <View style={styles.container}>
-        <StatusBar barStyle="dark-content" />
+        <StatusBar barStyle="light-content" backgroundColor="#1B4D3E" />
         <Header title="My Cart" showBack showCart={false} />
         <View style={styles.emptyState}>
           <View style={styles.emptyIconWrap}>
