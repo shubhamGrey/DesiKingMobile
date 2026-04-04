@@ -16,6 +16,7 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import Header from '../components/common/Header';
 import { colors, spacing, fontSize, borderRadius, shadows } from '../config/theme';
 import apiService from '../services/api';
@@ -107,6 +108,44 @@ const HomeScreen = () => {
   const digestiveAids = useMemo(() => allProducts.filter(p => ['cumin', 'fennel'].some(k => p.name.toLowerCase().includes(k))).slice(0, 8), [allProducts]);
   const desiKingSpecials = useMemo(() => allProducts.filter(p => ['masala', 'blend'].some(k => p.name.toLowerCase().includes(k))).slice(0, 8), [allProducts]);
 
+  const renderBrandBanner = () => (
+    <ImageBackground
+      source={require('../../assets/Brand.png')}
+      style={styles.brandBanner}
+      resizeMode="cover"
+    >
+      <View style={styles.brandOverlay}>
+        <Text style={styles.brandBannerTitle}>Straight from Farm to Kitchen</Text>
+        <Text style={styles.brandBannerSub}>Premium spices crafted since 2014</Text>
+      </View>
+    </ImageBackground>
+  );
+
+  const renderAchievements = () => (
+    <ImageBackground
+      source={require('../../assets/Achievement.jpg')}
+      style={styles.achievementsBanner}
+      resizeMode="cover"
+    >
+      <View style={styles.achievementsOverlay}>
+        <View style={styles.achievementItem}>
+          <Text style={styles.achievementNum}>10+</Text>
+          <Text style={styles.achievementLabel}>Years</Text>
+        </View>
+        <View style={styles.achievementDivider} />
+        <View style={styles.achievementItem}>
+          <Text style={styles.achievementNum}>50+</Text>
+          <Text style={styles.achievementLabel}>Products</Text>
+        </View>
+        <View style={styles.achievementDivider} />
+        <View style={styles.achievementItem}>
+          <Text style={styles.achievementNum}>1000+</Text>
+          <Text style={styles.achievementLabel}>Customers</Text>
+        </View>
+      </View>
+    </ImageBackground>
+  );
+
   const handleAddToCart = (product) => {
     const pricing = product.pricesAndSkus?.[0];
     addItem({
@@ -138,7 +177,7 @@ const HomeScreen = () => {
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
           <View style={styles.sectionTitleRow}>
-            <Text style={styles.sectionEmoji}>{emoji}</Text>
+            <Ionicons name={emoji} size={18} color={colors.accent.orange} />
             <Text style={styles.sectionTitle}>{title}</Text>
           </View>
           <TouchableOpacity onPress={() => navigation.navigate('Products')}>
@@ -160,8 +199,16 @@ const HomeScreen = () => {
                 key={product.id}
                 style={styles.rowCard}
                 onPress={() => navigation.navigate('ProductDetails', { productId: product.id })}
-                activeOpacity={0.9}
+                activeOpacity={0.88}
+                accessibilityLabel={product.name}
               >
+                {/* Orange top accent bar */}
+                <LinearGradient
+                  colors={['#1B4D3E', colors.accent.orange]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  style={styles.rowAccentBar}
+                />
                 <View style={styles.rowCardImg}>
                   <Image source={{ uri: product.thumbnailUrl }} style={styles.rowCardImage} resizeMode="cover" />
                   {hasDis && (
@@ -170,16 +217,26 @@ const HomeScreen = () => {
                     </View>
                   )}
                 </View>
-                <View style={styles.rowCardBody}>
+                <LinearGradient
+                  colors={['#faf5ed', '#f5efe5']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={styles.rowCardBody}
+                >
                   <Text style={styles.rowCardName} numberOfLines={1}>{product.name}</Text>
                   <View style={styles.rowCardFooter}>
                     <Text style={styles.rowCardPrice}>₹{pay}</Text>
                     {hasDis && <Text style={styles.rowCardStrike}>₹{orig}</Text>}
-                    <TouchableOpacity style={styles.rowAddBtn} onPress={() => handleAddToCart(product)}>
+                    <TouchableOpacity
+                      style={styles.rowAddBtn}
+                      onPress={() => handleAddToCart(product)}
+                      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                      accessibilityLabel="Add to cart"
+                    >
                       <Ionicons name="add" size={16} color="#fff" />
                     </TouchableOpacity>
                   </View>
-                </View>
+                </LinearGradient>
               </TouchableOpacity>
             );
           })}
@@ -314,10 +371,12 @@ const HomeScreen = () => {
         {/* Product sections */}
         {searchQuery.length > 0 ? renderSearchResults() : (
           <>
-            {renderSection('Daily Essentials', '🔥', dailyEssentials)}
-            {renderSection('Immunity Boosters', '🛡️', immunityBoosters)}
-            {renderSection('Digestive Aids', '🍃', digestiveAids)}
-            {renderSection('DesiKing Specials', '✨', desiKingSpecials)}
+            {renderSection('Daily Essentials', 'flame', dailyEssentials)}
+            {renderBrandBanner()}
+            {renderSection('Immunity Boosters', 'shield-checkmark', immunityBoosters)}
+            {renderAchievements()}
+            {renderSection('Digestive Aids', 'leaf', digestiveAids)}
+            {renderSection('DesiKing Specials', 'sparkles', desiKingSpecials)}
           </>
         )}
 
@@ -330,7 +389,7 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.default,
+    backgroundColor: '#FAFAF9',
   },
   greeting: {
     paddingHorizontal: spacing.md,
@@ -451,7 +510,7 @@ const styles = StyleSheet.create({
   },
   chip: {
     paddingHorizontal: 18,
-    paddingVertical: 9,
+    paddingVertical: 12,
     borderRadius: borderRadius.full,
     backgroundColor: colors.background.paper,
     borderWidth: 1.5,
@@ -484,9 +543,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-  },
-  sectionEmoji: {
-    fontSize: 18,
+    borderLeftWidth: 3,
+    borderLeftColor: colors.accent.orange,
+    paddingLeft: 8,
   },
   sectionTitle: {
     fontSize: fontSize.lg,
@@ -496,7 +555,7 @@ const styles = StyleSheet.create({
   },
   viewAll: {
     fontSize: 13,
-    color: colors.secondary.main,
+    color: colors.accent.orange,
     fontWeight: '800',
   },
   rowList: {
@@ -505,14 +564,17 @@ const styles = StyleSheet.create({
     paddingBottom: 4,
   },
   rowCard: {
-    backgroundColor: colors.background.paper,
     width: 155,
     borderRadius: borderRadius.lg,
     marginRight: spacing.md,
-    ...shadows.sm,
     borderWidth: 1,
-    borderColor: colors.divider,
+    borderColor: 'rgba(31,79,64,0.10)',
     overflow: 'hidden',
+    shadowColor: '#1B4D3E',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.10,
+    shadowRadius: 10,
+    elevation: 3,
   },
   rowCardImg: {
     height: 115,
@@ -527,7 +589,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 6,
     left: 6,
-    backgroundColor: colors.secondary.main,
+    backgroundColor: colors.accent.orange,
     paddingHorizontal: 6,
     paddingVertical: 3,
     borderRadius: borderRadius.full,
@@ -563,7 +625,7 @@ const styles = StyleSheet.create({
     marginRight: 6,
   },
   rowAddBtn: {
-    backgroundColor: colors.primary.main,
+    backgroundColor: colors.accent.orange,
     width: 28,
     height: 28,
     borderRadius: 14,
@@ -580,6 +642,74 @@ const styles = StyleSheet.create({
     fontSize: fontSize.sm,
     color: colors.text.muted,
     textAlign: 'center',
+  },
+  rowAccentBar: {
+    height: 3,
+    width: '100%',
+  },
+  brandBanner: {
+    marginHorizontal: spacing.md,
+    marginTop: spacing.lg,
+    height: 140,
+    borderRadius: borderRadius.lg,
+    overflow: 'hidden',
+  },
+  brandOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(10,30,22,0.80)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: spacing.lg,
+  },
+  brandBannerTitle: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '800',
+    letterSpacing: 0.2,
+    textAlign: 'center',
+  },
+  brandBannerSub: {
+    color: 'rgba(255,255,255,0.72)',
+    fontSize: 12,
+    marginTop: 6,
+    textAlign: 'center',
+  },
+  achievementsBanner: {
+    marginTop: spacing.lg,
+    height: 110,
+    overflow: 'hidden',
+  },
+  achievementsOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(10,30,22,0.82)',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: spacing.xl,
+  },
+  achievementItem: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  achievementNum: {
+    color: '#fff',
+    fontSize: 24,
+    fontWeight: '900',
+    letterSpacing: -0.5,
+  },
+  achievementLabel: {
+    color: 'rgba(255,255,255,0.72)',
+    fontSize: 11,
+    fontWeight: '500',
+    marginTop: 2,
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
+  },
+  achievementDivider: {
+    width: 1,
+    height: 40,
+    backgroundColor: 'rgba(255,255,255,0.25)',
+    marginHorizontal: spacing.md,
   },
 });
 
