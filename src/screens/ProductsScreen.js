@@ -76,7 +76,7 @@ const ProductsScreen = () => {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" />
+      <StatusBar barStyle="light-content" backgroundColor="#1B4D3E" />
       <Header title="Our Catalog" showBack />
 
       <FlatList

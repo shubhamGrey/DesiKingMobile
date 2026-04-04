@@ -1,8 +1,9 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, Platform } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { colors, spacing, fontSize, borderRadius, shadows } from '../../config/theme';
+import { colors, spacing, fontSize, borderRadius } from '../../config/theme';
 import { useCart } from '../../context/CartContext';
 
 const Header = ({ title, showBack = false, showCart = true, rightIcon, onRightPress }) => {
@@ -10,19 +11,30 @@ const Header = ({ title, showBack = false, showCart = true, rightIcon, onRightPr
   const { itemCount } = useCart();
 
   return (
-    <View style={styles.container}>
+    <LinearGradient
+      colors={['#1B4D3E', '#234F42']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 0 }}
+      style={styles.container}
+    >
       {/* Left */}
       <View style={styles.side}>
         {showBack ? (
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconBtn}>
-            <Ionicons name="chevron-back" size={22} color={colors.text.primary} />
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.iconBtn}
+            accessibilityLabel="Go back"
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <Ionicons name="chevron-back" size={22} color="#fff" />
           </TouchableOpacity>
         ) : (
           <View style={styles.logoWrap}>
             <Image
-              source={require('../../../assets/DesiKing.png')}
+              source={require('../../../assets/AgroNexisWhite.png')}
               style={styles.logo}
               resizeMode="contain"
+              accessibilityLabel="Agro Nexis logo"
             />
           </View>
         )}
@@ -40,15 +52,22 @@ const Header = ({ title, showBack = false, showCart = true, rightIcon, onRightPr
       {/* Right */}
       <View style={[styles.side, styles.sideRight]}>
         {rightIcon ? (
-          <TouchableOpacity onPress={onRightPress} style={styles.iconBtn}>
-            <Ionicons name={rightIcon} size={22} color={colors.text.primary} />
+          <TouchableOpacity
+            onPress={onRightPress}
+            style={styles.iconBtn}
+            accessibilityLabel="Action"
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <Ionicons name={rightIcon} size={22} color="#fff" />
           </TouchableOpacity>
         ) : showCart ? (
           <TouchableOpacity
             onPress={() => navigation.navigate('Cart')}
             style={styles.iconBtn}
+            accessibilityLabel="Open cart"
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
-            <Ionicons name="cart-outline" size={22} color={colors.text.primary} />
+            <Ionicons name="cart-outline" size={22} color="#fff" />
             {itemCount > 0 && (
               <View style={styles.badge}>
                 <Text style={styles.badgeText}>{itemCount > 99 ? '99+' : itemCount}</Text>
@@ -59,7 +78,7 @@ const Header = ({ title, showBack = false, showCart = true, rightIcon, onRightPr
           <View style={{ width: 40 }} />
         )}
       </View>
-    </View>
+    </LinearGradient>
   );
 };
 
@@ -68,13 +87,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: colors.background.default,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     paddingTop: Platform.OS === 'ios' ? 56 : 38,
     height: Platform.OS === 'ios' ? 106 : 86,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.divider,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.18,
+    shadowRadius: 12,
+    elevation: 8,
   },
   side: {
     width: 44,
@@ -89,23 +110,23 @@ const styles = StyleSheet.create({
   iconBtn: {
     width: 40,
     height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.background.paper,
+    borderRadius: borderRadius.sm,
+    backgroundColor: 'rgba(255,255,255,0.15)',
     alignItems: 'center',
     justifyContent: 'center',
-    ...shadows.sm,
     position: 'relative',
   },
   logoWrap: {
     width: 40,
     height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.background.paper,
-    padding: 5,
+    borderRadius: borderRadius.sm,
+    backgroundColor: 'rgba(255,255,255,0.12)',
+    padding: 6,
     alignItems: 'center',
     justifyContent: 'center',
-    ...shadows.sm,
     overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.2)',
   },
   logo: {
     width: '100%',
@@ -114,27 +135,27 @@ const styles = StyleSheet.create({
   title: {
     fontSize: fontSize.lg,
     fontWeight: '800',
-    color: colors.text.primary,
+    color: '#fff',
     letterSpacing: -0.3,
   },
   brandTitle: {
     fontSize: 15,
     fontWeight: '900',
-    color: colors.primary.main,
+    color: '#fff',
     letterSpacing: 2.5,
   },
   badge: {
     position: 'absolute',
     top: -2,
     right: -2,
-    backgroundColor: colors.secondary.main,
+    backgroundColor: colors.accent.orange,
     borderRadius: 9,
     minWidth: 18,
     height: 18,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
-    borderColor: colors.background.default,
+    borderColor: '#1B4D3E',
     paddingHorizontal: 3,
   },
   badgeText: {
