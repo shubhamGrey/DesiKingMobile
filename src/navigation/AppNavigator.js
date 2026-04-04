@@ -59,12 +59,14 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
               onPress={onPress}
               activeOpacity={0.8}
               style={styles.tabItem}
+              accessibilityLabel={cfg.label}
+              accessibilityRole="tab"
             >
               <View style={[styles.tabIconWrap, focused && styles.tabIconWrapActive]}>
                 <Ionicons
                   name={focused ? cfg.icon : cfg.iconOutline}
                   size={22}
-                  color={focused ? '#fff' : colors.text.muted}
+                  color={focused ? '#fff' : 'rgba(255,255,255,0.5)'}
                 />
                 {cartBadge && (
                   <View style={styles.badge}>
@@ -160,13 +162,17 @@ const styles = StyleSheet.create({
   },
   tabBar: {
     flexDirection: 'row',
-    backgroundColor: '#fff',
+    backgroundColor: '#1B4D3E',
     borderRadius: borderRadius.xxl,
     paddingVertical: 8,
     paddingHorizontal: 8,
-    ...shadows.dark,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.22,
+    shadowRadius: 20,
+    elevation: 12,
     borderWidth: 1,
-    borderColor: colors.divider,
+    borderColor: 'rgba(188,129,65,0.25)',
   },
   tabItem: {
     flex: 1,
@@ -183,20 +189,20 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   tabIconWrapActive: {
-    backgroundColor: colors.primary.main,
+    backgroundColor: colors.accent.orange,
   },
   badge: {
     position: 'absolute',
     top: -4,
     right: -4,
-    backgroundColor: colors.secondary.main,
+    backgroundColor: colors.accent.orange,
     borderRadius: 9,
     minWidth: 18,
     height: 18,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
-    borderColor: '#fff',
+    borderColor: '#1B4D3E',
     paddingHorizontal: 3,
   },
   badgeText: {
@@ -205,14 +211,14 @@ const styles = StyleSheet.create({
     fontWeight: '800',
   },
   tabLabel: {
-    fontSize: 10,
+    fontSize: 11,
     fontWeight: '600',
-    color: colors.text.muted,
+    color: 'rgba(255,255,255,0.5)',
     marginTop: 2,
     letterSpacing: 0.3,
   },
   tabLabelActive: {
-    color: colors.primary.main,
+    color: '#fff',
     fontWeight: '800',
   },
 });
