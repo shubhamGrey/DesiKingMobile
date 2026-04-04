@@ -137,6 +137,7 @@ const LoginScreen = () => {
             source={require('../../assets/premium symbol.png')}
             style={styles.premiumWatermark}
             resizeMode="contain"
+            accessible={false}
             accessibilityIgnoresInvertColors
           />
         </View>

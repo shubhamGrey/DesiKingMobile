@@ -4,7 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, shadows, borderRadius } from '../config/theme';
+import { colors, borderRadius } from '../config/theme';
 import { useCart } from '../context/CartContext';
 
 // Screens
@@ -61,6 +61,7 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
               style={styles.tabItem}
               accessibilityLabel={cfg.label}
               accessibilityRole="tab"
+              accessibilityState={{ selected: focused }}
             >
               <View style={[styles.tabIconWrap, focused && styles.tabIconWrapActive]}>
                 <Ionicons
