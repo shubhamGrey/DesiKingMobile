@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
   },
   discountText: {
     color: '#fff',
-    fontSize: 9,
+    fontSize: 11,
     fontWeight: '800',
     letterSpacing: 0.4,
   },
@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
   },
   featuredText: {
     color: '#fff',
-    fontSize: 9,
+    fontSize: 11,
     fontWeight: '800',
     letterSpacing: 0.3,
   },

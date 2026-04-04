@@ -168,7 +168,7 @@ const HomeScreen = () => {
         </View>
       );
     }
-    return renderSection('Search Results', '🔍', filteredProducts);
+    return renderSection('Search Results', 'search-outline', filteredProducts);
   };
 
   const renderSection = (title, emoji, productList) => {
@@ -333,7 +333,7 @@ const HomeScreen = () => {
                   </View>
                   <Text style={styles.heroTitle}>{item.title}</Text>
                   <Text style={styles.heroSub}>{item.sub}</Text>
-                  <TouchableOpacity style={styles.heroBtn} onPress={() => navigation.navigate('Products')}>
+                  <TouchableOpacity style={styles.heroBtn} onPress={() => navigation.navigate('Products')} accessibilityLabel="Shop Now">
                     <Text style={styles.heroBtnText}>Shop Now</Text>
                     <Ionicons name="arrow-forward" size={14} color={colors.primary.main} />
                   </TouchableOpacity>
@@ -362,6 +362,9 @@ const HomeScreen = () => {
               key={i}
               style={[styles.chip, activeCategory === cat && styles.chipActive]}
               onPress={() => setActiveCategory(cat)}
+              accessibilityRole="button"
+              accessibilityLabel={cat}
+              accessibilityState={{ selected: activeCategory === cat }}
             >
               <Text style={[styles.chipText, activeCategory === cat && styles.chipTextActive]}>{cat}</Text>
             </TouchableOpacity>
@@ -453,7 +456,7 @@ const styles = StyleSheet.create({
   },
   heroPillText: {
     color: '#fff',
-    fontSize: 9,
+    fontSize: 11,
     fontWeight: '900',
     letterSpacing: 1,
   },
@@ -596,7 +599,7 @@ const styles = StyleSheet.create({
   },
   rowBadgeText: {
     color: '#fff',
-    fontSize: 9,
+    fontSize: 11,
     fontWeight: '900',
   },
   rowCardBody: {
@@ -619,7 +622,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   rowCardStrike: {
-    fontSize: 10,
+    fontSize: 11,
     color: colors.text.disabled,
     textDecorationLine: 'line-through',
     marginRight: 6,

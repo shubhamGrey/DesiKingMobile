@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
   },
   badgeText: {
     color: '#fff',
-    fontSize: 9,
+    fontSize: 11,
     fontWeight: '800',
   },
   tabLabel: {
