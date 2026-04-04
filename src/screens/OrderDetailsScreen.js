@@ -22,7 +22,7 @@ const OrderDetailsScreen = () => {
     try {
       setIsLoading(true);
       // Fixed URL: Remove extra /order/ segment to match web app pattern
-      const response = await apiService.request(`/checkout/order/${orderId}`);
+      const response = await apiService.getOrderById(orderId);
       const orderData = response.data;
 
       if (orderData.orderItems && orderData.orderItems.length > 0) {
@@ -65,11 +65,7 @@ const OrderDetailsScreen = () => {
   if (isLoading) return <Loading fullScreen text="Loading details..." />;
   if (!order) return <View style={styles.center}><Text>Order not found</Text></View>;
 
-  const shippingFees = 100;
-  const taxRate = 0.05; // 5% GST
-  const taxAmount = (order.totalAmount || 0) * taxRate;
-  const subTotal = (order.totalAmount || 0);
-  const grandTotal = subTotal + taxAmount + shippingFees;
+  const totalPaid = order.totalAmount || 0;
 
   return (
     <View style={styles.container}>
@@ -143,22 +139,10 @@ const OrderDetailsScreen = () => {
             <Ionicons name="receipt-outline" size={18} color={colors.primary.main} />
             <Text style={styles.sectionTitle}>Payment Summary</Text>
           </View>
-          <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>Subtotal</Text>
-            <Text style={styles.summaryValue}>₹{subTotal.toFixed(2)}</Text>
-          </View>
-          <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>Shipping Fee</Text>
-            <Text style={styles.summaryValue}>₹{shippingFees.toFixed(2)}</Text>
-          </View>
-          <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>Tax (5%)</Text>
-            <Text style={styles.summaryValue}>₹{taxAmount.toFixed(2)}</Text>
-          </View>
           <View style={styles.divider} />
           <View style={styles.summaryRow}>
-            <Text style={styles.totalLabel}>Total Amount</Text>
-            <Text style={styles.totalValue}>₹{grandTotal.toFixed(2)}</Text>
+            <Text style={styles.totalLabel}>Total Paid</Text>
+            <Text style={styles.totalValue}>₹{totalPaid.toFixed(2)}</Text>
           </View>
           <Text style={styles.paymentMethod}>Payment Mode: {order.transaction?.paymentMethod || 'RAZORPAY'}</Text>
         </View>
