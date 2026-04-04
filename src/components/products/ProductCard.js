@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, ImageBackground, Dimensions } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, spacing, fontSize, borderRadius, shadows } from '../../config/theme';
+import { colors, spacing, fontSize, borderRadius } from '../../config/theme';
 import { useCart } from '../../context/CartContext';
 
 const { width } = Dimensions.get('window');
@@ -30,14 +31,34 @@ const ProductCard = ({ product, onPress }) => {
   };
 
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.9}>
+    <TouchableOpacity
+      style={styles.container}
+      onPress={onPress}
+      activeOpacity={0.88}
+      accessibilityLabel={`${product.name}, ₹${hasDiscount ? discountedPrice : price}`}
+    >
+      {/* Top accent bar */}
+      <LinearGradient
+        colors={['#1B4D3E', colors.accent.orange]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={styles.accentBar}
+      />
+
       {/* Image */}
       <View style={styles.imageContainer}>
-        <Image
-          source={{ uri: product.thumbnailUrl || product.imageUrls?.[0] || 'https://via.placeholder.com/150' }}
-          style={styles.image}
-          resizeMode="contain"
-        />
+        <ImageBackground
+          source={require('../../../assets/ProductBackground.png')}
+          style={styles.imageBg}
+          resizeMode="cover"
+        >
+          <Image
+            source={{ uri: product.thumbnailUrl || product.imageUrls?.[0] || 'https://via.placeholder.com/150' }}
+            style={styles.image}
+            resizeMode="contain"
+            accessibilityLabel={product.name}
+          />
+        </ImageBackground>
 
         {/* Badges */}
         <View style={styles.badges}>
@@ -48,7 +69,7 @@ const ProductCard = ({ product, onPress }) => {
           )}
           {product.isFeatured && !hasDiscount && (
             <View style={styles.featuredBadge}>
-              <Text style={styles.featuredText}>★ TOP</Text>
+              <Text style={styles.featuredText}>TOP</Text>
             </View>
           )}
         </View>
@@ -58,13 +79,20 @@ const ProductCard = ({ product, onPress }) => {
           style={[styles.cartBtn, inCart && styles.cartBtnAdded]}
           onPress={handleAddToCart}
           activeOpacity={0.85}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          accessibilityLabel={inCart ? 'Added to cart' : 'Add to cart'}
         >
           <Ionicons name={inCart ? 'checkmark' : 'add'} size={16} color="#fff" />
         </TouchableOpacity>
       </View>
 
       {/* Info */}
-      <View style={styles.info}>
+      <LinearGradient
+        colors={['#faf5ed', '#f5efe5']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.info}
+      >
         <Text style={styles.category} numberOfLines={1}>
           {product.categoryName || 'Spices'}
         </Text>
@@ -86,7 +114,7 @@ const ProductCard = ({ product, onPress }) => {
             <Text style={styles.strikePrice}>₹{price}</Text>
           )}
         </View>
-      </View>
+      </LinearGradient>
     </TouchableOpacity>
   );
 };
@@ -94,19 +122,31 @@ const ProductCard = ({ product, onPress }) => {
 const styles = StyleSheet.create({
   container: {
     width: CARD_WIDTH,
-    backgroundColor: colors.background.paper,
     borderRadius: borderRadius.lg,
     marginBottom: spacing.md,
-    ...shadows.light,
     borderWidth: 1,
-    borderColor: colors.divider,
+    borderColor: 'rgba(31,79,64,0.10)',
     overflow: 'hidden',
+    shadowColor: '#1B4D3E',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.10,
+    shadowRadius: 12,
+    elevation: 4,
+  },
+  accentBar: {
+    height: 3,
+    width: '100%',
   },
   imageContainer: {
     width: '100%',
     height: CARD_WIDTH * 0.88,
-    backgroundColor: colors.accent.lightGray,
     position: 'relative',
+  },
+  imageBg: {
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   image: {
     width: '100%',
@@ -119,7 +159,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   discountBadge: {
-    backgroundColor: colors.secondary.main,
+    backgroundColor: colors.accent.orange,
     paddingHorizontal: 7,
     paddingVertical: 3,
     borderRadius: borderRadius.full,
@@ -131,7 +171,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.4,
   },
   featuredBadge: {
-    backgroundColor: colors.primary.main,
+    backgroundColor: '#1B4D3E',
     paddingHorizontal: 7,
     paddingVertical: 3,
     borderRadius: borderRadius.full,
@@ -149,20 +189,24 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: colors.primary.main,
+    backgroundColor: colors.accent.orange,
     alignItems: 'center',
     justifyContent: 'center',
-    ...shadows.sm,
+    shadowColor: colors.accent.orange,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.35,
+    shadowRadius: 6,
+    elevation: 4,
   },
   cartBtnAdded: {
-    backgroundColor: colors.success,
+    backgroundColor: '#1B4D3E',
   },
   info: {
     padding: spacing.sm,
     paddingTop: spacing.xs + 2,
   },
   category: {
-    fontSize: 9,
+    fontSize: 11,
     color: colors.text.muted,
     textTransform: 'uppercase',
     letterSpacing: 0.8,
@@ -181,12 +225,12 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   ratingText: {
-    fontSize: 10,
+    fontSize: 11,
     fontWeight: '700',
     color: colors.text.primary,
   },
   ratingCount: {
-    fontSize: 9,
+    fontSize: 11,
     color: colors.text.muted,
   },
   priceRow: {
@@ -197,7 +241,7 @@ const styles = StyleSheet.create({
   price: {
     fontSize: fontSize.md,
     fontWeight: '800',
-    color: colors.primary.main,
+    color: '#1B4D3E',
   },
   strikePrice: {
     fontSize: 11,
