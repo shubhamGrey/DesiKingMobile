@@ -59,9 +59,11 @@ const HomeScreen = () => {
   const [heroIndex, setHeroIndex] = useState(0);
 
   const heroItems = [
-    { id: '1', title: 'Premium Spices', sub: 'Straight from the farm to your kitchen', bg: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?q=80&w=1000&auto=format&fit=crop' },
-    { id: '2', title: 'Pure. Natural. Authentic.', sub: 'No additives. No preservatives.', bg: 'https://images.unsplash.com/photo-1509358271058-acd22cc93898?q=80&w=1000&auto=format&fit=crop' },
-    { id: '3', title: 'Farm Fresh Direct', sub: 'Sourced from top Indian farms', bg: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?q=80&w=1000&auto=format&fit=crop' },
+    { id: '1', title: 'Premium Spices', sub: 'Straight from the farm to your kitchen', bg: require('../../assets/Hero Banner 1.png') },
+    { id: '2', title: 'Pure. Natural. Authentic.', sub: 'No additives. No preservatives.', bg: require('../../assets/Hero Banner 2.png') },
+    { id: '3', title: 'Farm Fresh Direct', sub: 'Sourced from top Indian farms', bg: require('../../assets/Hero Banner 3.png') },
+    { id: '4', title: 'Taste the Tradition', sub: 'Hand-picked spices from Indian farms', bg: require('../../assets/Hero Banner 4.png') },
+    { id: '5', title: 'Agro Nexis Quality', sub: 'Certified organic. 100% pure.', bg: require('../../assets/Hero Banner 5.png') },
   ];
 
   useEffect(() => { loadData(); }, []);
@@ -264,7 +266,7 @@ const HomeScreen = () => {
           {heroItems.map((item, idx) => (
             <View key={item.id} style={{ width: HERO_WIDTH, marginRight: 12 }}>
               <ImageBackground
-                source={{ uri: item.bg }}
+                source={item.bg}
                 style={styles.heroCard}
                 imageStyle={{ borderRadius: borderRadius.xl }}
               >
@@ -378,12 +380,12 @@ const styles = StyleSheet.create({
   },
   heroOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.42)',
+    backgroundColor: 'rgba(10,30,22,0.72)',
     padding: spacing.lg,
     justifyContent: 'flex-end',
   },
   heroPill: {
-    backgroundColor: colors.secondary.main,
+    backgroundColor: colors.accent.orange,
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: borderRadius.full,
@@ -414,7 +416,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#fff',
     paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingVertical: 12,
     borderRadius: borderRadius.full,
     alignSelf: 'flex-start',
     gap: 6,
@@ -438,7 +440,7 @@ const styles = StyleSheet.create({
   },
   dotActive: {
     width: 18,
-    backgroundColor: colors.primary.main,
+    backgroundColor: colors.accent.orange,
   },
   chipScroll: {
     marginTop: spacing.md,
