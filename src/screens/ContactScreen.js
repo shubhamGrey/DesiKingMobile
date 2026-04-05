@@ -15,7 +15,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Header from '../components/common/Header';
 import Input from '../components/common/Input';
 import Button from '../components/common/Button';
-import { colors, spacing, fontSize, borderRadius } from '../config/theme';
+import { colors, spacing, fontSize, borderRadius, fonts } from '../config/theme';
 import apiService from '../services/api';
 
 const contactDetails = [
@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
   },
   infoTitle: {
     fontSize: fontSize.xl,
-    fontWeight: '600',
+    fontFamily: fonts.body.semibold,
     color: colors.primary.contrastText,
     marginBottom: spacing.lg,
   },
@@ -258,7 +258,7 @@ const styles = StyleSheet.create({
   },
   formTitle: {
     fontSize: fontSize.xl,
-    fontWeight: '700',
+    fontFamily: fonts.heading.bold,
     color: colors.primary.main,
     marginBottom: spacing.lg,
     textAlign: 'center',

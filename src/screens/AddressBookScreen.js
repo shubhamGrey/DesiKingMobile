@@ -13,7 +13,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import Header from '../components/common/Header';
 import Button from '../components/common/Button';
-import { colors, spacing, fontSize, borderRadius, shadows } from '../config/theme';
+import { colors, spacing, fontSize, borderRadius, shadows, fonts } from '../config/theme';
 import apiService from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
@@ -139,16 +139,16 @@ const styles = StyleSheet.create({
   },
   cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
   badge: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.background.muted, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20 },
-  badgeText: { fontSize: 10, fontWeight: '800', color: colors.primary.main, textTransform: 'uppercase', marginLeft: 4 },
+  badgeText: { fontSize: 10, fontFamily: fonts.body.extrabold, color: colors.primary.main, textTransform: 'uppercase', marginLeft: 4 },
   deleteBtn: { padding: 4 },
-  fullName: { fontSize: 16, fontWeight: 'bold', color: colors.text.primary, marginBottom: 4 },
+  fullName: { fontSize: 16, fontFamily: fonts.heading.bold, color: colors.text.primary, marginBottom: 4 },
   fullAddress: { fontSize: 14, color: colors.text.secondary, lineHeight: 20 },
   cardFooter: { marginTop: 15, paddingTop: 15, borderTopWidth: 1, borderTopColor: '#f9f9f9' },
   editBtn: { alignSelf: 'flex-start' },
-  editBtnText: { fontSize: 13, color: colors.secondary.main, fontWeight: '700' },
+  editBtnText: { fontSize: 13, color: colors.secondary.main, fontFamily: fonts.body.bold },
   emptyState: { alignItems: 'center', justifyContent: 'center', marginTop: 100 },
   emptyCircle: { width: 80, height: 80, borderRadius: 40, backgroundColor: colors.background.muted, alignItems: 'center', justifyContent: 'center', marginBottom: 15 },
-  emptyTitle: { fontSize: 18, fontWeight: 'bold', color: colors.text.primary },
+  emptyTitle: { fontSize: 18, fontFamily: fonts.heading.bold, color: colors.text.primary },
   emptySubtitle: { fontSize: 14, color: colors.text.secondary, textAlign: 'center', marginTop: 5, paddingHorizontal: 40 },
   floatingFooter: { position: 'absolute', bottom: 0, left: 0, right: 0, padding: spacing.lg, backgroundColor: '#fff', borderTopLeftRadius: 24, borderTopRightRadius: 24, ...shadows.dark },
   addBtn: { height: 56 },

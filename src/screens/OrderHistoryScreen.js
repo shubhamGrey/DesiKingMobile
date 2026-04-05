@@ -14,7 +14,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Header from '../components/common/Header';
 import Loading from '../components/common/Loading';
 import Button from '../components/common/Button';
-import { colors, spacing, fontSize, borderRadius, shadows } from '../config/theme';
+import { colors, spacing, fontSize, borderRadius, shadows, fonts } from '../config/theme';
 import apiService from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
@@ -174,11 +174,11 @@ const styles = StyleSheet.create({
     ...shadows.sm,
   },
   orderHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.sm },
-  orderId: { fontSize: fontSize.sm, fontWeight: '700', color: colors.text.primary },
+  orderId: { fontSize: fontSize.sm, fontFamily: fonts.body.bold, color: colors.text.primary },
   orderDate: { fontSize: 11, color: colors.text.muted, marginTop: 2 },
   statusBadge: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20 },
   statusDot: { width: 6, height: 6, borderRadius: 3, marginRight: 6 },
-  statusText: { fontSize: 10, fontWeight: '800', textTransform: 'uppercase' },
+  statusText: { fontSize: 10, fontFamily: fonts.body.extrabold, textTransform: 'uppercase' },
   divider: { height: 1, backgroundColor: colors.divider, marginVertical: spacing.sm },
   orderContent: { flexDirection: 'row', justifyContent: 'space-between' },
   itemsList: { flex: 1.8, paddingRight: spacing.sm },
@@ -186,17 +186,17 @@ const styles = StyleSheet.create({
   productThumb: { width: 36, height: 36, borderRadius: 6, backgroundColor: colors.background.muted, marginRight: 10 },
   productThumbPlaceholder: { width: 36, height: 36, borderRadius: 6, backgroundColor: colors.background.muted, marginRight: 10, alignItems: 'center', justifyContent: 'center' },
   productInfo: { flex: 1 },
-  productName: { fontSize: 12, fontWeight: '600', color: colors.text.primary },
+  productName: { fontSize: 12, fontFamily: fonts.body.semibold, color: colors.text.primary },
   productMeta: { fontSize: 10, color: colors.text.secondary, marginTop: 2 },
-  moreItemsText: { fontSize: 10, color: colors.primary.main, fontWeight: '600', marginTop: 2 },
+  moreItemsText: { fontSize: 10, color: colors.primary.main, fontFamily: fonts.body.semibold, marginTop: 2 },
   priceContainer: { flex: 1, alignItems: 'flex-end', justifyContent: 'center', borderLeftWidth: 1, borderLeftColor: colors.divider, paddingLeft: spacing.sm },
   totalLabel: { fontSize: 9, color: colors.text.muted, textTransform: 'uppercase', letterSpacing: 0.5 },
-  totalAmount: { fontSize: fontSize.md, fontWeight: 'bold', color: colors.primary.main, marginVertical: 2 },
+  totalAmount: { fontSize: fontSize.md, fontFamily: fonts.heading.bold, color: colors.primary.main, marginVertical: 2 },
   detailsBtn: { flexDirection: 'row', alignItems: 'center', marginTop: 4 },
-  detailsBtnText: { fontSize: 11, color: colors.primary.main, fontWeight: '700', marginRight: 2 },
+  detailsBtnText: { fontSize: 11, color: colors.primary.main, fontFamily: fonts.body.bold, marginRight: 2 },
   emptyContainer: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: 100 },
   emptyIconCircle: { width: 80, height: 80, borderRadius: 40, backgroundColor: colors.background.muted, alignItems: 'center', justifyContent: 'center', marginBottom: spacing.md },
-  emptyTitle: { fontSize: fontSize.lg, fontWeight: 'bold', color: colors.text.primary },
+  emptyTitle: { fontSize: fontSize.lg, fontFamily: fonts.body.bold, color: colors.text.primary },
   emptySubtitle: { fontSize: fontSize.sm, color: colors.text.secondary, textAlign: 'center', marginTop: spacing.sm, paddingHorizontal: spacing.xl },
   shopButton: { marginTop: spacing.xl, paddingHorizontal: spacing.xl },
 });

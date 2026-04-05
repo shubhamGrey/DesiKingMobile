@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, TextInput, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, spacing, fontSize, borderRadius } from '../../config/theme';
+import { colors, spacing, fontSize, borderRadius, fonts } from '../../config/theme';
 
 const Input = ({
   label,
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: fontSize.sm,
-    fontWeight: '600',
+    fontFamily: fonts.body.semibold,
     color: colors.text.secondary,
     marginBottom: spacing.xs,
     letterSpacing: 0.2,
@@ -124,6 +124,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm + 2,
     fontSize: fontSize.md,
+    fontFamily: fonts.body.regular,
     color: colors.text.primary,
   },
   multilineInput: {

@@ -17,7 +17,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import Input from '../components/common/Input';
 import Button from '../components/common/Button';
-import { colors, spacing, fontSize, borderRadius, shadows } from '../config/theme';
+import { colors, spacing, fontSize, borderRadius, shadows, fonts } from '../config/theme';
 import { useAuth } from '../context/AuthContext';
 
 const { height } = Dimensions.get('window');
@@ -359,12 +359,13 @@ const styles = StyleSheet.create({
   },
   heroTitle: {
     fontSize: 26,
-    fontWeight: '900',
+    fontFamily: fonts.heading.black,
     color: '#fff',
     letterSpacing: 4,
   },
   heroSub: {
     fontSize: 12,
+    fontFamily: fonts.body.regular,
     color: 'rgba(255,255,255,0.7)',
     marginTop: 4,
     letterSpacing: 0.5,
@@ -420,21 +421,22 @@ const styles = StyleSheet.create({
   },
   tabText: {
     fontSize: fontSize.sm,
-    fontWeight: '600',
+    fontFamily: fonts.body.semibold,
     color: colors.text.muted,
   },
   tabTextActive: {
     color: colors.primary.main,
-    fontWeight: '800',
+    fontFamily: fonts.body.extrabold,
   },
   formTitle: {
     fontSize: fontSize.xl,
-    fontWeight: '800',
+    fontFamily: fonts.heading.extrabold,
     color: colors.text.primary,
     marginBottom: 4,
   },
   formSub: {
     fontSize: fontSize.sm,
+    fontFamily: fonts.body.regular,
     color: colors.text.muted,
     marginBottom: spacing.lg,
   },
@@ -452,12 +454,13 @@ const styles = StyleSheet.create({
   },
   toggleText: {
     fontSize: fontSize.sm,
+    fontFamily: fonts.body.regular,
     color: colors.text.muted,
   },
   toggleLink: {
     fontSize: fontSize.sm,
+    fontFamily: fonts.body.extrabold,
     color: colors.primary.main,
-    fontWeight: '800',
   },
 });
 

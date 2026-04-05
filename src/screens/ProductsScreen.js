@@ -15,7 +15,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Header from '../components/common/Header';
 import ProductCard from '../components/products/ProductCard';
 import Loading from '../components/common/Loading';
-import { colors, spacing, fontSize, borderRadius, shadows } from '../config/theme';
+import { colors, spacing, fontSize, borderRadius, shadows, fonts } from '../config/theme';
 import apiService from '../services/api';
 
 const ProductsScreen = () => {
@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#f0f0f0',
   },
-  searchInput: { flex: 1, marginLeft: 10, fontSize: 14, color: colors.text.primary, fontWeight: '500' },
+  searchInput: { flex: 1, marginLeft: 10, fontSize: 14, fontFamily: fonts.body.medium, color: colors.text.primary },
   chipList: { paddingHorizontal: spacing.md, marginTop: spacing.md, paddingBottom: 4 },
   chip: {
     paddingHorizontal: 20,
@@ -178,16 +178,16 @@ const styles = StyleSheet.create({
     borderColor: '#f0f0f0',
   },
   chipActive: { backgroundColor: colors.primary.main, borderColor: colors.primary.main },
-  chipText: { fontSize: 13, fontWeight: '600', color: colors.text.secondary },
-  chipTextActive: { color: '#fff' },
+  chipText: { fontSize: 13, fontFamily: fonts.body.semibold, color: colors.text.secondary },
+  chipTextActive: { color: '#fff', fontFamily: fonts.body.extrabold },
   resultsHeader: { paddingHorizontal: spacing.md, marginTop: spacing.lg },
-  resultsCount: { fontSize: 12, fontWeight: '700', color: colors.text.muted, textTransform: 'uppercase', letterSpacing: 1 },
+  resultsCount: { fontSize: 12, fontFamily: fonts.body.bold, color: colors.text.muted, textTransform: 'uppercase', letterSpacing: 1 },
   listContainer: { paddingBottom: 100 },
   row: { justifyContent: 'space-between', paddingHorizontal: spacing.md, marginTop: spacing.md },
   emptyState: { flex: 1, alignItems: 'center', justifyContent: 'center', marginTop: 80 },
   emptyIconCircle: { width: 80, height: 80, borderRadius: 40, backgroundColor: colors.background.muted, alignItems: 'center', justifyContent: 'center', marginBottom: spacing.md },
-  emptyTitle: { fontSize: 18, fontWeight: 'bold', color: colors.text.primary },
-  emptySubtitle: { fontSize: 14, color: colors.text.secondary, marginTop: 4 },
+  emptyTitle: { fontSize: 18, fontFamily: fonts.heading.bold, color: colors.text.primary },
+  emptySubtitle: { fontSize: 14, fontFamily: fonts.body.regular, color: colors.text.secondary, marginTop: 4 },
 });
 
 export default ProductsScreen;

@@ -4,7 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, borderRadius } from '../config/theme';
+import { colors, borderRadius, fonts } from '../config/theme';
 import { useCart } from '../context/CartContext';
 
 // Screens
@@ -209,18 +209,18 @@ const styles = StyleSheet.create({
   badgeText: {
     color: '#fff',
     fontSize: 11,
-    fontWeight: '800',
+    fontFamily: fonts.body.extrabold,
   },
   tabLabel: {
     fontSize: 11,
-    fontWeight: '600',
+    fontFamily: fonts.body.semibold,
     color: 'rgba(255,255,255,0.5)',
     marginTop: 2,
     letterSpacing: 0.3,
   },
   tabLabelActive: {
     color: '#fff',
-    fontWeight: '800',
+    fontFamily: fonts.body.extrabold,
   },
 });
 

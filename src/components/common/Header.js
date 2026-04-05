@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Image, Platform } from 'react
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { colors, spacing, fontSize, borderRadius } from '../../config/theme';
+import { colors, spacing, fontSize, borderRadius, fonts } from '../../config/theme';
 import { useCart } from '../../context/CartContext';
 
 const Header = ({ title, showBack = false, showCart = true, rightIcon, onRightPress, rightIconAccessibilityLabel = 'Action' }) => {
@@ -134,13 +134,13 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: fontSize.lg,
-    fontWeight: '800',
+    fontFamily: fonts.heading.bold,
     color: '#fff',
     letterSpacing: -0.3,
   },
   brandTitle: {
     fontSize: 15,
-    fontWeight: '900',
+    fontFamily: fonts.body.extrabold,
     color: '#fff',
     letterSpacing: 2.5,
   },
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
   badgeText: {
     color: '#fff',
     fontSize: 11,
-    fontWeight: '800',
+    fontFamily: fonts.body.extrabold,
   },
 });
 

@@ -84,6 +84,26 @@ export const fontWeight = {
   black: '900',
 };
 
+// Font families — loaded via @expo-google-fonts in App.js
+export const fonts = {
+  // Playfair Display — for headings, product names, hero text, prices
+  heading: {
+    regular: 'PlayfairDisplay_400Regular',
+    semibold: 'PlayfairDisplay_600SemiBold',
+    bold: 'PlayfairDisplay_700Bold',
+    extrabold: 'PlayfairDisplay_800ExtraBold',
+    black: 'PlayfairDisplay_900Black',
+  },
+  // Inter — for body text, labels, buttons, UI elements
+  body: {
+    regular: 'Inter_400Regular',
+    medium: 'Inter_500Medium',
+    semibold: 'Inter_600SemiBold',
+    bold: 'Inter_700Bold',
+    extrabold: 'Inter_800ExtraBold',
+  },
+};
+
 export const borderRadius = {
   xs: 4,
   sm: 8,
@@ -137,6 +157,7 @@ export default {
   spacing,
   fontSize,
   fontWeight,
+  fonts,
   borderRadius,
   shadows,
 };

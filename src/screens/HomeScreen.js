@@ -18,7 +18,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import Header from '../components/common/Header';
-import { colors, spacing, fontSize, borderRadius, shadows } from '../config/theme';
+import { colors, spacing, fontSize, borderRadius, shadows, fonts } from '../config/theme';
 import apiService from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -401,12 +401,13 @@ const styles = StyleSheet.create({
   },
   greetHi: {
     fontSize: fontSize.xl,
-    fontWeight: '900',
+    fontFamily: fonts.heading.black,
     color: colors.text.primary,
     letterSpacing: -0.3,
   },
   greetSub: {
     fontSize: fontSize.sm,
+    fontFamily: fonts.body.regular,
     color: colors.text.muted,
     marginTop: 3,
   },
@@ -429,6 +430,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     fontSize: fontSize.sm,
+    fontFamily: fonts.body.regular,
     color: colors.text.primary,
   },
   heroScroll: {
@@ -457,19 +459,20 @@ const styles = StyleSheet.create({
   heroPillText: {
     color: '#fff',
     fontSize: 11,
-    fontWeight: '900',
+    fontFamily: fonts.body.extrabold,
     letterSpacing: 1,
   },
   heroTitle: {
     color: '#fff',
     fontSize: 22,
-    fontWeight: '900',
+    fontFamily: fonts.heading.black,
     letterSpacing: -0.3,
-    lineHeight: 26,
+    lineHeight: 28,
   },
   heroSub: {
     color: 'rgba(255,255,255,0.75)',
     fontSize: 12,
+    fontFamily: fonts.body.regular,
     marginTop: 4,
     marginBottom: 12,
   },
@@ -485,7 +488,7 @@ const styles = StyleSheet.create({
   },
   heroBtnText: {
     color: colors.primary.main,
-    fontWeight: '800',
+    fontFamily: fonts.body.extrabold,
     fontSize: 12,
   },
   dots: {
@@ -525,12 +528,12 @@ const styles = StyleSheet.create({
   },
   chipText: {
     color: colors.text.secondary,
-    fontWeight: '600',
+    fontFamily: fonts.body.semibold,
     fontSize: 13,
   },
   chipTextActive: {
     color: '#fff',
-    fontWeight: '800',
+    fontFamily: fonts.body.extrabold,
   },
   section: {
     marginTop: spacing.lg,
@@ -552,14 +555,14 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: fontSize.lg,
-    fontWeight: '800',
+    fontFamily: fonts.heading.bold,
     color: colors.text.primary,
     letterSpacing: -0.2,
   },
   viewAll: {
     fontSize: 13,
     color: colors.accent.orange,
-    fontWeight: '800',
+    fontFamily: fonts.body.extrabold,
   },
   rowList: {
     paddingLeft: spacing.md,
@@ -600,14 +603,14 @@ const styles = StyleSheet.create({
   rowBadgeText: {
     color: '#fff',
     fontSize: 11,
-    fontWeight: '900',
+    fontFamily: fonts.body.extrabold,
   },
   rowCardBody: {
     padding: spacing.sm,
   },
   rowCardName: {
     fontSize: 13,
-    fontWeight: '700',
+    fontFamily: fonts.heading.bold,
     color: colors.text.primary,
     marginBottom: 6,
   },
@@ -617,12 +620,13 @@ const styles = StyleSheet.create({
   },
   rowCardPrice: {
     fontSize: 15,
-    fontWeight: '900',
+    fontFamily: fonts.heading.extrabold,
     color: colors.primary.main,
     flex: 1,
   },
   rowCardStrike: {
     fontSize: 11,
+    fontFamily: fonts.body.regular,
     color: colors.text.disabled,
     textDecorationLine: 'line-through',
     marginRight: 6,
@@ -643,6 +647,7 @@ const styles = StyleSheet.create({
   },
   emptySearchText: {
     fontSize: fontSize.sm,
+    fontFamily: fonts.body.regular,
     color: colors.text.muted,
     textAlign: 'center',
   },
@@ -667,13 +672,14 @@ const styles = StyleSheet.create({
   brandBannerTitle: {
     color: '#fff',
     fontSize: 18,
-    fontWeight: '800',
+    fontFamily: fonts.heading.extrabold,
     letterSpacing: 0.2,
     textAlign: 'center',
   },
   brandBannerSub: {
     color: 'rgba(255,255,255,0.72)',
     fontSize: 12,
+    fontFamily: fonts.body.regular,
     marginTop: 6,
     textAlign: 'center',
   },
@@ -697,13 +703,13 @@ const styles = StyleSheet.create({
   achievementNum: {
     color: '#fff',
     fontSize: 24,
-    fontWeight: '900',
+    fontFamily: fonts.heading.black,
     letterSpacing: -0.5,
   },
   achievementLabel: {
     color: 'rgba(255,255,255,0.72)',
     fontSize: 11,
-    fontWeight: '500',
+    fontFamily: fonts.body.medium,
     marginTop: 2,
     textTransform: 'uppercase',
     letterSpacing: 0.8,

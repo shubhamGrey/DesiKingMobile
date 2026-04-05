@@ -4,7 +4,7 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import Header from '../components/common/Header';
 import Loading from '../components/common/Loading';
-import { colors, spacing, fontSize, borderRadius, shadows } from '../config/theme';
+import { colors, spacing, fontSize, borderRadius, shadows, fonts } from '../config/theme';
 import apiService from '../services/api';
 
 const { width } = Dimensions.get('window');
@@ -157,32 +157,32 @@ const styles = StyleSheet.create({
   card: { backgroundColor: '#fff', padding: spacing.md, borderRadius: borderRadius.md, marginBottom: spacing.md, ...shadows.sm, borderWidth: 1, borderColor: colors.border },
   statusHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.sm },
   orderIdLabel: { fontSize: 10, color: colors.text.muted, textTransform: 'uppercase', letterSpacing: 1 },
-  orderId: { fontSize: fontSize.md, fontWeight: 'bold', color: colors.text.primary, marginTop: 2 },
+  orderId: { fontSize: fontSize.md, fontFamily: fonts.heading.bold, color: colors.text.primary, marginTop: 2 },
   statusBadge: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20 },
-  statusText: { fontSize: 10, fontWeight: '800', textTransform: 'uppercase' },
+  statusText: { fontSize: 10, fontFamily: fonts.body.extrabold, textTransform: 'uppercase' },
   divider: { height: 1, backgroundColor: colors.divider, marginVertical: spacing.sm },
   dateRow: { flexDirection: 'row', alignItems: 'center' },
   dateText: { fontSize: 12, color: colors.text.secondary, marginLeft: 6 },
   trackingRow: { flexDirection: 'row', alignItems: 'center', marginTop: 8 },
-  trackingText: { fontSize: 12, color: colors.primary.main, fontWeight: '600', marginLeft: 6 },
+  trackingText: { fontSize: 12, color: colors.primary.main, fontFamily: fonts.body.semibold, marginLeft: 6 },
   section: { backgroundColor: '#fff', padding: spacing.md, borderRadius: borderRadius.md, marginBottom: spacing.md, ...shadows.sm, borderWidth: 1, borderColor: colors.border },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: spacing.md },
-  sectionTitle: { fontSize: 14, fontWeight: 'bold', color: colors.text.primary, marginLeft: 8 },
-  addressName: { fontSize: 14, fontWeight: '700', color: colors.text.primary, marginBottom: 4 },
+  sectionTitle: { fontSize: 14, fontFamily: fonts.heading.bold, color: colors.text.primary, marginLeft: 8 },
+  addressName: { fontSize: 14, fontFamily: fonts.body.bold, color: colors.text.primary, marginBottom: 4 },
   addressText: { fontSize: 13, color: colors.text.secondary, lineHeight: 18 },
   phoneRow: { flexDirection: 'row', alignItems: 'center', marginTop: 8 },
-  phoneText: { fontSize: 12, color: colors.text.primary, fontWeight: '600', marginLeft: 4 },
+  phoneText: { fontSize: 12, color: colors.text.primary, fontFamily: fonts.body.semibold, marginLeft: 4 },
   itemRow: { flexDirection: 'row', alignItems: 'center', marginBottom: spacing.md },
   itemImage: { width: 48, height: 48, borderRadius: 8, backgroundColor: colors.background.muted, marginRight: 12 },
   itemInfo: { flex: 1 },
-  itemName: { fontSize: 13, fontWeight: '600', color: colors.text.primary },
+  itemName: { fontSize: 13, fontFamily: fonts.body.semibold, color: colors.text.primary },
   itemMeta: { fontSize: 11, color: colors.text.secondary, marginTop: 2 },
-  itemTotal: { fontSize: 14, fontWeight: 'bold', color: colors.text.primary },
+  itemTotal: { fontSize: 14, fontFamily: fonts.heading.bold, color: colors.text.primary },
   summaryRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: spacing.sm },
   summaryLabel: { fontSize: 13, color: colors.text.secondary },
-  summaryValue: { fontSize: 13, color: colors.text.primary, fontWeight: '600' },
-  totalLabel: { fontSize: 15, fontWeight: '800', color: colors.text.primary },
-  totalValue: { fontSize: 18, fontWeight: '900', color: colors.primary.main },
+  summaryValue: { fontSize: 13, color: colors.text.primary, fontFamily: fonts.body.semibold },
+  totalLabel: { fontSize: 15, fontFamily: fonts.body.extrabold, color: colors.text.primary },
+  totalValue: { fontSize: 18, fontFamily: fonts.heading.black, color: colors.primary.main },
   paymentMethod: { fontSize: 10, color: colors.text.muted, marginTop: spacing.sm, textAlign: 'right', fontStyle: 'italic' },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center' }
 });

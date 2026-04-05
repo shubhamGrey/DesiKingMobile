@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { colors, spacing, fontSize, borderRadius, shadows } from '../../config/theme';
+import { colors, spacing, fontSize, borderRadius, shadows, fonts } from '../../config/theme';
 
 const ITEM_SIZE = 76;
 
@@ -47,12 +47,12 @@ const styles = StyleSheet.create({
   title: {
     color: colors.text.secondary,
     fontSize: 11,
-    fontWeight: '600',
+    fontFamily: fonts.body.semibold,
     textAlign: 'center',
   },
   titleActive: {
     color: colors.primary.main,
-    fontWeight: '800',
+    fontFamily: fonts.body.extrabold,
   },
 });
 

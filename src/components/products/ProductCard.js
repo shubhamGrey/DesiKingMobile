@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, ImageBackground, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, spacing, fontSize, borderRadius } from '../../config/theme';
+import { colors, spacing, fontSize, borderRadius, fonts } from '../../config/theme';
 import { useCart } from '../../context/CartContext';
 
 const { width } = Dimensions.get('window');
@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
   discountText: {
     color: '#fff',
     fontSize: 11,
-    fontWeight: '800',
+    fontFamily: fonts.body.extrabold,
     letterSpacing: 0.4,
   },
   featuredBadge: {
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
   featuredText: {
     color: '#fff',
     fontSize: 11,
-    fontWeight: '800',
+    fontFamily: fonts.body.extrabold,
     letterSpacing: 0.3,
   },
   cartBtn: {
@@ -207,6 +207,7 @@ const styles = StyleSheet.create({
   },
   category: {
     fontSize: 11,
+    fontFamily: fonts.body.medium,
     color: colors.text.muted,
     textTransform: 'uppercase',
     letterSpacing: 0.8,
@@ -214,9 +215,9 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: fontSize.sm,
-    fontWeight: '700',
+    fontFamily: fonts.heading.bold,
     color: colors.text.primary,
-    lineHeight: 18,
+    lineHeight: 20,
     marginBottom: 4,
   },
   ratingRow: {
@@ -226,11 +227,12 @@ const styles = StyleSheet.create({
   },
   ratingText: {
     fontSize: 11,
-    fontWeight: '700',
+    fontFamily: fonts.body.bold,
     color: colors.text.primary,
   },
   ratingCount: {
     fontSize: 11,
+    fontFamily: fonts.body.regular,
     color: colors.text.muted,
   },
   priceRow: {
@@ -240,11 +242,12 @@ const styles = StyleSheet.create({
   },
   price: {
     fontSize: fontSize.md,
-    fontWeight: '800',
+    fontFamily: fonts.heading.extrabold,
     color: '#1B4D3E',
   },
   strikePrice: {
     fontSize: 11,
+    fontFamily: fonts.body.regular,
     color: colors.text.disabled,
     textDecorationLine: 'line-through',
   },

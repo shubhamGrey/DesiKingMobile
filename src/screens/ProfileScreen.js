@@ -13,7 +13,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import Button from '../components/common/Button';
-import { colors, spacing, fontSize, borderRadius, shadows } from '../config/theme';
+import { colors, spacing, fontSize, borderRadius, shadows, fonts } from '../config/theme';
 import { useAuth } from '../context/AuthContext';
 
 const MENU_GROUPS = (navigation) => [
@@ -178,12 +178,13 @@ const styles = StyleSheet.create({
   },
   heroGreet: {
     fontSize: fontSize.xxl,
-    fontWeight: '900',
+    fontFamily: fonts.heading.black,
     color: '#fff',
     letterSpacing: -0.5,
   },
   heroSub: {
     fontSize: fontSize.sm,
+    fontFamily: fonts.body.regular,
     color: 'rgba(255,255,255,0.7)',
     marginTop: 6,
   },
@@ -209,12 +210,13 @@ const styles = StyleSheet.create({
   },
   guestTitle: {
     fontSize: fontSize.xl,
-    fontWeight: '800',
+    fontFamily: fonts.heading.extrabold,
     color: colors.text.primary,
     marginBottom: 8,
   },
   guestSub: {
     fontSize: fontSize.sm,
+    fontFamily: fonts.body.regular,
     color: colors.text.muted,
     textAlign: 'center',
     lineHeight: 20,
@@ -237,7 +239,7 @@ const styles = StyleSheet.create({
   },
   avatarInitials: {
     fontSize: 30,
-    fontWeight: '900',
+    fontFamily: fonts.heading.black,
     color: '#fff',
     letterSpacing: 1,
   },
@@ -256,12 +258,13 @@ const styles = StyleSheet.create({
   },
   heroName: {
     fontSize: fontSize.xl,
-    fontWeight: '900',
+    fontFamily: fonts.heading.black,
     color: '#fff',
     letterSpacing: -0.3,
   },
   heroEmail: {
     fontSize: fontSize.sm,
+    fontFamily: fonts.body.regular,
     color: 'rgba(255,255,255,0.65)',
     marginTop: 3,
   },
@@ -274,7 +277,7 @@ const styles = StyleSheet.create({
   },
   groupTitle: {
     fontSize: 11,
-    fontWeight: '800',
+    fontFamily: fonts.body.extrabold,
     color: colors.text.muted,
     textTransform: 'uppercase',
     letterSpacing: 1.2,
@@ -312,11 +315,12 @@ const styles = StyleSheet.create({
   },
   menuLabel: {
     fontSize: fontSize.md,
-    fontWeight: '700',
+    fontFamily: fonts.body.bold,
     color: colors.text.primary,
   },
   menuSublabel: {
     fontSize: 11,
+    fontFamily: fonts.body.regular,
     color: colors.text.muted,
     marginTop: 2,
   },
@@ -329,13 +333,14 @@ const styles = StyleSheet.create({
   },
   logoutText: {
     color: colors.error.main,
-    fontWeight: '700',
+    fontFamily: fonts.body.bold,
     fontSize: fontSize.md,
     marginLeft: spacing.sm,
   },
   version: {
     textAlign: 'center',
     fontSize: 11,
+    fontFamily: fonts.body.regular,
     color: colors.text.disabled,
     marginTop: spacing.sm,
   },

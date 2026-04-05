@@ -14,7 +14,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Header from '../components/common/Header';
 import CartItem from '../components/cart/CartItem';
 import Button from '../components/common/Button';
-import { colors, spacing, fontSize, borderRadius, shadows } from '../config/theme';
+import { colors, spacing, fontSize, borderRadius, shadows, fonts } from '../config/theme';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import apiService from '../services/api';
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
   },
   countLabel: {
     fontSize: 11,
-    fontWeight: '800',
+    fontFamily: fonts.body.extrabold,
     color: colors.text.muted,
     textTransform: 'uppercase',
     letterSpacing: 1.2,
@@ -217,12 +217,13 @@ const styles = StyleSheet.create({
   },
   emptyTitle: {
     fontSize: fontSize.xl,
-    fontWeight: '800',
+    fontFamily: fonts.heading.extrabold,
     color: colors.text.primary,
     marginBottom: spacing.xs,
   },
   emptySub: {
     fontSize: fontSize.sm,
+    fontFamily: fonts.body.regular,
     color: colors.text.muted,
     textAlign: 'center',
     lineHeight: 20,
@@ -252,12 +253,12 @@ const styles = StyleSheet.create({
   },
   summaryLabel: {
     fontSize: 13,
+    fontFamily: fonts.body.medium,
     color: colors.text.muted,
-    fontWeight: '500',
   },
   summaryValue: {
     fontSize: 13,
-    fontWeight: '700',
+    fontFamily: fonts.body.bold,
     color: colors.text.primary,
   },
   divider: {
@@ -272,14 +273,14 @@ const styles = StyleSheet.create({
   },
   totalCaption: {
     fontSize: 11,
+    fontFamily: fonts.body.semibold,
     color: colors.text.muted,
-    fontWeight: '600',
     textTransform: 'uppercase',
     letterSpacing: 0.8,
   },
   totalAmount: {
     fontSize: 26,
-    fontWeight: '900',
+    fontFamily: fonts.heading.black,
     color: colors.primary.main,
     letterSpacing: -0.5,
   },

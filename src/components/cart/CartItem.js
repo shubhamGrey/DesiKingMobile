@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, spacing, fontSize, borderRadius, shadows } from '../../config/theme';
+import { colors, spacing, fontSize, borderRadius, shadows, fonts } from '../../config/theme';
 
 const CartItem = ({ item, onRemove, onUpdateQuantity }) => {
   const hasDiscount = item.originalPrice && item.originalPrice > item.price;
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
   name: {
     flex: 1,
     fontSize: fontSize.sm,
-    fontWeight: '700',
+    fontFamily: fonts.heading.bold,
     color: colors.text.primary,
     lineHeight: 19,
     marginRight: spacing.sm,
@@ -110,11 +110,12 @@ const styles = StyleSheet.create({
   },
   price: {
     fontSize: 13,
-    fontWeight: '700',
+    fontFamily: fonts.heading.bold,
     color: colors.primary.main,
   },
   originalPrice: {
     fontSize: 11,
+    fontFamily: fonts.body.regular,
     color: colors.text.disabled,
     textDecorationLine: 'line-through',
   },
@@ -147,7 +148,7 @@ const styles = StyleSheet.create({
   },
   qty: {
     fontSize: 13,
-    fontWeight: '800',
+    fontFamily: fonts.body.extrabold,
     color: colors.text.primary,
     paddingHorizontal: 10,
     minWidth: 28,
@@ -155,7 +156,7 @@ const styles = StyleSheet.create({
   },
   total: {
     fontSize: 15,
-    fontWeight: '900',
+    fontFamily: fonts.heading.black,
     color: colors.primary.main,
   },
 });

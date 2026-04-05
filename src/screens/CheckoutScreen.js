@@ -15,7 +15,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Header from '../components/common/Header';
 import Button from '../components/common/Button';
 import Loading from '../components/common/Loading';
-import { colors, spacing, fontSize, borderRadius, shadows } from '../config/theme';
+import { colors, spacing, fontSize, borderRadius, shadows, fonts } from '../config/theme';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import apiService from '../services/api';
@@ -256,8 +256,8 @@ const styles = StyleSheet.create({
   scrollView: { flex: 1 },
   scrollContent: { padding: spacing.md, paddingBottom: 120 },
   sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.md },
-  sectionTitle: { fontSize: 18, fontWeight: '800', color: colors.text.primary, letterSpacing: -0.5 },
-  editLink: { color: colors.secondary.main, fontWeight: '700', fontSize: 14 },
+  sectionTitle: { fontSize: 18, fontFamily: fonts.heading.extrabold, color: colors.text.primary, letterSpacing: -0.5 },
+  editLink: { color: colors.secondary.main, fontFamily: fonts.body.bold, fontSize: 14 },
   addressCard: {
     flexDirection: 'row',
     backgroundColor: '#fff',
@@ -273,22 +273,22 @@ const styles = StyleSheet.create({
   radio: { width: 20, height: 20, borderRadius: 10, borderWidth: 2, borderColor: colors.text.disabled, marginRight: 15, alignItems: 'center', justifyContent: 'center' },
   radioActive: { borderColor: colors.primary.main },
   radioInner: { width: 10, height: 10, borderRadius: 5, backgroundColor: colors.primary.main },
-  addressType: { fontSize: 10, fontWeight: 'bold', color: colors.primary.main, textTransform: 'uppercase', marginBottom: 4 },
+  addressType: { fontSize: 10, fontFamily: fonts.body.bold, color: colors.primary.main, textTransform: 'uppercase', marginBottom: 4 },
   addressText: { fontSize: 14, color: colors.text.secondary, lineHeight: 20 },
   previewContainer: { backgroundColor: '#fff', borderRadius: borderRadius.lg, padding: spacing.md, ...shadows.light },
   itemRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: spacing.sm, borderBottomWidth: 1, borderBottomColor: '#f9f9f9' },
   itemThumb: { width: 45, height: 45, borderRadius: 8, marginRight: 12, backgroundColor: colors.background.muted },
-  itemName: { fontSize: 13, fontWeight: '600', color: colors.text.primary, flex: 1 },
+  itemName: { fontSize: 13, fontFamily: fonts.body.semibold, color: colors.text.primary, flex: 1 },
   itemMeta: { fontSize: 11, color: colors.text.muted, marginTop: 2 },
-  itemPrice: { fontSize: 14, fontWeight: '700', color: colors.text.primary },
+  itemPrice: { fontSize: 14, fontFamily: fonts.heading.bold, color: colors.text.primary },
   strikedPrice: { fontSize: 10, color: colors.text.muted, textDecorationLine: 'line-through' },
   breakdownCard: { marginTop: spacing.xl, padding: spacing.lg, backgroundColor: '#fff', borderRadius: borderRadius.lg, ...shadows.medium },
   summaryRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12 },
   summaryLabel: { color: colors.text.secondary, fontSize: 14 },
-  summaryValue: { fontWeight: '600', color: colors.text.primary, fontSize: 14 },
+  summaryValue: { fontFamily: fonts.body.semibold, color: colors.text.primary, fontSize: 14 },
   divider: { height: 1, backgroundColor: '#f0f0f0', marginVertical: spacing.sm },
-  grandTotalLabel: { fontSize: 16, fontWeight: '800', color: colors.text.primary },
-  grandTotalValue: { fontSize: 20, fontWeight: '900', color: colors.primary.main },
+  grandTotalLabel: { fontSize: 16, fontFamily: fonts.heading.extrabold, color: colors.text.primary },
+  grandTotalValue: { fontSize: 20, fontFamily: fonts.heading.black, color: colors.primary.main },
   secureNote: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 24, opacity: 0.6 },
   secureText: { fontSize: 11, color: colors.text.muted, marginLeft: 6 },
   footer: { position: 'absolute', bottom: 0, left: 0, right: 0, padding: spacing.lg, backgroundColor: '#fff', borderTopLeftRadius: 24, borderTopRightRadius: 24, ...shadows.dark },

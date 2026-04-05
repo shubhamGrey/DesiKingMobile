@@ -17,7 +17,7 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import Header from '../components/common/Header';
 import Button from '../components/common/Button';
-import { colors, spacing, fontSize, borderRadius, shadows } from '../config/theme';
+import { colors, spacing, fontSize, borderRadius, shadows, fonts } from '../config/theme';
 import apiService from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
@@ -342,7 +342,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background.default },
   scrollContent: { padding: spacing.md },
   formCard: { backgroundColor: '#fff', borderRadius: borderRadius.lg, padding: spacing.lg, ...shadows.medium, borderWidth: 1, borderColor: '#f0f0f0' },
-  label: { fontSize: 12, fontWeight: '700', color: colors.text.secondary, marginBottom: 8, marginTop: 15, textTransform: 'uppercase', letterSpacing: 0.5 },
+  label: { fontSize: 12, fontFamily: fonts.body.bold, color: colors.text.secondary, marginBottom: 8, marginTop: 15, textTransform: 'uppercase', letterSpacing: 0.5 },
   input: { backgroundColor: colors.accent.lightGray, borderRadius: borderRadius.md, padding: 12, fontSize: 14, color: colors.text.primary, borderWidth: 1, borderColor: '#eee' },
   selector: { backgroundColor: colors.accent.lightGray, borderRadius: borderRadius.md, padding: 12, borderWidth: 1, borderColor: '#eee', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   selectorText: { fontSize: 14, color: colors.text.primary },
@@ -351,7 +351,7 @@ const styles = StyleSheet.create({
   footer: { padding: spacing.lg, backgroundColor: '#fff', borderTopLeftRadius: 24, borderTopRightRadius: 24, ...shadows.dark, paddingBottom: Platform.OS === 'ios' ? 40 : spacing.lg },
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
   modalContent: { backgroundColor: '#fff', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: spacing.lg, maxHeight: '80%' },
-  modalTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 20, textAlign: 'center', color: colors.text.primary },
+  modalTitle: { fontSize: 18, fontFamily: fonts.heading.bold, marginBottom: 20, textAlign: 'center', color: colors.text.primary },
   modalItem: { paddingVertical: 15, borderBottomWidth: 1, borderBottomColor: '#f0f0f0' },
   modalItemText: { fontSize: 16, color: colors.text.primary }
 });

@@ -1,7 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, ActivityIndicator, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, spacing, fontSize, borderRadius, shadows } from '../../config/theme';
+import { colors, spacing, fontSize, borderRadius, shadows, fonts } from '../../config/theme';
 
 const Button = ({
   title,
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
 
   // --- Labels ---
   label: {
-    fontWeight: '700',
+    fontFamily: fonts.body.bold,
     letterSpacing: 0.3,
   },
   primaryLabel: { color: '#fff' },

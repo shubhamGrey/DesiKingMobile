@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView, Image, Dimensions } from 'react-nat
 import { Ionicons } from '@expo/vector-icons';
 import { WebView } from 'react-native-webview';
 import Header from '../components/common/Header';
-import { colors, spacing, fontSize, borderRadius } from '../config/theme';
+import { colors, spacing, fontSize, borderRadius, fonts } from '../config/theme';
 
 const { width } = Dimensions.get('window');
 const VIDEO_HEIGHT = (width * 9) / 16; // 16:9 Aspect Ratio
@@ -65,7 +65,7 @@ const AboutScreen = () => {
           <Text style={styles.paragraph}>
             We aim to bridge traditional Indian flavor with modern food standards, offering home cooks, chefs, retailers, and international buyers a product that's not just flavorful—but consistently reliable.
           </Text>
-          <Text style={[styles.paragraph, { fontWeight: 'bold', color: colors.primary.main }]}>
+          <Text style={[styles.paragraph, { fontFamily: fonts.heading.bold, color: colors.primary.main }]}>
             At AGRO NEXIS, we don't just sell spices. We deliver flavor, heritage, and health in every pinch.
           </Text>
         </View>
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
   },
   bannerTitle: {
     fontSize: 28,
-    fontWeight: 'bold',
+    fontFamily: fonts.heading.bold,
     color: '#fff',
     textAlign: 'center',
     marginVertical: 4,
@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
   },
   sectionHeading: {
     fontSize: 24,
-    fontWeight: '700',
+    fontFamily: fonts.heading.bold,
     color: colors.primary.main,
     textAlign: 'center',
     marginBottom: spacing.lg,
@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
   },
   subHeading: {
     fontSize: 20,
-    fontWeight: '600',
+    fontFamily: fonts.body.semibold,
     color: colors.primary.main,
     marginLeft: spacing.xs,
   },
@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontFamily: fonts.heading.bold,
     color: colors.primary.main,
     marginTop: spacing.sm,
     marginBottom: spacing.md,
@@ -302,7 +302,7 @@ const styles = StyleSheet.create({
   },
   specialCardTitle: {
     fontSize: 12,
-    fontWeight: '600',
+    fontFamily: fonts.body.semibold,
     color: colors.text.primary,
     textAlign: 'center',
     marginTop: 8,
@@ -327,7 +327,7 @@ const styles = StyleSheet.create({
   },
   founderName: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: fonts.heading.bold,
     color: colors.text.primary,
     marginBottom: 4,
   },
@@ -348,7 +348,7 @@ const styles = StyleSheet.create({
   },
   teamName: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontFamily: fonts.heading.bold,
     color: colors.text.primary,
   },
   teamRole: {
@@ -364,7 +364,7 @@ const styles = StyleSheet.create({
   footerBrandName: {
     color: '#fff',
     fontSize: 12,
-    fontWeight: 'bold',
+    fontFamily: fonts.body.bold,
     textAlign: 'center',
   },
   footerBrandSub: {
