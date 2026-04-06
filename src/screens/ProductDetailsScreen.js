@@ -9,6 +9,7 @@ import {
   Dimensions,
   Share,
   Alert,
+  StatusBar,
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
@@ -115,6 +116,7 @@ const ProductDetailsScreen = () => {
 
   return (
     <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#0a1628" />
       <Header title="" showBack rightIcon="share-outline" onRightPress={handleShare} />
 
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
@@ -262,47 +264,73 @@ const ProductDetailsScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
+  container: {
+    flex: 1,
+    backgroundColor: colors.background.default,
+  },
   scrollView: { flex: 1 },
-  imageSection: { backgroundColor: colors.background.muted, paddingBottom: spacing.md },
-  mainImageContainer: { width: width, height: width * 0.85, backgroundColor: '#fff', ...shadows.sm },
+  imageSection: { backgroundColor: colors.background.default, paddingBottom: spacing.md },
+  mainImageContainer: { width: width, height: width * 0.85, backgroundColor: colors.glass.surface, borderWidth: 1, borderColor: colors.glass.border, ...shadows.sm },
   mainImage: { width: '100%', height: '100%' },
   discountBadge: { position: 'absolute', top: spacing.md, left: spacing.md, backgroundColor: colors.secondary.main, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 4 },
   discountText: { color: '#fff', fontSize: 12, fontFamily: fonts.body.extrabold },
   thumbnailsList: { paddingHorizontal: spacing.md, marginTop: spacing.md },
-  thumbnail: { width: 60, height: 60, borderRadius: 8, backgroundColor: '#fff', marginRight: 10, padding: 4, borderWidth: 1, borderColor: '#eee' },
+  thumbnail: { width: 60, height: 60, borderRadius: 8, backgroundColor: colors.glass.surface, marginRight: 10, padding: 4, borderWidth: 1, borderColor: colors.glass.border },
   thumbnailActive: { borderColor: colors.primary.main, borderWidth: 2 },
   thumbnailImage: { width: '100%', height: '100%' },
-  sectionSpacer: { height: 20 }, // New spacer style
-  content: { padding: spacing.lg, backgroundColor: '#fff', borderTopLeftRadius: 30, borderTopRightRadius: 30, marginTop: -20 },
+  sectionSpacer: { height: 20 },
+  content: { padding: spacing.lg, backgroundColor: colors.glass.surface, borderWidth: 1, borderColor: colors.glass.border, borderTopLeftRadius: 30, borderTopRightRadius: 30, marginTop: -20 },
   categoryLabel: { fontSize: 12, color: colors.text.muted, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 },
   titleRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.sm },
   title: { fontSize: fontSize.xxl, fontFamily: fonts.heading.extrabold, color: colors.text.primary, flex: 1, marginRight: 10 },
-  badge: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#e8f5e9', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 20 },
+  badge: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.glass.surface, borderWidth: 1, borderColor: colors.glass.border, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 20 },
   badgeText: { fontSize: 10, color: colors.success, fontFamily: fonts.body.bold, marginLeft: 4 },
   priceRow: { flexDirection: 'row', alignItems: 'center', marginBottom: spacing.lg },
-  price: { fontSize: 28, fontFamily: fonts.heading.bold, color: colors.primary.main },
+  price: {
+    fontSize: 28,
+    fontFamily: fonts.heading.black,
+    color: colors.secondary.light,
+  },
   originalPrice: { fontSize: 18, color: colors.text.muted, textDecorationLine: 'line-through', marginLeft: spacing.sm },
   section: { marginBottom: spacing.xl },
-  sectionTitle: { fontSize: 16, fontFamily: fonts.body.bold, color: colors.text.primary, marginBottom: spacing.md },
+  sectionTitle: {
+    fontSize: 16,
+    fontFamily: fonts.body.bold,
+    color: '#fff',
+    marginBottom: spacing.md,
+  },
   skuRow: { flexDirection: 'row', flexWrap: 'wrap' },
-  skuCard: { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 12, borderWidth: 1, borderColor: '#eee', marginRight: 10, marginBottom: 10, backgroundColor: '#f9f9f9' },
+  skuCard: { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 12, borderWidth: 1, borderColor: colors.glass.border, marginRight: 10, marginBottom: 10, backgroundColor: colors.glass.surface },
   skuCardActive: { backgroundColor: colors.primary.main, borderColor: colors.primary.main, ...shadows.sm },
   skuText: { fontSize: 14, color: colors.text.primary, fontFamily: fonts.body.semibold },
   skuTextActive: { color: '#fff' },
-  qtyContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#f5f5f5', borderRadius: 12, alignSelf: 'flex-start', padding: 4 },
+  qtyContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.glass.surface, borderRadius: 12, alignSelf: 'flex-start', padding: 4 },
   qtyBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
-  qtyText: { fontSize: 18, fontFamily: fonts.body.bold, paddingHorizontal: 20 },
-  trustGrid: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: spacing.lg, borderTopWidth: 1, borderBottomWidth: 1, borderColor: '#f0f0f0', marginBottom: spacing.xl },
+  qtyText: { fontSize: 18, fontFamily: fonts.body.bold, paddingHorizontal: 20, color: colors.text.primary },
+  trustGrid: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: spacing.lg, borderTopWidth: 1, borderBottomWidth: 1, borderColor: colors.glass.border, marginBottom: spacing.xl },
   trustItem: { alignItems: 'center' },
   trustLabel: { fontSize: 10, color: colors.text.secondary, marginTop: 4, fontFamily: fonts.body.semibold },
-  description: { fontSize: 15, color: colors.text.secondary, lineHeight: 24 },
+  description: {
+    fontSize: 15,
+    fontFamily: fonts.body.regular,
+    color: 'rgba(255,255,255,0.75)',
+    lineHeight: 24,
+  },
   featureItem: { flexDirection: 'row', alignItems: 'center', marginBottom: 10 },
-  featureText: { fontSize: 14, color: colors.text.primary, marginLeft: 10 },
-  footer: { flexDirection: 'row', alignItems: 'center', padding: spacing.lg, backgroundColor: '#fff', borderTopWidth: 1, borderTopColor: '#f0f0f0', ...shadows.lg },
+  featureText: {
+    fontSize: 14,
+    fontFamily: fonts.body.regular,
+    color: 'rgba(255,255,255,0.8)',
+    marginLeft: 10,
+  },
+  footer: { flexDirection: 'row', alignItems: 'center', padding: spacing.lg, backgroundColor: '#0d1e3d', borderTopWidth: 1, borderTopColor: 'rgba(188,129,65,0.25)', ...shadows.lg },
   footerPrice: { flex: 1 },
   footerLabel: { fontSize: 12, color: colors.text.muted },
-  footerAmount: { fontSize: 20, fontFamily: fonts.heading.bold, color: colors.primary.main },
+  footerAmount: {
+    fontSize: 20,
+    fontFamily: fonts.heading.extrabold,
+    color: colors.secondary.light,
+  },
   actionBtn: { flex: 1.5, height: 54 },
   errorContainer: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xl },
   errorText: { fontSize: 18, color: colors.text.secondary, marginBottom: spacing.md },
