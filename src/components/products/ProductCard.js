@@ -39,7 +39,7 @@ const ProductCard = ({ product, onPress }) => {
     >
       {/* Top accent bar */}
       <LinearGradient
-        colors={['#1B4D3E', colors.accent.orange]}
+        colors={[colors.secondary.main, colors.secondary.light]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
         style={styles.accentBar}
@@ -87,12 +87,7 @@ const ProductCard = ({ product, onPress }) => {
       </View>
 
       {/* Info */}
-      <LinearGradient
-        colors={['#faf5ed', '#f5efe5']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.info}
-      >
+      <View style={styles.info}>
         <Text style={styles.category} numberOfLines={1}>
           {product.categoryName || 'Spices'}
         </Text>
@@ -114,7 +109,7 @@ const ProductCard = ({ product, onPress }) => {
             <Text style={styles.strikePrice}>₹{price}</Text>
           )}
         </View>
-      </LinearGradient>
+      </View>
     </TouchableOpacity>
   );
 };
@@ -125,13 +120,14 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.lg,
     marginBottom: spacing.md,
     borderWidth: 1,
-    borderColor: 'rgba(31,79,64,0.10)',
+    borderColor: colors.glass.border,
     overflow: 'hidden',
-    shadowColor: '#1B4D3E',
+    backgroundColor: colors.glass.surface,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.10,
+    shadowOpacity: 0.3,
     shadowRadius: 12,
-    elevation: 4,
+    elevation: 6,
   },
   accentBar: {
     height: 3,
@@ -141,6 +137,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: CARD_WIDTH * 0.88,
     position: 'relative',
+    backgroundColor: 'rgba(255,255,255,0.04)',
   },
   imageBg: {
     width: '100%',
@@ -204,11 +201,12 @@ const styles = StyleSheet.create({
   info: {
     padding: spacing.sm,
     paddingTop: spacing.xs + 2,
+    backgroundColor: 'rgba(255,255,255,0.04)',
   },
   category: {
     fontSize: 11,
     fontFamily: fonts.body.medium,
-    color: colors.text.muted,
+    color: 'rgba(255,255,255,0.45)',
     textTransform: 'uppercase',
     letterSpacing: 0.8,
     marginBottom: 2,
@@ -216,7 +214,7 @@ const styles = StyleSheet.create({
   name: {
     fontSize: fontSize.sm,
     fontFamily: fonts.heading.bold,
-    color: colors.text.primary,
+    color: '#fff',
     lineHeight: 20,
     marginBottom: 4,
   },
@@ -228,12 +226,12 @@ const styles = StyleSheet.create({
   ratingText: {
     fontSize: 11,
     fontFamily: fonts.body.bold,
-    color: colors.text.primary,
+    color: 'rgba(255,255,255,0.8)',
   },
   ratingCount: {
     fontSize: 11,
     fontFamily: fonts.body.regular,
-    color: colors.text.muted,
+    color: 'rgba(255,255,255,0.4)',
   },
   priceRow: {
     flexDirection: 'row',
@@ -243,12 +241,12 @@ const styles = StyleSheet.create({
   price: {
     fontSize: fontSize.md,
     fontFamily: fonts.heading.extrabold,
-    color: '#1B4D3E',
+    color: colors.secondary.light,
   },
   strikePrice: {
     fontSize: 11,
     fontFamily: fonts.body.regular,
-    color: colors.text.disabled,
+    color: 'rgba(255,255,255,0.35)',
     textDecorationLine: 'line-through',
   },
 });
