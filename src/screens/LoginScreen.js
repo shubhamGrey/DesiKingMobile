@@ -100,7 +100,7 @@ const LoginScreen = () => {
 
   return (
     <View style={styles.root}>
-      <StatusBar barStyle="light-content" backgroundColor={colors.primary.main} />
+      <StatusBar barStyle="light-content" backgroundColor="#0a1628" />
 
       {/* Hero banner */}
       <ImageBackground
@@ -310,7 +310,7 @@ const HERO_HEIGHT = height * 0.32;
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.background.paper,
+    backgroundColor: colors.background.default,
   },
   heroBanner: {
     height: HERO_HEIGHT,
@@ -318,7 +318,7 @@ const styles = StyleSheet.create({
   },
   heroImageOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(27,77,62,0.88)',
+    backgroundColor: 'rgba(6,13,26,0.88)',
     justifyContent: 'flex-end',
     paddingBottom: spacing.xl,
     paddingHorizontal: spacing.lg,
@@ -394,9 +394,11 @@ const styles = StyleSheet.create({
   },
   card: {
     flex: 1,
-    backgroundColor: colors.background.paper,
+    backgroundColor: 'rgba(10,22,40,0.97)',
     borderTopLeftRadius: borderRadius.xxl,
     borderTopRightRadius: borderRadius.xxl,
+    borderTopWidth: 1,
+    borderTopColor: colors.glass.border,
   },
   cardContent: {
     padding: spacing.lg,
@@ -404,10 +406,12 @@ const styles = StyleSheet.create({
   },
   tabRow: {
     flexDirection: 'row',
-    backgroundColor: colors.accent.lightGray,
+    backgroundColor: colors.glass.surface,
     borderRadius: borderRadius.full,
     padding: 4,
     marginBottom: spacing.xl,
+    borderWidth: 1,
+    borderColor: colors.glass.border,
   },
   tab: {
     flex: 1,
@@ -416,28 +420,27 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   tabActive: {
-    backgroundColor: colors.background.paper,
-    ...shadows.sm,
+    backgroundColor: colors.secondary.main,
   },
   tabText: {
     fontSize: fontSize.sm,
     fontFamily: fonts.body.semibold,
-    color: colors.text.muted,
+    color: 'rgba(255,255,255,0.5)',
   },
   tabTextActive: {
-    color: colors.primary.main,
+    color: '#fff',
     fontFamily: fonts.body.extrabold,
   },
   formTitle: {
     fontSize: fontSize.xl,
     fontFamily: fonts.heading.extrabold,
-    color: colors.text.primary,
+    color: '#fff',
     marginBottom: 4,
   },
   formSub: {
     fontSize: fontSize.sm,
     fontFamily: fonts.body.regular,
-    color: colors.text.muted,
+    color: 'rgba(255,255,255,0.55)',
     marginBottom: spacing.lg,
   },
   nameRow: {
@@ -455,12 +458,12 @@ const styles = StyleSheet.create({
   toggleText: {
     fontSize: fontSize.sm,
     fontFamily: fonts.body.regular,
-    color: colors.text.muted,
+    color: 'rgba(255,255,255,0.55)',
   },
   toggleLink: {
     fontSize: fontSize.sm,
     fontFamily: fonts.body.extrabold,
-    color: colors.primary.main,
+    color: colors.secondary.light,
   },
 });
 
