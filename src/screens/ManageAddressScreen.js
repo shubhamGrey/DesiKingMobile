@@ -17,7 +17,7 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import Header from '../components/common/Header';
 import Button from '../components/common/Button';
-import { colors, spacing, fontSize, borderRadius, fonts } from '../config/theme';
+import { colors, spacing, fontSize, borderRadius, fonts, shadows } from '../config/theme';
 import apiService from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
@@ -177,7 +177,7 @@ const ManageAddressScreen = () => {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#0a1628" />
+      <StatusBar barStyle="light-content" backgroundColor={colors.background.default} />
       <Header title={isEditing ? 'Edit Location' : 'Add New Location'} showBack />
 
       <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
@@ -327,11 +327,12 @@ const styles = StyleSheet.create({
   scrollContent: { padding: spacing.md, paddingBottom: 120 },
 
   formCard: {
-    backgroundColor: colors.glass.surface,
+    backgroundColor: colors.background.paper,
     borderRadius: borderRadius.lg,
     padding: spacing.lg,
     borderWidth: 1,
-    borderColor: colors.glass.border,
+    borderColor: colors.card.border,
+    ...shadows.card,
   },
   label: {
     fontSize: 11,
@@ -343,22 +344,22 @@ const styles = StyleSheet.create({
     letterSpacing: 0.8,
   },
   input: {
-    backgroundColor: 'rgba(255,255,255,0.06)',
+    backgroundColor: colors.background.cream,
     borderRadius: borderRadius.md,
     padding: 13,
     fontSize: 14,
     color: colors.text.primary,
     borderWidth: 1,
-    borderColor: colors.glass.border,
+    borderColor: colors.card.border,
     fontFamily: fonts.body.regular,
   },
   textArea: { height: 80, textAlignVertical: 'top' },
   selector: {
-    backgroundColor: 'rgba(255,255,255,0.06)',
+    backgroundColor: colors.background.cream,
     borderRadius: borderRadius.md,
     padding: 13,
     borderWidth: 1,
-    borderColor: colors.glass.border,
+    borderColor: colors.card.border,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -374,7 +375,7 @@ const styles = StyleSheet.create({
     right: 0,
     padding: spacing.lg,
     paddingBottom: Platform.OS === 'ios' ? 36 : spacing.lg,
-    backgroundColor: '#0d1e3d',
+    backgroundColor: colors.background.paper,
     borderTopLeftRadius: borderRadius.xxl,
     borderTopRightRadius: borderRadius.xxl,
     borderTopWidth: 1,
@@ -383,13 +384,13 @@ const styles = StyleSheet.create({
 
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.7)', justifyContent: 'flex-end' },
   modalContent: {
-    backgroundColor: '#0d1e3d',
+    backgroundColor: colors.background.paper,
     borderTopLeftRadius: borderRadius.xxl,
     borderTopRightRadius: borderRadius.xxl,
     padding: spacing.lg,
     maxHeight: '80%',
     borderTopWidth: 1,
-    borderTopColor: 'rgba(188,129,65,0.25)',
+    borderTopColor: colors.card.border,
   },
   modalTitle: {
     fontSize: 18,

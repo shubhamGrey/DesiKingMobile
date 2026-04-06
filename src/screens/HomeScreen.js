@@ -18,7 +18,6 @@ import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import Header from '../components/common/Header';
-import OrbBackground, { ORB_CONFIGS } from '../components/common/OrbBackground';
 import { colors, spacing, fontSize, borderRadius, shadows, fonts } from '../config/theme';
 import apiService from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -41,7 +40,7 @@ const SkeletonBlock = ({ w, h, radius = 12, style }) => {
   const opacity = anim.interpolate({ inputRange: [0, 1], outputRange: [0.25, 0.55] });
   return (
     <Animated.View
-      style={[{ width: w, height: h, borderRadius: radius, backgroundColor: 'rgba(255,255,255,0.12)', opacity }, style]}
+      style={[{ width: w, height: h, borderRadius: radius, backgroundColor: 'rgba(0,0,0,0.07)', opacity }, style]}
     />
   );
 };
@@ -269,8 +268,7 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
-      <OrbBackground orbs={ORB_CONFIGS.home} />
-      <StatusBar barStyle="light-content" backgroundColor="#0a1628" />
+      <StatusBar barStyle="light-content" backgroundColor={colors.background.default} />
       <Header />
 
       <ScrollView
@@ -420,13 +418,13 @@ const styles = StyleSheet.create({
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.glass.surface,
+    backgroundColor: colors.background.paper,
     height: 48,
     borderRadius: borderRadius.full,
     paddingHorizontal: spacing.md,
     gap: 8,
     borderWidth: 1,
-    borderColor: colors.glass.border,
+    borderColor: colors.border,
   },
   searchInput: {
     flex: 1,
@@ -501,7 +499,7 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: 'rgba(255,255,255,0.2)',
+    backgroundColor: colors.border,
   },
   dotActive: {
     width: 18,
@@ -518,16 +516,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
     paddingVertical: 12,
     borderRadius: borderRadius.full,
-    backgroundColor: colors.glass.surface,
+    backgroundColor: colors.card.muted,
     borderWidth: 1,
-    borderColor: colors.glass.border,
+    borderColor: colors.card.border,
   },
   chipActive: {
     backgroundColor: colors.secondary.main,
     borderColor: colors.secondary.main,
   },
   chipText: {
-    color: 'rgba(255,255,255,0.65)',
+    color: colors.text.secondary,
     fontFamily: fonts.body.semibold,
     fontSize: 13,
   },
@@ -556,12 +554,12 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: fontSize.lg,
     fontFamily: fonts.heading.bold,
-    color: '#fff',
+    color: colors.text.primary,
     letterSpacing: -0.2,
   },
   viewAll: {
     fontSize: 13,
-    color: colors.secondary.light,
+    color: colors.secondary.main,
     fontFamily: fonts.body.extrabold,
   },
   rowList: {
@@ -574,9 +572,10 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.lg,
     marginRight: spacing.md,
     borderWidth: 1,
-    borderColor: colors.glass.border,
+    borderColor: colors.card.border,
     overflow: 'hidden',
-    backgroundColor: colors.glass.surface,
+    backgroundColor: colors.background.paper,
+    ...shadows.card,
   },
   rowCardImg: {
     height: 115,
@@ -604,12 +603,12 @@ const styles = StyleSheet.create({
 
   rowCardBody: {
     padding: spacing.sm,
-    backgroundColor: 'rgba(255,255,255,0.04)',
+    backgroundColor: colors.background.paper,
   },
   rowCardName: {
     fontSize: 13,
     fontFamily: fonts.heading.bold,
-    color: '#fff',
+    color: colors.text.primary,
     marginBottom: 6,
   },
   rowCardFooter: {
@@ -625,7 +624,7 @@ const styles = StyleSheet.create({
   rowCardStrike: {
     fontSize: 11,
     fontFamily: fonts.body.regular,
-    color: 'rgba(255,255,255,0.35)',
+    color: colors.text.disabled,
     textDecorationLine: 'line-through',
     marginRight: 6,
   },
@@ -646,7 +645,7 @@ const styles = StyleSheet.create({
   emptySearchText: {
     fontSize: fontSize.sm,
     fontFamily: fonts.body.regular,
-    color: 'rgba(255,255,255,0.55)',
+    color: colors.text.muted,
     textAlign: 'center',
   },
   rowAccentBar: {

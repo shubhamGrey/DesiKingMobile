@@ -14,7 +14,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Header from '../components/common/Header';
 import Loading from '../components/common/Loading';
 import Button from '../components/common/Button';
-import { colors, spacing, fontSize, borderRadius, fonts } from '../config/theme';
+import { colors, spacing, fontSize, borderRadius, fonts, shadows } from '../config/theme';
 import apiService from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
@@ -140,7 +140,7 @@ const OrderHistoryScreen = () => {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#0a1628" />
+      <StatusBar barStyle="light-content" backgroundColor={colors.background.default} />
       <Header title="My Orders" showBack />
       <FlatList
         data={orders}
@@ -176,12 +176,13 @@ const styles = StyleSheet.create({
   listContent: { padding: spacing.md, paddingBottom: spacing.xl },
 
   orderCard: {
-    backgroundColor: colors.glass.surface,
+    backgroundColor: colors.background.paper,
     borderRadius: borderRadius.lg,
     padding: spacing.md,
     marginBottom: spacing.md,
     borderWidth: 1,
-    borderColor: colors.glass.border,
+    borderColor: colors.card.border,
+    ...shadows.card,
   },
   orderHeader: {
     flexDirection: 'row',
@@ -244,12 +245,13 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: colors.glass.surface,
+    backgroundColor: colors.background.paper,
     borderWidth: 1,
-    borderColor: colors.glass.border,
+    borderColor: colors.card.border,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: spacing.md,
+    ...shadows.card,
   },
   emptyTitle: { fontSize: fontSize.lg, fontFamily: fonts.body.bold, color: colors.text.primary },
   emptySubtitle: {

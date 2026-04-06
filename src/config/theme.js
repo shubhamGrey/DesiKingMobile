@@ -21,45 +21,55 @@ export const colors = {
     orange: '#E85D04',
   },
   background: {
-    default: '#0a1628',
-    paper: '#0d1e3d',
-    dark: '#060d1a',
-    muted: 'rgba(255,255,255,0.05)',
-    subtle: 'rgba(255,255,255,0.03)',
+    default: '#FAFAF8',       // warm near-white
+    paper: '#FFFFFF',         // cards, modals
+    dark: '#1f4f40',          // header / hero areas (brand green)
+    muted: 'rgba(0,0,0,0.03)',
+    subtle: 'rgba(0,0,0,0.015)',
+    cream: '#F5EFE1',         // section tints
   },
+  // Glass tokens — kept for any overlay components
   glass: {
-    surface: 'rgba(255,255,255,0.07)',
-    surfaceStrong: 'rgba(255,255,255,0.12)',
-    border: 'rgba(255,255,255,0.12)',
-    borderStrong: 'rgba(255,255,255,0.20)',
+    surface: 'rgba(255,255,255,0.85)',
+    surfaceStrong: 'rgba(255,255,255,0.95)',
+    border: 'rgba(0,0,0,0.08)',
+    borderStrong: 'rgba(0,0,0,0.14)',
     gold: 'rgba(188,129,65,0.08)',
-    goldBorder: 'rgba(188,129,65,0.35)',
-    overlay: 'rgba(6,13,26,0.85)',
+    goldBorder: 'rgba(188,129,65,0.30)',
+    overlay: 'rgba(6,13,26,0.82)',
+  },
+  // Card surface token
+  card: {
+    surface: '#FFFFFF',
+    border: 'rgba(0,0,0,0.07)',
+    shadow: 'rgba(31,79,64,0.08)',
+    muted: '#F7F3ED',         // warm tinted card (e.g. featured)
   },
   text: {
-    primary: '#FFFFFF',
-    secondary: 'rgba(255,255,255,0.75)',
-    muted: 'rgba(255,255,255,0.45)',
+    primary: '#1C1409',       // warm near-black
+    secondary: '#6B5F55',     // warm medium gray
+    muted: '#ABA39A',         // soft muted
     light: '#FFFFFF',
-    disabled: 'rgba(255,255,255,0.25)',
+    disabled: '#C8C0B8',
+    inverse: '#FFFFFF',
   },
-  border: 'rgba(255,255,255,0.12)',
-  divider: 'rgba(255,255,255,0.08)',
-  success: '#34C759',
-  warning: '#FF9F0A',
+  border: 'rgba(0,0,0,0.08)',
+  divider: 'rgba(0,0,0,0.06)',
+  success: '#2E8B57',
+  warning: '#E8A838',
   error: {
-    main: '#FF3B30',
-    light: '#FF6961',
-    dark: '#C0392B',
+    main: '#D94F3D',
+    light: '#F07167',
+    dark: '#B03226',
   },
   // Gradient stop helpers
   gradient: {
-    primaryStart: '#0d1e3d',
-    primaryEnd: '#0a1628',
+    primaryStart: '#1f4f40',
+    primaryEnd: '#2d6a58',
     goldStart: '#BC8141',
     goldEnd: '#d4a265',
-    darkStart: '#0d1e3d',
-    darkEnd: '#0a1628',
+    darkStart: '#0d2b22',
+    darkEnd: '#1f4f40',
   },
 };
 
@@ -140,24 +150,31 @@ export const shadows = {
   },
   medium: {
     shadowColor: '#1f4f40',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.12,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.10,
     shadowRadius: 16,
-    elevation: 6,
+    elevation: 5,
   },
   dark: {
     shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.18,
-    shadowRadius: 24,
-    elevation: 12,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.12,
+    shadowRadius: 20,
+    elevation: 8,
   },
   gold: {
     shadowColor: '#BC8141',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
+    shadowOpacity: 0.20,
     shadowRadius: 12,
     elevation: 6,
+  },
+  card: {
+    shadowColor: '#1f4f40',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.07,
+    shadowRadius: 12,
+    elevation: 3,
   },
 };
 

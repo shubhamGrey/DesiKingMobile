@@ -120,14 +120,14 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.lg,
     marginBottom: spacing.md,
     borderWidth: 1,
-    borderColor: colors.glass.border,
+    borderColor: colors.card.border,
     overflow: 'hidden',
-    backgroundColor: colors.glass.surface,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
+    backgroundColor: colors.background.paper,
+    shadowColor: '#1f4f40',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.07,
     shadowRadius: 12,
-    elevation: 6,
+    elevation: 3,
   },
   accentBar: {
     height: 3,
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: CARD_WIDTH * 0.88,
     position: 'relative',
-    backgroundColor: 'rgba(255,255,255,0.04)',
+    backgroundColor: colors.background.cream,
   },
   imageBg: {
     width: '100%',
@@ -201,12 +201,12 @@ const styles = StyleSheet.create({
   info: {
     padding: spacing.sm,
     paddingTop: spacing.xs + 2,
-    backgroundColor: 'rgba(255,255,255,0.04)',
+    backgroundColor: 'rgba(0,0,0,0.02)',
   },
   category: {
     fontSize: 11,
     fontFamily: fonts.body.medium,
-    color: 'rgba(255,255,255,0.45)',
+    color: colors.text.muted,
     textTransform: 'uppercase',
     letterSpacing: 0.8,
     marginBottom: 2,
@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
   name: {
     fontSize: fontSize.sm,
     fontFamily: fonts.heading.bold,
-    color: '#fff',
+    color: colors.text.primary,
     lineHeight: 20,
     marginBottom: 4,
   },
@@ -226,12 +226,12 @@ const styles = StyleSheet.create({
   ratingText: {
     fontSize: 11,
     fontFamily: fonts.body.bold,
-    color: 'rgba(255,255,255,0.8)',
+    color: colors.text.secondary,
   },
   ratingCount: {
     fontSize: 11,
     fontFamily: fonts.body.regular,
-    color: 'rgba(255,255,255,0.4)',
+    color: colors.text.muted,
   },
   priceRow: {
     flexDirection: 'row',
@@ -246,7 +246,7 @@ const styles = StyleSheet.create({
   strikePrice: {
     fontSize: 11,
     fontFamily: fonts.body.regular,
-    color: 'rgba(255,255,255,0.35)',
+    color: colors.text.disabled,
     textDecorationLine: 'line-through',
   },
 });

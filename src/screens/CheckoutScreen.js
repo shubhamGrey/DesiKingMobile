@@ -145,7 +145,7 @@ const CheckoutScreen = () => {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#0a1628" />
+      <StatusBar barStyle="light-content" backgroundColor={colors.background.default} />
       <Header title="Secure Checkout" showBack />
 
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
@@ -260,15 +260,16 @@ const styles = StyleSheet.create({
   addressCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.glass.surface,
+    backgroundColor: colors.background.paper,
     padding: spacing.md,
     borderRadius: borderRadius.lg,
     borderWidth: 1,
-    borderColor: colors.glass.border,
+    borderColor: colors.card.border,
     marginBottom: spacing.md,
+    ...shadows.card,
   },
   selectedCard: {
-    borderColor: colors.secondary.main,
+    borderColor: colors.glass.goldBorder,
     backgroundColor: colors.glass.gold,
   },
   radio: {
@@ -276,7 +277,7 @@ const styles = StyleSheet.create({
     height: 20,
     borderRadius: 10,
     borderWidth: 2,
-    borderColor: 'rgba(255,255,255,0.3)',
+    borderColor: colors.border,
     marginRight: 14,
     alignItems: 'center',
     justifyContent: 'center',
@@ -290,18 +291,19 @@ const styles = StyleSheet.create({
   emptyText: { color: colors.text.muted, fontFamily: fonts.body.regular, marginBottom: spacing.md },
 
   previewContainer: {
-    backgroundColor: colors.glass.surface,
+    backgroundColor: colors.background.paper,
     borderRadius: borderRadius.lg,
     padding: spacing.md,
     borderWidth: 1,
-    borderColor: colors.glass.border,
+    borderColor: colors.card.border,
+    ...shadows.card,
   },
   itemRow: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255,255,255,0.05)',
+    borderBottomColor: colors.divider,
   },
   itemThumb: { width: 44, height: 44, borderRadius: 8, marginRight: 12, backgroundColor: colors.background.muted },
   itemName: { fontSize: 13, fontFamily: fonts.body.semibold, color: colors.text.primary, marginBottom: 2 },
@@ -312,17 +314,17 @@ const styles = StyleSheet.create({
   breakdownCard: {
     marginTop: spacing.lg,
     padding: spacing.lg,
-    backgroundColor: '#0d1e3d',
+    backgroundColor: colors.background.cream,
     borderRadius: borderRadius.lg,
     borderWidth: 1,
     borderColor: 'rgba(188,129,65,0.2)',
   },
   summaryRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 },
-  summaryLabel: { color: colors.text.muted, fontSize: 13, fontFamily: fonts.body.medium },
+  summaryLabel: { color: colors.text.secondary, fontSize: 13, fontFamily: fonts.body.medium },
   summaryValue: { fontFamily: fonts.body.semibold, color: colors.text.primary, fontSize: 13 },
-  divider: { height: 1, backgroundColor: 'rgba(255,255,255,0.08)', marginVertical: spacing.sm },
+  divider: { height: 1, backgroundColor: colors.divider, marginVertical: spacing.sm },
   grandTotalRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  grandTotalLabel: { fontSize: 14, fontFamily: fonts.body.extrabold, color: 'rgba(255,255,255,0.7)', textTransform: 'uppercase', letterSpacing: 0.5 },
+  grandTotalLabel: { fontSize: 14, fontFamily: fonts.body.extrabold, color: colors.text.secondary, textTransform: 'uppercase', letterSpacing: 0.5 },
   grandTotalValue: { fontSize: 24, fontFamily: fonts.heading.black, color: colors.secondary.light, letterSpacing: -0.5 },
 
   secureNote: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: spacing.lg, opacity: 0.7 },
@@ -335,7 +337,7 @@ const styles = StyleSheet.create({
     right: 0,
     padding: spacing.lg,
     paddingBottom: spacing.lg + 4,
-    backgroundColor: '#0d1e3d',
+    backgroundColor: colors.background.cream,
     borderTopLeftRadius: borderRadius.xxl,
     borderTopRightRadius: borderRadius.xxl,
     borderTopWidth: 1,

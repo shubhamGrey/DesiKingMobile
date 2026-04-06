@@ -73,7 +73,7 @@ const ContactScreen = () => {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#0a1628" />
+      <StatusBar barStyle="light-content" backgroundColor={colors.background.default} />
       <Header title="Contact Us" showBack />
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
         <ScrollView showsVerticalScrollIndicator={false}>
@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background.default },
 
   infoSection: {
-    backgroundColor: '#0d1e3d',
+    backgroundColor: colors.primary.main,
     padding: spacing.xl,
     alignItems: 'center',
     borderBottomWidth: 1,
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
   infoTitle: {
     fontSize: fontSize.lg,
     fontFamily: fonts.heading.bold,
-    color: colors.text.primary,
+    color: '#FFFFFF',
     marginBottom: spacing.lg,
   },
   contactItem: {
@@ -176,15 +176,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginRight: spacing.md,
   },
-  contactLabel: { fontSize: 13, color: colors.text.secondary, flex: 1, lineHeight: 18 },
+  contactLabel: { fontSize: 13, color: 'rgba(255,255,255,0.85)', flex: 1, lineHeight: 18 },
   socialContainer: { flexDirection: 'row', marginTop: spacing.lg },
   socialButton: {
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: colors.glass.surfaceStrong,
+    backgroundColor: 'rgba(31,79,64,0.1)',
     borderWidth: 1,
-    borderColor: colors.glass.border,
+    borderColor: 'rgba(31,79,64,0.25)',
     alignItems: 'center',
     justifyContent: 'center',
     marginHorizontal: spacing.xs,

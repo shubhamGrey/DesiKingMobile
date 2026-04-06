@@ -67,7 +67,7 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
                 <Ionicons
                   name={focused ? cfg.icon : cfg.iconOutline}
                   size={22}
-                  color={focused ? '#fff' : 'rgba(255,255,255,0.5)'}
+                  color={focused ? '#fff' : 'rgba(31,79,64,0.5)'}
                 />
                 {cartBadge && (
                   <View style={styles.badge}>
@@ -163,17 +163,17 @@ const styles = StyleSheet.create({
   },
   tabBar: {
     flexDirection: 'row',
-    backgroundColor: '#0a1628',
+    backgroundColor: '#FFFFFF',
     borderRadius: borderRadius.xxl,
     paddingVertical: 8,
     paddingHorizontal: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.22,
+    shadowColor: '#1f4f40',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.14,
     shadowRadius: 20,
     elevation: 12,
     borderWidth: 1,
-    borderColor: 'rgba(188,129,65,0.3)',
+    borderColor: 'rgba(31,79,64,0.1)',
   },
   tabItem: {
     flex: 1,
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
-    borderColor: '#0a1628',
+    borderColor: '#FFFFFF',
     paddingHorizontal: 3,
   },
   badgeText: {
@@ -214,12 +214,12 @@ const styles = StyleSheet.create({
   tabLabel: {
     fontSize: 11,
     fontFamily: fonts.body.semibold,
-    color: 'rgba(255,255,255,0.5)',
+    color: 'rgba(31,79,64,0.45)',
     marginTop: 2,
     letterSpacing: 0.3,
   },
   tabLabelActive: {
-    color: '#fff',
+    color: colors.primary.main,
     fontFamily: fonts.body.extrabold,
   },
 });

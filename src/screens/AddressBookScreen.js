@@ -13,7 +13,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import Header from '../components/common/Header';
 import Button from '../components/common/Button';
-import { colors, spacing, fontSize, borderRadius, fonts } from '../config/theme';
+import { colors, spacing, fontSize, borderRadius, fonts, shadows } from '../config/theme';
 import apiService from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
@@ -91,7 +91,7 @@ const AddressBookScreen = () => {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#0a1628" />
+      <StatusBar barStyle="light-content" backgroundColor={colors.background.default} />
       <Header title="My Locations" showBack />
 
       {isLoading ? (
@@ -135,12 +135,13 @@ const styles = StyleSheet.create({
   center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
 
   addressCard: {
-    backgroundColor: colors.glass.surface,
+    backgroundColor: colors.background.paper,
     borderRadius: borderRadius.lg,
     padding: spacing.lg,
     marginBottom: spacing.md,
     borderWidth: 1,
-    borderColor: colors.glass.border,
+    borderColor: colors.card.border,
+    ...shadows.card,
   },
   cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
   badge: {
@@ -174,12 +175,13 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: colors.glass.surface,
+    backgroundColor: colors.background.paper,
     borderWidth: 1,
-    borderColor: colors.glass.border,
+    borderColor: colors.card.border,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 16,
+    ...shadows.card,
   },
   emptyTitle: { fontSize: 18, fontFamily: fonts.heading.bold, color: colors.text.primary },
   emptySubtitle: { fontSize: 13, color: colors.text.muted, textAlign: 'center', marginTop: 6, paddingHorizontal: 40, lineHeight: 20 },
@@ -190,11 +192,12 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     padding: spacing.lg,
-    backgroundColor: '#0d1e3d',
+    backgroundColor: colors.background.paper,
     borderTopLeftRadius: borderRadius.xxl,
     borderTopRightRadius: borderRadius.xxl,
     borderTopWidth: 1,
     borderTopColor: 'rgba(188,129,65,0.25)',
+    ...shadows.medium,
   },
   addBtn: { height: 52 },
 });

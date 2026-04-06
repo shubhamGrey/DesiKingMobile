@@ -4,7 +4,7 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import Header from '../components/common/Header';
 import Loading from '../components/common/Loading';
-import { colors, spacing, fontSize, borderRadius, fonts } from '../config/theme';
+import { colors, spacing, fontSize, borderRadius, fonts, shadows } from '../config/theme';
 import apiService from '../services/api';
 
 const OrderDetailsScreen = () => {
@@ -69,7 +69,7 @@ const OrderDetailsScreen = () => {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#0a1628" />
+      <StatusBar barStyle="light-content" backgroundColor={colors.background.default} />
       <Header title="Order Details" showBack />
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 
@@ -167,12 +167,13 @@ const styles = StyleSheet.create({
   center: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background.default },
 
   card: {
-    backgroundColor: colors.glass.surface,
+    backgroundColor: colors.background.paper,
     padding: spacing.md,
     borderRadius: borderRadius.lg,
     marginBottom: spacing.md,
     borderWidth: 1,
-    borderColor: colors.glass.border,
+    borderColor: colors.card.border,
+    ...shadows.card,
   },
   statusHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.sm },
   orderIdLabel: { fontSize: 10, color: colors.text.muted, textTransform: 'uppercase', letterSpacing: 1 },
@@ -187,12 +188,13 @@ const styles = StyleSheet.create({
   trackingText: { fontSize: 12, color: colors.secondary.main, fontFamily: fonts.body.semibold, marginLeft: 6 },
 
   section: {
-    backgroundColor: colors.glass.surface,
+    backgroundColor: colors.background.paper,
     padding: spacing.md,
     borderRadius: borderRadius.lg,
     marginBottom: spacing.md,
     borderWidth: 1,
-    borderColor: colors.glass.border,
+    borderColor: colors.card.border,
+    ...shadows.card,
   },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: spacing.md },
   sectionIconCircle: {

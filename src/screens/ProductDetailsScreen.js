@@ -116,7 +116,7 @@ const ProductDetailsScreen = () => {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#0a1628" />
+      <StatusBar barStyle="light-content" backgroundColor={colors.background.default} />
       <Header title="" showBack rightIcon="share-outline" onRightPress={handleShare} />
 
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
@@ -270,20 +270,20 @@ const styles = StyleSheet.create({
   },
   scrollView: { flex: 1 },
   imageSection: { backgroundColor: colors.background.default, paddingBottom: spacing.md },
-  mainImageContainer: { width: width, height: width * 0.85, backgroundColor: colors.glass.surface, borderWidth: 1, borderColor: colors.glass.border, ...shadows.sm },
+  mainImageContainer: { width: width, height: width * 0.85, backgroundColor: colors.background.cream, borderWidth: 1, borderColor: colors.card.border, ...shadows.sm },
   mainImage: { width: '100%', height: '100%' },
   discountBadge: { position: 'absolute', top: spacing.md, left: spacing.md, backgroundColor: colors.secondary.main, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 4 },
   discountText: { color: '#fff', fontSize: 12, fontFamily: fonts.body.extrabold },
   thumbnailsList: { paddingHorizontal: spacing.md, marginTop: spacing.md },
-  thumbnail: { width: 60, height: 60, borderRadius: 8, backgroundColor: colors.glass.surface, marginRight: 10, padding: 4, borderWidth: 1, borderColor: colors.glass.border },
+  thumbnail: { width: 60, height: 60, borderRadius: 8, backgroundColor: colors.background.cream, marginRight: 10, padding: 4, borderWidth: 1, borderColor: colors.card.border },
   thumbnailActive: { borderColor: colors.primary.main, borderWidth: 2 },
   thumbnailImage: { width: '100%', height: '100%' },
   sectionSpacer: { height: 20 },
-  content: { padding: spacing.lg, backgroundColor: colors.glass.surface, borderWidth: 1, borderColor: colors.glass.border, borderTopLeftRadius: 30, borderTopRightRadius: 30, marginTop: -20 },
+  content: { padding: spacing.lg, backgroundColor: colors.card.surface, borderWidth: 1, borderColor: colors.card.border, borderTopLeftRadius: 30, borderTopRightRadius: 30, marginTop: -20, ...shadows.card },
   categoryLabel: { fontSize: 12, color: colors.text.muted, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 },
   titleRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.sm },
   title: { fontSize: fontSize.xxl, fontFamily: fonts.heading.extrabold, color: colors.text.primary, flex: 1, marginRight: 10 },
-  badge: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.glass.surface, borderWidth: 1, borderColor: colors.glass.border, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 20 },
+  badge: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.background.cream, borderWidth: 1, borderColor: colors.card.border, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 20 },
   badgeText: { fontSize: 10, color: colors.success, fontFamily: fonts.body.bold, marginLeft: 4 },
   priceRow: { flexDirection: 'row', alignItems: 'center', marginBottom: spacing.lg },
   price: {
@@ -296,34 +296,34 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontFamily: fonts.body.bold,
-    color: '#fff',
+    color: colors.text.primary,
     marginBottom: spacing.md,
   },
   skuRow: { flexDirection: 'row', flexWrap: 'wrap' },
-  skuCard: { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 12, borderWidth: 1, borderColor: colors.glass.border, marginRight: 10, marginBottom: 10, backgroundColor: colors.glass.surface },
+  skuCard: { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 12, borderWidth: 1, borderColor: colors.card.border, marginRight: 10, marginBottom: 10, backgroundColor: colors.background.cream },
   skuCardActive: { backgroundColor: colors.primary.main, borderColor: colors.primary.main, ...shadows.sm },
   skuText: { fontSize: 14, color: colors.text.primary, fontFamily: fonts.body.semibold },
   skuTextActive: { color: '#fff' },
-  qtyContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.glass.surface, borderRadius: 12, alignSelf: 'flex-start', padding: 4 },
+  qtyContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.background.cream, borderRadius: 12, alignSelf: 'flex-start', padding: 4, borderWidth: 1, borderColor: colors.card.border },
   qtyBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
   qtyText: { fontSize: 18, fontFamily: fonts.body.bold, paddingHorizontal: 20, color: colors.text.primary },
-  trustGrid: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: spacing.lg, borderTopWidth: 1, borderBottomWidth: 1, borderColor: colors.glass.border, marginBottom: spacing.xl },
+  trustGrid: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: spacing.lg, borderTopWidth: 1, borderBottomWidth: 1, borderColor: colors.divider, marginBottom: spacing.xl },
   trustItem: { alignItems: 'center' },
   trustLabel: { fontSize: 10, color: colors.text.secondary, marginTop: 4, fontFamily: fonts.body.semibold },
   description: {
     fontSize: 15,
     fontFamily: fonts.body.regular,
-    color: 'rgba(255,255,255,0.75)',
+    color: colors.text.secondary,
     lineHeight: 24,
   },
   featureItem: { flexDirection: 'row', alignItems: 'center', marginBottom: 10 },
   featureText: {
     fontSize: 14,
     fontFamily: fonts.body.regular,
-    color: 'rgba(255,255,255,0.8)',
+    color: colors.text.secondary,
     marginLeft: 10,
   },
-  footer: { flexDirection: 'row', alignItems: 'center', padding: spacing.lg, backgroundColor: '#0d1e3d', borderTopWidth: 1, borderTopColor: 'rgba(188,129,65,0.25)', ...shadows.lg },
+  footer: { flexDirection: 'row', alignItems: 'center', padding: spacing.lg, backgroundColor: colors.background.cream, borderTopWidth: 1, borderTopColor: 'rgba(188,129,65,0.25)', ...shadows.lg },
   footerPrice: { flex: 1 },
   footerLabel: { fontSize: 12, color: colors.text.muted },
   footerAmount: {

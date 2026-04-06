@@ -100,7 +100,7 @@ const LoginScreen = () => {
 
   return (
     <View style={styles.root}>
-      <StatusBar barStyle="light-content" backgroundColor="#0a1628" />
+      <StatusBar barStyle="light-content" backgroundColor={colors.background.default} />
 
       {/* Hero banner */}
       <ImageBackground
@@ -394,11 +394,11 @@ const styles = StyleSheet.create({
   },
   card: {
     flex: 1,
-    backgroundColor: 'rgba(10,22,40,0.97)',
+    backgroundColor: colors.background.paper,
     borderTopLeftRadius: borderRadius.xxl,
     borderTopRightRadius: borderRadius.xxl,
     borderTopWidth: 1,
-    borderTopColor: colors.glass.border,
+    borderTopColor: colors.card.border,
   },
   cardContent: {
     padding: spacing.lg,
@@ -406,12 +406,12 @@ const styles = StyleSheet.create({
   },
   tabRow: {
     flexDirection: 'row',
-    backgroundColor: colors.glass.surface,
+    backgroundColor: colors.background.cream,
     borderRadius: borderRadius.full,
     padding: 4,
     marginBottom: spacing.xl,
     borderWidth: 1,
-    borderColor: colors.glass.border,
+    borderColor: colors.card.border,
   },
   tab: {
     flex: 1,
@@ -420,12 +420,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   tabActive: {
-    backgroundColor: colors.secondary.main,
+    backgroundColor: colors.primary.main,
   },
   tabText: {
     fontSize: fontSize.sm,
     fontFamily: fonts.body.semibold,
-    color: 'rgba(255,255,255,0.5)',
+    color: colors.text.muted,
   },
   tabTextActive: {
     color: '#fff',
@@ -434,13 +434,13 @@ const styles = StyleSheet.create({
   formTitle: {
     fontSize: fontSize.xl,
     fontFamily: fonts.heading.extrabold,
-    color: '#fff',
+    color: colors.text.primary,
     marginBottom: 4,
   },
   formSub: {
     fontSize: fontSize.sm,
     fontFamily: fonts.body.regular,
-    color: 'rgba(255,255,255,0.55)',
+    color: colors.text.secondary,
     marginBottom: spacing.lg,
   },
   nameRow: {
@@ -458,7 +458,7 @@ const styles = StyleSheet.create({
   toggleText: {
     fontSize: fontSize.sm,
     fontFamily: fonts.body.regular,
-    color: 'rgba(255,255,255,0.55)',
+    color: colors.text.secondary,
   },
   toggleLink: {
     fontSize: fontSize.sm,

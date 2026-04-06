@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView, Image, Dimensions, StatusBar } from
 import { Ionicons } from '@expo/vector-icons';
 import { WebView } from 'react-native-webview';
 import Header from '../components/common/Header';
-import { colors, spacing, fontSize, borderRadius, fonts } from '../config/theme';
+import { colors, spacing, fontSize, borderRadius, fonts, shadows } from '../config/theme';
 
 const { width } = Dimensions.get('window');
 const VIDEO_HEIGHT = (width * 9) / 16;
@@ -18,7 +18,7 @@ const specialFeatures = [
 const AboutScreen = () => {
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#0a1628" />
+      <StatusBar barStyle="light-content" backgroundColor={colors.background.default} />
       <Header title="About Us" showBack />
       <ScrollView showsVerticalScrollIndicator={false}>
 
@@ -193,13 +193,14 @@ const styles = StyleSheet.create({
 
   cardSection: { padding: spacing.md },
   infoCard: {
-    backgroundColor: colors.glass.surface,
+    backgroundColor: colors.background.paper,
     borderRadius: borderRadius.lg,
     padding: spacing.lg,
     marginBottom: spacing.md,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: colors.glass.border,
+    borderColor: colors.card.border,
+    ...shadows.card,
   },
   cardIconCircle: {
     width: 52,
@@ -234,13 +235,14 @@ const styles = StyleSheet.create({
   specialGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
   specialCard: {
     width: '48%',
-    backgroundColor: colors.glass.surface,
+    backgroundColor: colors.background.paper,
     padding: spacing.md,
     borderRadius: borderRadius.md,
     alignItems: 'center',
     marginBottom: spacing.md,
     borderWidth: 1,
-    borderColor: colors.glass.border,
+    borderColor: colors.card.border,
+    ...shadows.card,
   },
   specialCardTitle: {
     fontSize: 12,
@@ -253,11 +255,12 @@ const styles = StyleSheet.create({
   founderCard: {
     flexDirection: 'row',
     marginBottom: spacing.lg,
-    backgroundColor: colors.glass.surface,
+    backgroundColor: colors.background.paper,
     padding: spacing.md,
     borderRadius: borderRadius.lg,
     borderWidth: 1,
-    borderColor: colors.glass.border,
+    borderColor: colors.card.border,
+    ...shadows.card,
   },
   founderThumb: { width: 72, height: 90, borderRadius: borderRadius.sm, marginRight: spacing.md },
   founderInfo: { flex: 1 },
@@ -271,7 +274,7 @@ const styles = StyleSheet.create({
   teamRole: { fontSize: 13, color: colors.secondary.main, marginTop: 2, fontFamily: fonts.body.medium },
 
   footerBranding: {
-    backgroundColor: '#0d1e3d',
+    backgroundColor: colors.primary.main,
     borderTopWidth: 1,
     borderTopColor: 'rgba(188,129,65,0.2)',
     padding: spacing.xl,

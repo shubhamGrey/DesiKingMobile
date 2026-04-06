@@ -97,7 +97,7 @@ const CartScreen = () => {
   if (items.length === 0) {
     return (
       <View style={styles.container}>
-        <StatusBar barStyle="light-content" backgroundColor="#0a1628" />
+        <StatusBar barStyle="light-content" backgroundColor={colors.background.default} />
         <Header title="My Cart" showBack showCart={false} />
         <View style={styles.emptyState}>
           <View style={styles.emptyIconWrap}>
@@ -121,7 +121,7 @@ const CartScreen = () => {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#0a1628" />
+      <StatusBar barStyle="light-content" backgroundColor={colors.background.default} />
       <Header title="My Cart" showBack showCart={false} />
 
       <FlatList
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
   countLabel: {
     fontSize: 11,
     fontFamily: fonts.body.extrabold,
-    color: 'rgba(255,255,255,0.45)',
+    color: colors.text.muted,
     textTransform: 'uppercase',
     letterSpacing: 1.2,
     marginBottom: spacing.md,
@@ -208,23 +208,24 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: colors.glass.surface,
+    backgroundColor: colors.card.surface,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: spacing.lg,
     borderWidth: 1,
-    borderColor: colors.glass.border,
+    borderColor: colors.card.border,
+    ...shadows.card,
   },
   emptyTitle: {
     fontSize: fontSize.xl,
     fontFamily: fonts.heading.extrabold,
-    color: '#fff',
+    color: colors.text.primary,
     marginBottom: spacing.xs,
   },
   emptySub: {
     fontSize: fontSize.sm,
     fontFamily: fonts.body.regular,
-    color: 'rgba(255,255,255,0.55)',
+    color: colors.text.muted,
     textAlign: 'center',
     lineHeight: 20,
     marginBottom: spacing.xl,
@@ -237,7 +238,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: '#0d1e3d',
+    backgroundColor: colors.background.cream,
     borderTopLeftRadius: borderRadius.xxl,
     borderTopRightRadius: borderRadius.xxl,
     padding: spacing.lg,
@@ -253,16 +254,16 @@ const styles = StyleSheet.create({
   summaryLabel: {
     fontSize: 13,
     fontFamily: fonts.body.medium,
-    color: 'rgba(255,255,255,0.55)',
+    color: colors.text.secondary,
   },
   summaryValue: {
     fontSize: 13,
     fontFamily: fonts.body.bold,
-    color: '#fff',
+    color: colors.text.primary,
   },
   divider: {
     height: 1,
-    backgroundColor: 'rgba(255,255,255,0.08)',
+    backgroundColor: colors.divider,
     marginVertical: spacing.md,
   },
   totalRow: {
@@ -273,7 +274,7 @@ const styles = StyleSheet.create({
   totalCaption: {
     fontSize: 11,
     fontFamily: fonts.body.semibold,
-    color: 'rgba(255,255,255,0.45)',
+    color: colors.text.muted,
     textTransform: 'uppercase',
     letterSpacing: 0.8,
   },

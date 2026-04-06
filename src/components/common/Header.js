@@ -12,7 +12,7 @@ const Header = ({ title, showBack = false, showCart = true, rightIcon, onRightPr
 
   return (
     <LinearGradient
-      colors={['#0d1e3d', '#0a1628']}
+      colors={[colors.primary.main, colors.primary.light]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 0 }}
       style={styles.container}
@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
-    borderColor: '#0a1628',
+    borderColor: colors.primary.main,
     paddingHorizontal: 3,
   },
   badgeText: {

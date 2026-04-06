@@ -59,7 +59,7 @@ const ProfileScreen = () => {
   if (!isAuthenticated) {
     return (
       <View style={styles.container}>
-        <StatusBar barStyle="light-content" backgroundColor="#0a1628" />
+        <StatusBar barStyle="light-content" backgroundColor={colors.primary.main} />
         <View style={styles.heroBanner}>
           <View style={styles.decCircle} />
           <Text style={styles.heroGreet}>Hello, Guest!</Text>
@@ -88,7 +88,7 @@ const ProfileScreen = () => {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#0a1628" />
+      <StatusBar barStyle="light-content" backgroundColor={colors.primary.main} />
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         {/* Profile hero */}
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
     paddingBottom: 120,
   },
   heroBanner: {
-    backgroundColor: '#0d1e3d',
+    backgroundColor: colors.primary.main,
     paddingTop: Platform.OS === 'ios' ? 64 : 50,
     paddingBottom: spacing.xl + 10,
     alignItems: 'center',
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
     width: 220,
     height: 220,
     borderRadius: 110,
-    backgroundColor: 'rgba(255,255,255,0.06)',
+    backgroundColor: 'rgba(255,255,255,0.1)',
     top: -60,
     right: -50,
   },
@@ -193,23 +193,24 @@ const styles = StyleSheet.create({
   guestCard: {
     margin: spacing.md,
     marginTop: -20,
-    backgroundColor: colors.glass.surface,
+    backgroundColor: colors.card.surface,
     borderRadius: borderRadius.xl,
     padding: spacing.xl,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: colors.glass.border,
+    borderColor: colors.card.border,
+    ...shadows.card,
   },
   guestIconWrap: {
     width: 72,
     height: 72,
     borderRadius: 36,
-    backgroundColor: 'rgba(255,255,255,0.08)',
+    backgroundColor: colors.background.cream,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: spacing.md,
     borderWidth: 1,
-    borderColor: colors.glass.border,
+    borderColor: colors.card.border,
   },
   guestTitle: {
     fontSize: fontSize.xl,
@@ -288,11 +289,12 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   groupCard: {
-    backgroundColor: colors.glass.surface,
+    backgroundColor: colors.card.surface,
     borderRadius: borderRadius.lg,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: colors.glass.border,
+    borderColor: colors.card.border,
+    ...shadows.card,
   },
   menuRow: {
     flexDirection: 'row',
@@ -301,13 +303,13 @@ const styles = StyleSheet.create({
   },
   menuRowBorder: {
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255,255,255,0.06)',
+    borderBottomColor: colors.divider,
   },
   menuIconCircle: {
     width: 40,
     height: 40,
     borderRadius: 12,
-    backgroundColor: 'rgba(255,255,255,0.08)',
+    backgroundColor: colors.background.cream,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: spacing.md,
