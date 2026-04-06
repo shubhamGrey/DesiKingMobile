@@ -24,16 +24,12 @@
         "resourceClass": "m-medium"
       },
       "android": {
-        "buildType": "apk"
+        "buildType": "app-bundle"
       }
     }
   },
   "submit": {
     "production": {
-      "ios": {
-        "appleId": "your-apple-id@email.com",
-        "ascAppId": "your-app-store-connect-app-id"
-      },
       "android": {
         "serviceAccountKeyPath": "./google-services.json"
       }

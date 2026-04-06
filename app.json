@@ -1,14 +1,14 @@
 {
   "expo": {
-    "name": "Agro Nexis",
-    "slug": "agro-nexis",
+    "name": "DesiKing",
+    "slug": "desiking-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
+      "image": "./assets/icon.png",
+      "resizeMode": "cover",
       "backgroundColor": "#1f4f40"
     },
     "assetBundlePatterns": [
@@ -16,19 +16,19 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.agronexis.app",
+      "bundleIdentifier": "com.desiking.app",
       "buildNumber": "1"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#1f4f40"
       },
-      "package": "com.agronexis.app",
+      "package": "com.desiking.app",
       "versionCode": 1
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/icon.png"
     },
     "plugins": [
       "expo-secure-store",
@@ -36,9 +36,9 @@
     ],
     "extra": {
       "eas": {
-        "projectId": "agro-nexis-mobile"
+        "projectId": "cd97c3bd-dd89-4f14-8f80-96fe47fad3ba"
       },
-      "apiUrl": "https://agronexis.com/app"
+      "apiUrl": "https://desikingspices.com/app"
     }
   }
 }
