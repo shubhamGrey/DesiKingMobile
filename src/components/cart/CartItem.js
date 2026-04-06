@@ -61,22 +61,23 @@ const CartItem = ({ item, onRemove, onUpdateQuantity }) => {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    backgroundColor: colors.background.paper,
+    backgroundColor: colors.glass.surface,
     borderRadius: borderRadius.lg,
     padding: spacing.md,
     marginBottom: spacing.md,
-    ...shadows.light,
     borderWidth: 1,
-    borderColor: colors.divider,
+    borderColor: colors.glass.border,
   },
   imageWrap: {
     width: 76,
     height: 76,
     borderRadius: borderRadius.md,
-    backgroundColor: colors.accent.lightGray,
+    backgroundColor: 'rgba(255,255,255,0.06)',
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: colors.glass.border,
   },
   image: {
     width: '85%',
@@ -111,7 +112,7 @@ const styles = StyleSheet.create({
   price: {
     fontSize: 13,
     fontFamily: fonts.heading.bold,
-    color: colors.primary.main,
+    color: colors.secondary.light,
   },
   originalPrice: {
     fontSize: 11,
@@ -128,7 +129,7 @@ const styles = StyleSheet.create({
   stepper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.accent.lightGray,
+    backgroundColor: 'rgba(255,255,255,0.08)',
     borderRadius: borderRadius.full,
     paddingHorizontal: 4,
     paddingVertical: 3,
@@ -138,10 +139,9 @@ const styles = StyleSheet.create({
     width: 26,
     height: 26,
     borderRadius: 13,
-    backgroundColor: '#fff',
+    backgroundColor: 'rgba(255,255,255,0.12)',
     alignItems: 'center',
     justifyContent: 'center',
-    ...shadows.sm,
   },
   stepBtnDisabled: {
     opacity: 0.5,
@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
   total: {
     fontSize: 15,
     fontFamily: fonts.heading.black,
-    color: colors.primary.main,
+    color: colors.secondary.light,
   },
 });
 
