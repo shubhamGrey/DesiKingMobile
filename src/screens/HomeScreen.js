@@ -18,6 +18,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import Header from '../components/common/Header';
+import OrbBackground, { ORB_CONFIGS } from '../components/common/OrbBackground';
 import { colors, spacing, fontSize, borderRadius, shadows, fonts } from '../config/theme';
 import apiService from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -40,7 +41,7 @@ const SkeletonBlock = ({ w, h, radius = 12, style }) => {
   const opacity = anim.interpolate({ inputRange: [0, 1], outputRange: [0.25, 0.55] });
   return (
     <Animated.View
-      style={[{ width: w, height: h, borderRadius: radius, backgroundColor: '#D4CBBA', opacity }, style]}
+      style={[{ width: w, height: h, borderRadius: radius, backgroundColor: 'rgba(255,255,255,0.12)', opacity }, style]}
     />
   );
 };
@@ -217,12 +218,7 @@ const HomeScreen = () => {
                     </View>
                   )}
                 </View>
-                <LinearGradient
-                  colors={['#faf5ed', '#f5efe5']}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                  style={styles.rowCardBody}
-                >
+                <View style={styles.rowCardBody}>
                   <Text style={styles.rowCardName} numberOfLines={1}>{product.name}</Text>
                   <View style={styles.rowCardFooter}>
                     <Text style={styles.rowCardPrice}>₹{pay}</Text>
@@ -236,7 +232,7 @@ const HomeScreen = () => {
                       <Ionicons name="add" size={16} color="#fff" />
                     </TouchableOpacity>
                   </View>
-                </LinearGradient>
+                </View>
               </TouchableOpacity>
             );
           })}
@@ -273,7 +269,8 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#1B4D3E" />
+      <OrbBackground orbs={ORB_CONFIGS.home} />
+      <StatusBar barStyle="light-content" backgroundColor="#0a1628" />
       <Header />
 
       <ScrollView
@@ -328,9 +325,14 @@ const HomeScreen = () => {
                 imageStyle={{ borderRadius: borderRadius.xl }}
               >
                 <View style={styles.heroOverlay}>
-                  <View style={styles.heroPill}>
+                  <LinearGradient
+                    colors={[colors.secondary.main, colors.secondary.light]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                    style={styles.heroPill}
+                  >
                     <Text style={styles.heroPillText}>NEW ARRIVAL</Text>
-                  </View>
+                  </LinearGradient>
                   <Text style={styles.heroTitle}>{item.title}</Text>
                   <Text style={styles.heroSub}>{item.sub}</Text>
                   <TouchableOpacity style={styles.heroBtn} onPress={() => navigation.navigate('Products')} accessibilityLabel="Shop Now">
@@ -392,7 +394,7 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FAFAF9',
+    backgroundColor: colors.background.default,
   },
   greeting: {
     paddingHorizontal: spacing.md,
@@ -418,14 +420,13 @@ const styles = StyleSheet.create({
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.background.paper,
+    backgroundColor: colors.glass.surface,
     height: 48,
     borderRadius: borderRadius.full,
     paddingHorizontal: spacing.md,
     gap: 8,
-    ...shadows.sm,
     borderWidth: 1,
-    borderColor: colors.divider,
+    borderColor: colors.glass.border,
   },
   searchInput: {
     flex: 1,
@@ -444,12 +445,11 @@ const styles = StyleSheet.create({
   },
   heroOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(10,30,22,0.72)',
+    backgroundColor: 'rgba(6,13,26,0.70)',
     padding: spacing.lg,
     justifyContent: 'flex-end',
   },
   heroPill: {
-    backgroundColor: colors.accent.orange,
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: borderRadius.full,
@@ -501,11 +501,11 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: colors.divider,
+    backgroundColor: 'rgba(255,255,255,0.2)',
   },
   dotActive: {
     width: 18,
-    backgroundColor: colors.accent.orange,
+    backgroundColor: colors.secondary.main,
   },
   chipScroll: {
     marginTop: spacing.md,
@@ -518,16 +518,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
     paddingVertical: 12,
     borderRadius: borderRadius.full,
-    backgroundColor: colors.background.paper,
-    borderWidth: 1.5,
-    borderColor: colors.divider,
+    backgroundColor: colors.glass.surface,
+    borderWidth: 1,
+    borderColor: colors.glass.border,
   },
   chipActive: {
-    backgroundColor: colors.primary.main,
-    borderColor: colors.primary.main,
+    backgroundColor: colors.secondary.main,
+    borderColor: colors.secondary.main,
   },
   chipText: {
-    color: colors.text.secondary,
+    color: 'rgba(255,255,255,0.65)',
     fontFamily: fonts.body.semibold,
     fontSize: 13,
   },
@@ -556,12 +556,12 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: fontSize.lg,
     fontFamily: fonts.heading.bold,
-    color: colors.text.primary,
+    color: '#fff',
     letterSpacing: -0.2,
   },
   viewAll: {
     fontSize: 13,
-    color: colors.accent.orange,
+    color: colors.secondary.light,
     fontFamily: fonts.body.extrabold,
   },
   rowList: {
@@ -574,13 +574,9 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.lg,
     marginRight: spacing.md,
     borderWidth: 1,
-    borderColor: 'rgba(31,79,64,0.10)',
+    borderColor: colors.glass.border,
     overflow: 'hidden',
-    shadowColor: '#1B4D3E',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.10,
-    shadowRadius: 10,
-    elevation: 3,
+    backgroundColor: colors.glass.surface,
   },
   rowCardImg: {
     height: 115,
@@ -605,13 +601,15 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontFamily: fonts.body.extrabold,
   },
+
   rowCardBody: {
     padding: spacing.sm,
+    backgroundColor: 'rgba(255,255,255,0.04)',
   },
   rowCardName: {
     fontSize: 13,
     fontFamily: fonts.heading.bold,
-    color: colors.text.primary,
+    color: '#fff',
     marginBottom: 6,
   },
   rowCardFooter: {
@@ -621,13 +619,13 @@ const styles = StyleSheet.create({
   rowCardPrice: {
     fontSize: 15,
     fontFamily: fonts.heading.extrabold,
-    color: colors.primary.main,
+    color: colors.secondary.light,
     flex: 1,
   },
   rowCardStrike: {
     fontSize: 11,
     fontFamily: fonts.body.regular,
-    color: colors.text.disabled,
+    color: 'rgba(255,255,255,0.35)',
     textDecorationLine: 'line-through',
     marginRight: 6,
   },
@@ -648,7 +646,7 @@ const styles = StyleSheet.create({
   emptySearchText: {
     fontSize: fontSize.sm,
     fontFamily: fonts.body.regular,
-    color: colors.text.muted,
+    color: 'rgba(255,255,255,0.55)',
     textAlign: 'center',
   },
   rowAccentBar: {
@@ -676,6 +674,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.2,
     textAlign: 'center',
   },
+
   brandBannerSub: {
     color: 'rgba(255,255,255,0.72)',
     fontSize: 12,
@@ -706,6 +705,7 @@ const styles = StyleSheet.create({
     fontFamily: fonts.heading.black,
     letterSpacing: -0.5,
   },
+
   achievementLabel: {
     color: 'rgba(255,255,255,0.72)',
     fontSize: 11,
