@@ -12,7 +12,7 @@ const Header = ({ title, showBack = false, showCart = true, rightIcon, onRightPr
 
   return (
     <LinearGradient
-      colors={['#1B4D3E', '#234F42']}
+      colors={['#0d1e3d', '#0a1628']}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 0 }}
       style={styles.container}
@@ -91,9 +91,11 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
     paddingTop: Platform.OS === 'ios' ? 56 : 38,
     height: Platform.OS === 'ios' ? 106 : 86,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(188,129,65,0.25)',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.18,
+    shadowOpacity: 0.35,
     shadowRadius: 12,
     elevation: 8,
   },
@@ -111,22 +113,24 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: borderRadius.sm,
-    backgroundColor: 'rgba(255,255,255,0.15)',
+    backgroundColor: 'rgba(255,255,255,0.08)',
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.12)',
   },
   logoWrap: {
     width: 40,
     height: 40,
     borderRadius: borderRadius.sm,
-    backgroundColor: 'rgba(255,255,255,0.12)',
+    backgroundColor: 'rgba(255,255,255,0.08)',
     padding: 6,
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.2)',
+    borderColor: 'rgba(255,255,255,0.15)',
   },
   logo: {
     width: '100%',
@@ -155,7 +159,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
-    borderColor: '#1B4D3E',
+    borderColor: '#0a1628',
     paddingHorizontal: 3,
   },
   badgeText: {
