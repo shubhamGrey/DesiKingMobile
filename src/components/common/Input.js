@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: fontSize.sm,
     fontFamily: fonts.body.semibold,
-    color: colors.text.secondary,
+    color: 'rgba(255,255,255,0.65)',
     marginBottom: spacing.xs,
     letterSpacing: 0.2,
   },
@@ -103,21 +103,21 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.background.paper,
+    backgroundColor: 'rgba(255,255,255,0.07)',
     borderWidth: 1.5,
-    borderColor: colors.divider,
+    borderColor: 'rgba(255,255,255,0.12)',
     borderRadius: borderRadius.md,
   },
   inputFocused: {
-    borderColor: colors.primary.main,
-    backgroundColor: '#fff',
+    borderColor: '#BC8141',
+    backgroundColor: 'rgba(255,255,255,0.12)',
   },
   inputError: {
     borderColor: colors.error.main,
   },
   inputDisabled: {
-    backgroundColor: colors.background.muted,
-    borderColor: colors.divider,
+    backgroundColor: 'rgba(255,255,255,0.03)',
+    borderColor: 'rgba(255,255,255,0.08)',
   },
   input: {
     flex: 1,
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm + 2,
     fontSize: fontSize.md,
     fontFamily: fonts.body.regular,
-    color: colors.text.primary,
+    color: '#fff',
   },
   multilineInput: {
     minHeight: 100,
@@ -142,12 +142,13 @@ const styles = StyleSheet.create({
   },
   helperText: {
     fontSize: fontSize.xs,
-    color: colors.text.muted,
+    fontFamily: fonts.body.regular,
+    color: 'rgba(255,255,255,0.45)',
     marginTop: spacing.xs,
     marginLeft: 2,
   },
   errorText: {
-    color: colors.error.main,
+    color: '#FF6961',
   },
 });
 
