@@ -96,6 +96,11 @@ const styles = StyleSheet.create({
   danger: {
     backgroundColor: colors.error.main,
   },
+  glass: {
+    backgroundColor: 'rgba(255,255,255,0.08)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.20)',
+  },
 
   // --- Labels ---
   label: {
@@ -107,6 +112,7 @@ const styles = StyleSheet.create({
   outlineLabel: { color: colors.primary.main },
   ghostLabel: { color: colors.primary.main },
   dangerLabel: { color: '#fff' },
+  glassLabel: { color: '#fff' },
 
   // --- Sizes ---
   smallSize: {
