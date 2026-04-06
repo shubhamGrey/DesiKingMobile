@@ -76,7 +76,7 @@ const ProductsScreen = () => {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#1B4D3E" />
+      <StatusBar barStyle="light-content" backgroundColor="#0a1628" />
       <Header title="Our Catalog" showBack />
 
       <FlatList
@@ -157,37 +157,41 @@ const styles = StyleSheet.create({
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: colors.glass.surface,
     height: 50,
     borderRadius: borderRadius.md,
     paddingHorizontal: spacing.md,
-    ...shadows.light,
     borderWidth: 1,
-    borderColor: '#f0f0f0',
+    borderColor: colors.glass.border,
   },
-  searchInput: { flex: 1, marginLeft: 10, fontSize: 14, fontFamily: fonts.body.medium, color: colors.text.primary },
+  searchInput: { flex: 1, marginLeft: 10, fontSize: 14, fontFamily: fonts.body.medium, color: '#fff' },
   chipList: { paddingHorizontal: spacing.md, marginTop: spacing.md, paddingBottom: 4 },
   chip: {
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: borderRadius.full,
-    backgroundColor: '#fff',
+    backgroundColor: colors.glass.surface,
     marginRight: 10,
-    ...shadows.light,
     borderWidth: 1,
-    borderColor: '#f0f0f0',
+    borderColor: colors.glass.border,
   },
-  chipActive: { backgroundColor: colors.primary.main, borderColor: colors.primary.main },
-  chipText: { fontSize: 13, fontFamily: fonts.body.semibold, color: colors.text.secondary },
+  chipActive: { backgroundColor: colors.secondary.main, borderColor: colors.secondary.main },
+  chipText: { fontSize: 13, fontFamily: fonts.body.semibold, color: 'rgba(255,255,255,0.65)' },
   chipTextActive: { color: '#fff', fontFamily: fonts.body.extrabold },
   resultsHeader: { paddingHorizontal: spacing.md, marginTop: spacing.lg },
-  resultsCount: { fontSize: 12, fontFamily: fonts.body.bold, color: colors.text.muted, textTransform: 'uppercase', letterSpacing: 1 },
+  resultsCount: {
+    fontSize: 12,
+    fontFamily: fonts.body.bold,
+    color: 'rgba(255,255,255,0.45)',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+  },
   listContainer: { paddingBottom: 100 },
   row: { justifyContent: 'space-between', paddingHorizontal: spacing.md, marginTop: spacing.md },
   emptyState: { flex: 1, alignItems: 'center', justifyContent: 'center', marginTop: 80 },
-  emptyIconCircle: { width: 80, height: 80, borderRadius: 40, backgroundColor: colors.background.muted, alignItems: 'center', justifyContent: 'center', marginBottom: spacing.md },
-  emptyTitle: { fontSize: 18, fontFamily: fonts.heading.bold, color: colors.text.primary },
-  emptySubtitle: { fontSize: 14, fontFamily: fonts.body.regular, color: colors.text.secondary, marginTop: 4 },
+  emptyIconCircle: { width: 80, height: 80, borderRadius: 40, backgroundColor: colors.glass.surface, alignItems: 'center', justifyContent: 'center', marginBottom: spacing.md, borderWidth: 1, borderColor: colors.glass.border },
+  emptyTitle: { fontSize: 18, fontFamily: fonts.heading.bold, color: '#fff' },
+  emptySubtitle: { fontSize: 14, fontFamily: fonts.body.regular, color: 'rgba(255,255,255,0.55)', marginTop: 4 },
 });
 
 export default ProductsScreen;
