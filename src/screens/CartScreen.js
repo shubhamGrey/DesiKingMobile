@@ -97,7 +97,7 @@ const CartScreen = () => {
   if (items.length === 0) {
     return (
       <View style={styles.container}>
-        <StatusBar barStyle="light-content" backgroundColor="#1B4D3E" />
+        <StatusBar barStyle="light-content" backgroundColor="#0a1628" />
         <Header title="My Cart" showBack showCart={false} />
         <View style={styles.emptyState}>
           <View style={styles.emptyIconWrap}>
@@ -121,7 +121,7 @@ const CartScreen = () => {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" />
+      <StatusBar barStyle="light-content" backgroundColor="#0a1628" />
       <Header title="My Cart" showBack showCart={false} />
 
       <FlatList
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
   countLabel: {
     fontSize: 11,
     fontFamily: fonts.body.extrabold,
-    color: colors.text.muted,
+    color: 'rgba(255,255,255,0.45)',
     textTransform: 'uppercase',
     letterSpacing: 1.2,
     marginBottom: spacing.md,
@@ -208,23 +208,23 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: colors.background.muted,
+    backgroundColor: colors.glass.surface,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: spacing.lg,
-    borderWidth: 2,
-    borderColor: colors.divider,
+    borderWidth: 1,
+    borderColor: colors.glass.border,
   },
   emptyTitle: {
     fontSize: fontSize.xl,
     fontFamily: fonts.heading.extrabold,
-    color: colors.text.primary,
+    color: '#fff',
     marginBottom: spacing.xs,
   },
   emptySub: {
     fontSize: fontSize.sm,
     fontFamily: fonts.body.regular,
-    color: colors.text.muted,
+    color: 'rgba(255,255,255,0.55)',
     textAlign: 'center',
     lineHeight: 20,
     marginBottom: spacing.xl,
@@ -237,14 +237,13 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: colors.background.paper,
+    backgroundColor: '#0d1e3d',
     borderTopLeftRadius: borderRadius.xxl,
     borderTopRightRadius: borderRadius.xxl,
     padding: spacing.lg,
     paddingBottom: spacing.xl + 8,
-    ...shadows.dark,
     borderTopWidth: 1,
-    borderTopColor: colors.divider,
+    borderTopColor: 'rgba(188,129,65,0.25)',
   },
   summaryRow: {
     flexDirection: 'row',
@@ -254,16 +253,16 @@ const styles = StyleSheet.create({
   summaryLabel: {
     fontSize: 13,
     fontFamily: fonts.body.medium,
-    color: colors.text.muted,
+    color: 'rgba(255,255,255,0.55)',
   },
   summaryValue: {
     fontSize: 13,
     fontFamily: fonts.body.bold,
-    color: colors.text.primary,
+    color: '#fff',
   },
   divider: {
     height: 1,
-    backgroundColor: colors.divider,
+    backgroundColor: 'rgba(255,255,255,0.08)',
     marginVertical: spacing.md,
   },
   totalRow: {
@@ -274,14 +273,14 @@ const styles = StyleSheet.create({
   totalCaption: {
     fontSize: 11,
     fontFamily: fonts.body.semibold,
-    color: colors.text.muted,
+    color: 'rgba(255,255,255,0.45)',
     textTransform: 'uppercase',
     letterSpacing: 0.8,
   },
   totalAmount: {
     fontSize: 26,
     fontFamily: fonts.heading.black,
-    color: colors.primary.main,
+    color: colors.secondary.light,
     letterSpacing: -0.5,
   },
   checkoutBtn: {
