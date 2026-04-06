@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
   },
   tabBar: {
     flexDirection: 'row',
-    backgroundColor: '#1B4D3E',
+    backgroundColor: '#0a1628',
     borderRadius: borderRadius.xxl,
     paddingVertical: 8,
     paddingHorizontal: 8,
@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
     shadowRadius: 20,
     elevation: 12,
     borderWidth: 1,
-    borderColor: 'rgba(188,129,65,0.25)',
+    borderColor: 'rgba(188,129,65,0.3)',
   },
   tabItem: {
     flex: 1,
@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   tabIconWrapActive: {
-    backgroundColor: colors.accent.orange,
+    backgroundColor: colors.secondary.main,
   },
   badge: {
     position: 'absolute',
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
-    borderColor: '#1B4D3E',
+    borderColor: '#0a1628',
     paddingHorizontal: 3,
   },
   badgeText: {
