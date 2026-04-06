@@ -121,7 +121,6 @@ const CheckoutScreen = () => {
 
       await apiService.createOrder(orderData);
 
-      // Delete each item individually from the server cart
       try {
         await Promise.all(items.map(item => apiService.removeFromCart(item.id)));
       } catch (cartError) {
@@ -130,7 +129,7 @@ const CheckoutScreen = () => {
 
       Alert.alert('Success', 'Your premium spices are on the way!', [
         { text: 'Continue Shopping', onPress: () => {
-          clearCart(); // Clears local state and async storage
+          clearCart();
           navigation.reset({ index: 0, routes: [{ name: 'MainTabs', params: { screen: 'Home' } }] });
         }}
       ]);
@@ -146,12 +145,12 @@ const CheckoutScreen = () => {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#1B4D3E" />
+      <StatusBar barStyle="light-content" backgroundColor="#0a1628" />
       <Header title="Secure Checkout" showBack />
 
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
 
-        {/* Address Section */}
+        {/* Delivery Address */}
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Delivery To</Text>
           <TouchableOpacity onPress={() => navigation.navigate('AddressBook')}>
@@ -165,6 +164,7 @@ const CheckoutScreen = () => {
               key={addr.id}
               style={[styles.addressCard, selectedAddress === addr.id && styles.selectedCard]}
               onPress={() => setSelectedAddress(addr.id)}
+              activeOpacity={0.8}
             >
               <View style={[styles.radio, selectedAddress === addr.id && styles.radioActive]}>
                 {selectedAddress === addr.id && <View style={styles.radioInner} />}
@@ -190,7 +190,7 @@ const CheckoutScreen = () => {
               <Image source={{ uri: item.image }} style={styles.itemThumb} />
               <View style={{ flex: 1 }}>
                 <Text style={styles.itemName}>{item.name}</Text>
-                <Text style={styles.itemMeta}>Quantity: {item.quantity}</Text>
+                <Text style={styles.itemMeta}>Qty: {item.quantity}</Text>
               </View>
               <View style={{ alignItems: 'flex-end' }}>
                 <Text style={styles.itemPrice}>{currencySymbol}{(item.price * item.quantity).toFixed(2)}</Text>
@@ -202,45 +202,42 @@ const CheckoutScreen = () => {
           ))}
         </View>
 
-        {/* Breakdown Card */}
+        {/* Breakdown */}
         <View style={styles.breakdownCard}>
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>Subtotal</Text>
             <Text style={styles.summaryValue}>{currencySymbol}{(checkoutTotal + totalDiscount).toFixed(2)}</Text>
           </View>
-
           {totalDiscount > 0 && (
             <View style={styles.summaryRow}>
               <Text style={styles.summaryLabel}>Total Savings</Text>
-              <Text style={[styles.summaryValue, { color: colors.success }]}>-{currencySymbol}{totalDiscount.toFixed(2)}</Text>
+              <Text style={[styles.summaryValue, { color: colors.success }]}>−{currencySymbol}{totalDiscount.toFixed(2)}</Text>
             </View>
           )}
-
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>Shipping Fee</Text>
             <Text style={styles.summaryValue}>{currencySymbol}{shippingFees.toFixed(2)}</Text>
           </View>
-
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>GST (5%)</Text>
             <Text style={styles.summaryValue}>{currencySymbol}{taxAmount.toFixed(2)}</Text>
           </View>
           <View style={styles.divider} />
-          <View style={styles.summaryRow}>
+          <View style={styles.grandTotalRow}>
             <Text style={styles.grandTotalLabel}>Grand Total</Text>
             <Text style={styles.grandTotalValue}>{currencySymbol}{grandTotal.toFixed(2)}</Text>
           </View>
         </View>
 
         <View style={styles.secureNote}>
-          <Ionicons name="lock-closed" size={14} color={colors.text.muted} />
-          <Text style={styles.secureText}>Payments are encrypted and secured by Razorpay</Text>
+          <Ionicons name="lock-closed" size={13} color={colors.text.muted} />
+          <Text style={styles.secureText}>Payments encrypted & secured by Razorpay</Text>
         </View>
       </ScrollView>
 
       <View style={styles.footer}>
         <Button
-          title={isProcessing ? "Processing..." : `Place Order • ${currencySymbol}${grandTotal.toFixed(2)}`}
+          title={isProcessing ? 'Processing...' : `Place Order • ${currencySymbol}${grandTotal.toFixed(2)}`}
           onPress={handlePlaceOrder}
           fullWidth
           loading={isProcessing}
@@ -254,44 +251,96 @@ const CheckoutScreen = () => {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background.default },
   scrollView: { flex: 1 },
-  scrollContent: { padding: spacing.md, paddingBottom: 120 },
+  scrollContent: { padding: spacing.md, paddingBottom: 130 },
+
   sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.md },
   sectionTitle: { fontSize: 18, fontFamily: fonts.heading.extrabold, color: colors.text.primary, letterSpacing: -0.5 },
   editLink: { color: colors.secondary.main, fontFamily: fonts.body.bold, fontSize: 14 },
+
   addressCard: {
     flexDirection: 'row',
-    backgroundColor: '#fff',
-    padding: spacing.lg,
+    alignItems: 'center',
+    backgroundColor: colors.glass.surface,
+    padding: spacing.md,
     borderRadius: borderRadius.lg,
     borderWidth: 1,
-    borderColor: '#f0f0f0',
+    borderColor: colors.glass.border,
     marginBottom: spacing.md,
-    ...shadows.light,
-    alignItems: 'center',
   },
-  selectedCard: { borderColor: colors.primary.main, backgroundColor: '#f1f8e9' },
-  radio: { width: 20, height: 20, borderRadius: 10, borderWidth: 2, borderColor: colors.text.disabled, marginRight: 15, alignItems: 'center', justifyContent: 'center' },
-  radioActive: { borderColor: colors.primary.main },
-  radioInner: { width: 10, height: 10, borderRadius: 5, backgroundColor: colors.primary.main },
-  addressType: { fontSize: 10, fontFamily: fonts.body.bold, color: colors.primary.main, textTransform: 'uppercase', marginBottom: 4 },
-  addressText: { fontSize: 14, color: colors.text.secondary, lineHeight: 20 },
-  previewContainer: { backgroundColor: '#fff', borderRadius: borderRadius.lg, padding: spacing.md, ...shadows.light },
-  itemRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: spacing.sm, borderBottomWidth: 1, borderBottomColor: '#f9f9f9' },
-  itemThumb: { width: 45, height: 45, borderRadius: 8, marginRight: 12, backgroundColor: colors.background.muted },
-  itemName: { fontSize: 13, fontFamily: fonts.body.semibold, color: colors.text.primary, flex: 1 },
-  itemMeta: { fontSize: 11, color: colors.text.muted, marginTop: 2 },
+  selectedCard: {
+    borderColor: colors.secondary.main,
+    backgroundColor: colors.glass.gold,
+  },
+  radio: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.3)',
+    marginRight: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  radioActive: { borderColor: colors.secondary.main },
+  radioInner: { width: 10, height: 10, borderRadius: 5, backgroundColor: colors.secondary.main },
+  addressType: { fontSize: 10, fontFamily: fonts.body.extrabold, color: colors.secondary.light, textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 4 },
+  addressText: { fontSize: 13, color: colors.text.secondary, lineHeight: 19 },
+
+  emptyAddress: { alignItems: 'center', padding: spacing.xl },
+  emptyText: { color: colors.text.muted, fontFamily: fonts.body.regular, marginBottom: spacing.md },
+
+  previewContainer: {
+    backgroundColor: colors.glass.surface,
+    borderRadius: borderRadius.lg,
+    padding: spacing.md,
+    borderWidth: 1,
+    borderColor: colors.glass.border,
+  },
+  itemRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: spacing.sm,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255,255,255,0.05)',
+  },
+  itemThumb: { width: 44, height: 44, borderRadius: 8, marginRight: 12, backgroundColor: colors.background.muted },
+  itemName: { fontSize: 13, fontFamily: fonts.body.semibold, color: colors.text.primary, marginBottom: 2 },
+  itemMeta: { fontSize: 11, color: colors.text.muted },
   itemPrice: { fontSize: 14, fontFamily: fonts.heading.bold, color: colors.text.primary },
-  strikedPrice: { fontSize: 10, color: colors.text.muted, textDecorationLine: 'line-through' },
-  breakdownCard: { marginTop: spacing.xl, padding: spacing.lg, backgroundColor: '#fff', borderRadius: borderRadius.lg, ...shadows.medium },
-  summaryRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12 },
-  summaryLabel: { color: colors.text.secondary, fontSize: 14 },
-  summaryValue: { fontFamily: fonts.body.semibold, color: colors.text.primary, fontSize: 14 },
-  divider: { height: 1, backgroundColor: '#f0f0f0', marginVertical: spacing.sm },
-  grandTotalLabel: { fontSize: 16, fontFamily: fonts.heading.extrabold, color: colors.text.primary },
-  grandTotalValue: { fontSize: 20, fontFamily: fonts.heading.black, color: colors.primary.main },
-  secureNote: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 24, opacity: 0.6 },
+  strikedPrice: { fontSize: 10, color: colors.text.disabled, textDecorationLine: 'line-through' },
+
+  breakdownCard: {
+    marginTop: spacing.lg,
+    padding: spacing.lg,
+    backgroundColor: '#0d1e3d',
+    borderRadius: borderRadius.lg,
+    borderWidth: 1,
+    borderColor: 'rgba(188,129,65,0.2)',
+  },
+  summaryRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 },
+  summaryLabel: { color: colors.text.muted, fontSize: 13, fontFamily: fonts.body.medium },
+  summaryValue: { fontFamily: fonts.body.semibold, color: colors.text.primary, fontSize: 13 },
+  divider: { height: 1, backgroundColor: 'rgba(255,255,255,0.08)', marginVertical: spacing.sm },
+  grandTotalRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  grandTotalLabel: { fontSize: 14, fontFamily: fonts.body.extrabold, color: 'rgba(255,255,255,0.7)', textTransform: 'uppercase', letterSpacing: 0.5 },
+  grandTotalValue: { fontSize: 24, fontFamily: fonts.heading.black, color: colors.secondary.light, letterSpacing: -0.5 },
+
+  secureNote: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: spacing.lg, opacity: 0.7 },
   secureText: { fontSize: 11, color: colors.text.muted, marginLeft: 6 },
-  footer: { position: 'absolute', bottom: 0, left: 0, right: 0, padding: spacing.lg, backgroundColor: '#fff', borderTopLeftRadius: 24, borderTopRightRadius: 24, ...shadows.dark },
+
+  footer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: spacing.lg,
+    paddingBottom: spacing.lg + 4,
+    backgroundColor: '#0d1e3d',
+    borderTopLeftRadius: borderRadius.xxl,
+    borderTopRightRadius: borderRadius.xxl,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(188,129,65,0.25)',
+  },
   placeOrderBtn: { height: 56, borderRadius: borderRadius.md },
 });
 

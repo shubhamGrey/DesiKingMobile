@@ -17,7 +17,7 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import Header from '../components/common/Header';
 import Button from '../components/common/Button';
-import { colors, spacing, fontSize, borderRadius, shadows, fonts } from '../config/theme';
+import { colors, spacing, fontSize, borderRadius, fonts } from '../config/theme';
 import apiService from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
@@ -28,15 +28,12 @@ const ManageAddressScreen = () => {
   const { address } = route.params || {};
   const isEditing = !!address;
 
-  // Helper to parse the fullAddress string
   const parseAddressString = (fullAddr) => {
     if (!fullAddr) return {};
     const parts = fullAddr.split(',').map(p => p.trim());
     if (parts.length < 4) return { addressLine: fullAddr };
-
     const lastPart = parts[parts.length - 1];
     const pinSplit = lastPart.split('-').map(p => p.trim());
-
     return {
       pinCode: pinSplit[1] || '',
       countryName: pinSplit[0] || '',
@@ -76,7 +73,6 @@ const ManageAddressScreen = () => {
       const countriesList = countryRes.data || countryRes || [];
       setCountries(Array.isArray(countriesList) ? countriesList : []);
 
-      // If editing and we parsed a country name, find its code
       let currentCountryCode = formData.countryCode;
       if (isEditing && parsed.countryName) {
         const foundCountry = countriesList.find(c =>
@@ -93,7 +89,6 @@ const ManageAddressScreen = () => {
         const statesList = stateRes.data || stateRes || [];
         setStates(Array.isArray(statesList) ? statesList : []);
 
-        // If editing and we parsed a state name, find its code
         if (isEditing && parsed.stateName) {
           const foundState = statesList.find(s =>
             (s.name || s.stateName)?.toLowerCase() === parsed.stateName.toLowerCase()
@@ -135,35 +130,26 @@ const ManageAddressScreen = () => {
 
   const handleSave = async () => {
     const { fullName, addressLine, city, stateCode, countryCode, pinCode, phoneNumber } = formData;
-
     if (!fullName || !addressLine || !city || !stateCode || !countryCode || !pinCode || !phoneNumber) {
       Alert.alert('Missing Info', 'Please fill in all the required fields.');
       return;
     }
-
     try {
       setIsSaving(true);
-
       const addressPayload = {
         userId: user.id,
-        fullName: fullName,
-        phoneNumber: phoneNumber,
-        addressLine: addressLine,
-        city: city,
-        stateCode: stateCode,
-        countryCode: countryCode,
-        pinCode: pinCode,
-        addressType: "SHIPPING"
+        fullName,
+        phoneNumber,
+        addressLine,
+        city,
+        stateCode,
+        countryCode,
+        pinCode,
+        addressType: 'SHIPPING'
       };
-
-      if (isEditing) {
-        addressPayload.id = address.id;
-        await apiService.addAddress(addressPayload);
-        Alert.alert('Success', 'Address updated successfully!');
-      } else {
-        await apiService.addAddress(addressPayload);
-        Alert.alert('Success', 'New location added!');
-      }
+      if (isEditing) addressPayload.id = address.id;
+      await apiService.addAddress(addressPayload);
+      Alert.alert('Success', isEditing ? 'Address updated successfully!' : 'New location added!');
       navigation.goBack();
     } catch (e) {
       console.error('Error saving address:', e);
@@ -176,14 +162,14 @@ const ManageAddressScreen = () => {
   const Selector = ({ label, value, onPress, placeholder }) => (
     <View style={{ flex: 1 }}>
       <Text style={styles.label}>{label}</Text>
-      <TouchableOpacity style={styles.selector} onPress={onPress}>
-        <Text style={[styles.selectorText, !value && { color: colors.text.muted }]}>
+      <TouchableOpacity style={styles.selector} onPress={onPress} activeOpacity={0.8}>
+        <Text style={[styles.selectorText, !value && styles.selectorPlaceholder]}>
           {value || placeholder}
         </Text>
         {loadingDropdowns ? (
-          <ActivityIndicator size="small" color={colors.primary.main} />
+          <ActivityIndicator size="small" color={colors.secondary.main} />
         ) : (
-          <Ionicons name="chevron-down" size={18} color={colors.text.secondary} />
+          <Ionicons name="chevron-down" size={18} color={colors.text.muted} />
         )}
       </TouchableOpacity>
     </View>
@@ -191,43 +177,40 @@ const ManageAddressScreen = () => {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#1B4D3E" />
-      <Header title={isEditing ? "Edit Location" : "Add New Location"} showBack />
+      <StatusBar barStyle="light-content" backgroundColor="#0a1628" />
+      <Header title={isEditing ? 'Edit Location' : 'Add New Location'} showBack />
 
       <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
         <View style={styles.formCard}>
+
           <Text style={styles.label}>Receiver's Name</Text>
           <TextInput
             style={styles.input}
             value={formData.fullName}
-            onChangeText={(val) => setFormData({...formData, fullName: val})}
+            onChangeText={(val) => setFormData({ ...formData, fullName: val })}
             placeholder="John Doe"
-            placeholderTextColor={colors.text.muted}
+            placeholderTextColor={colors.text.disabled}
           />
 
           <Text style={styles.label}>Address Line (House No, Street)</Text>
           <TextInput
             style={[styles.input, styles.textArea]}
             value={formData.addressLine}
-            onChangeText={(val) => setFormData({...formData, addressLine: val})}
+            onChangeText={(val) => setFormData({ ...formData, addressLine: val })}
             placeholder="e.g. 123, Purity Lane"
-            placeholderTextColor={colors.text.muted}
+            placeholderTextColor={colors.text.disabled}
             multiline
             numberOfLines={3}
           />
 
-          <View style={styles.row}>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.label}>City</Text>
-              <TextInput
-                style={styles.input}
-                value={formData.city}
-                onChangeText={(val) => setFormData({...formData, city: val})}
-                placeholder="e.g. Pune"
-                placeholderTextColor={colors.text.muted}
-              />
-            </View>
-          </View>
+          <Text style={styles.label}>City</Text>
+          <TextInput
+            style={styles.input}
+            value={formData.city}
+            onChangeText={(val) => setFormData({ ...formData, city: val })}
+            placeholder="e.g. Pune"
+            placeholderTextColor={colors.text.disabled}
+          />
 
           <View style={styles.row}>
             <Selector
@@ -253,9 +236,9 @@ const ManageAddressScreen = () => {
               <TextInput
                 style={styles.input}
                 value={formData.pinCode}
-                onChangeText={(val) => setFormData({...formData, pinCode: val})}
+                onChangeText={(val) => setFormData({ ...formData, pinCode: val })}
                 placeholder="411014"
-                placeholderTextColor={colors.text.muted}
+                placeholderTextColor={colors.text.disabled}
                 keyboardType="number-pad"
                 maxLength={6}
               />
@@ -266,21 +249,22 @@ const ManageAddressScreen = () => {
               <TextInput
                 style={styles.input}
                 value={formData.phoneNumber}
-                onChangeText={(val) => setFormData({...formData, phoneNumber: val})}
+                onChangeText={(val) => setFormData({ ...formData, phoneNumber: val })}
                 placeholder="Mobile number"
-                placeholderTextColor={colors.text.muted}
+                placeholderTextColor={colors.text.disabled}
                 keyboardType="phone-pad"
               />
             </View>
           </View>
+
         </View>
       </ScrollView>
 
       <View style={styles.footer}>
-        <Button title={isSaving ? "Saving..." : "Save Address"} onPress={handleSave} fullWidth loading={isSaving} />
+        <Button title={isSaving ? 'Saving...' : 'Save Address'} onPress={handleSave} fullWidth loading={isSaving} />
       </View>
 
-      {/* Country Selection Modal */}
+      {/* Country Modal */}
       <Modal visible={showCountryModal} animationType="slide" transparent>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
@@ -298,7 +282,7 @@ const ManageAddressScreen = () => {
             ) : (
               <View style={{ padding: 20, alignItems: 'center' }}>
                 <Text style={{ color: colors.text.muted }}>Loading countries...</Text>
-                <ActivityIndicator size="large" color={colors.primary.main} style={{ marginTop: 10 }} />
+                <ActivityIndicator size="large" color={colors.secondary.main} style={{ marginTop: 10 }} />
               </View>
             )}
             <View style={{ marginTop: 10 }}>
@@ -308,7 +292,7 @@ const ManageAddressScreen = () => {
         </View>
       </Modal>
 
-      {/* State Selection Modal */}
+      {/* State Modal */}
       <Modal visible={showStateModal} animationType="slide" transparent>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
@@ -340,20 +324,86 @@ const ManageAddressScreen = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background.default },
-  scrollContent: { padding: spacing.md },
-  formCard: { backgroundColor: '#fff', borderRadius: borderRadius.lg, padding: spacing.lg, ...shadows.medium, borderWidth: 1, borderColor: '#f0f0f0' },
-  label: { fontSize: 12, fontFamily: fonts.body.bold, color: colors.text.secondary, marginBottom: 8, marginTop: 15, textTransform: 'uppercase', letterSpacing: 0.5 },
-  input: { backgroundColor: colors.accent.lightGray, borderRadius: borderRadius.md, padding: 12, fontSize: 14, color: colors.text.primary, borderWidth: 1, borderColor: '#eee' },
-  selector: { backgroundColor: colors.accent.lightGray, borderRadius: borderRadius.md, padding: 12, borderWidth: 1, borderColor: '#eee', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  selectorText: { fontSize: 14, color: colors.text.primary },
+  scrollContent: { padding: spacing.md, paddingBottom: 120 },
+
+  formCard: {
+    backgroundColor: colors.glass.surface,
+    borderRadius: borderRadius.lg,
+    padding: spacing.lg,
+    borderWidth: 1,
+    borderColor: colors.glass.border,
+  },
+  label: {
+    fontSize: 11,
+    fontFamily: fonts.body.bold,
+    color: colors.text.muted,
+    marginBottom: 8,
+    marginTop: 14,
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
+  },
+  input: {
+    backgroundColor: 'rgba(255,255,255,0.06)',
+    borderRadius: borderRadius.md,
+    padding: 13,
+    fontSize: 14,
+    color: colors.text.primary,
+    borderWidth: 1,
+    borderColor: colors.glass.border,
+    fontFamily: fonts.body.regular,
+  },
   textArea: { height: 80, textAlignVertical: 'top' },
+  selector: {
+    backgroundColor: 'rgba(255,255,255,0.06)',
+    borderRadius: borderRadius.md,
+    padding: 13,
+    borderWidth: 1,
+    borderColor: colors.glass.border,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  selectorText: { fontSize: 14, color: colors.text.primary, fontFamily: fonts.body.regular },
+  selectorPlaceholder: { color: colors.text.disabled },
   row: { flexDirection: 'row' },
-  footer: { padding: spacing.lg, backgroundColor: '#fff', borderTopLeftRadius: 24, borderTopRightRadius: 24, ...shadows.dark, paddingBottom: Platform.OS === 'ios' ? 40 : spacing.lg },
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
-  modalContent: { backgroundColor: '#fff', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: spacing.lg, maxHeight: '80%' },
-  modalTitle: { fontSize: 18, fontFamily: fonts.heading.bold, marginBottom: 20, textAlign: 'center', color: colors.text.primary },
-  modalItem: { paddingVertical: 15, borderBottomWidth: 1, borderBottomColor: '#f0f0f0' },
-  modalItemText: { fontSize: 16, color: colors.text.primary }
+
+  footer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: spacing.lg,
+    paddingBottom: Platform.OS === 'ios' ? 36 : spacing.lg,
+    backgroundColor: '#0d1e3d',
+    borderTopLeftRadius: borderRadius.xxl,
+    borderTopRightRadius: borderRadius.xxl,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(188,129,65,0.25)',
+  },
+
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.7)', justifyContent: 'flex-end' },
+  modalContent: {
+    backgroundColor: '#0d1e3d',
+    borderTopLeftRadius: borderRadius.xxl,
+    borderTopRightRadius: borderRadius.xxl,
+    padding: spacing.lg,
+    maxHeight: '80%',
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(188,129,65,0.25)',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontFamily: fonts.heading.bold,
+    marginBottom: 20,
+    textAlign: 'center',
+    color: colors.text.primary,
+  },
+  modalItem: {
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.divider,
+  },
+  modalItemText: { fontSize: 15, color: colors.text.secondary, fontFamily: fonts.body.regular },
 });
 
 export default ManageAddressScreen;
