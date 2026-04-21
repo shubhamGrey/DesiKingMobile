@@ -27,7 +27,7 @@ const Input = ({
   return (
     <View style={[styles.container, style]}>
       {label && (
-        <Text style={[styles.label, isFocused && styles.labelFocused, error && styles.labelError]}>
+        <Text style={[styles.label, error && styles.labelError]}>
           {label}
         </Text>
       )}
@@ -85,17 +85,14 @@ const Input = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: spacing.md,
+    marginBottom: spacing.md - 2,
   },
   label: {
-    fontSize: fontSize.sm,
-    fontFamily: fonts.body.semibold,
-    color: 'rgba(255,255,255,0.65)',
-    marginBottom: spacing.xs,
+    fontSize: fontSize.xs,
+    fontFamily: fonts.body.bold,
+    color: colors.text.primary,
+    marginBottom: spacing.xs - 1,
     letterSpacing: 0.2,
-  },
-  labelFocused: {
-    color: colors.primary.main,
   },
   labelError: {
     color: colors.error.main,
@@ -103,29 +100,35 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.07)',
+    backgroundColor: '#fff',
     borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.12)',
+    borderColor: colors.card.border,
     borderRadius: borderRadius.md,
+    shadowColor: colors.primary.main,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    elevation: 1,
   },
   inputFocused: {
-    borderColor: '#BC8141',
-    backgroundColor: 'rgba(255,255,255,0.12)',
+    borderColor: colors.primary.main,
+    shadowOpacity: 0.09,
+    shadowRadius: 10,
   },
   inputError: {
     borderColor: colors.error.main,
   },
   inputDisabled: {
-    backgroundColor: 'rgba(255,255,255,0.03)',
-    borderColor: 'rgba(255,255,255,0.08)',
+    backgroundColor: colors.background.cream,
+    borderColor: colors.card.border,
   },
   input: {
     flex: 1,
     paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm + 2,
-    fontSize: fontSize.md,
+    paddingVertical: spacing.sm + 3,
+    fontSize: fontSize.sm,
     fontFamily: fonts.body.regular,
-    color: '#fff',
+    color: colors.text.primary,
   },
   multilineInput: {
     minHeight: 100,
@@ -143,12 +146,12 @@ const styles = StyleSheet.create({
   helperText: {
     fontSize: fontSize.xs,
     fontFamily: fonts.body.regular,
-    color: 'rgba(255,255,255,0.45)',
+    color: colors.text.muted,
     marginTop: spacing.xs,
     marginLeft: 2,
   },
   errorText: {
-    color: '#FF6961',
+    color: colors.error.main,
   },
 });
 

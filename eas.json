@@ -7,18 +7,18 @@
       "developmentClient": true,
       "distribution": "internal",
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://agronexis.com/app"
+        "EXPO_PUBLIC_API_URL": "https://desikingspices.com/app"
       }
     },
     "preview": {
       "distribution": "internal",
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://agronexis.com/app"
+        "EXPO_PUBLIC_API_URL": "https://desikingspices.com/app"
       }
     },
     "production": {
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://agronexis.com/app"
+        "EXPO_PUBLIC_API_URL": "https://desikingspices.com/app"
       },
       "ios": {
         "resourceClass": "m-medium"

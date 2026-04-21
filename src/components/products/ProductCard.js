@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, ImageBackground, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, spacing, fontSize, borderRadius, fonts } from '../../config/theme';
+import { colors, spacing, fontSize, borderRadius, fonts, CATEGORY_COLORS, CATEGORY_COLORS_DEFAULT } from '../../config/theme';
 import { useCart } from '../../context/CartContext';
 
 const { width } = Dimensions.get('window');
@@ -18,6 +18,8 @@ const ProductCard = ({ product, onPress }) => {
   const hasDiscount = pricing?.isDiscounted && discountedPrice;
   const weightLabel = pricing ? `${pricing.weightValue}${pricing.weightUnit}` : '';
   const discountPct = hasDiscount ? Math.round(pricing.discountPercentage) : 0;
+
+  const barColors = CATEGORY_COLORS[product.categoryName] || CATEGORY_COLORS_DEFAULT;
 
   const handleAddToCart = () => {
     addItem({
@@ -37,44 +39,35 @@ const ProductCard = ({ product, onPress }) => {
       activeOpacity={0.88}
       accessibilityLabel={`${product.name}, ₹${hasDiscount ? discountedPrice : price}`}
     >
-      {/* Top accent bar */}
+      {/* Top color bar — category gradient */}
       <LinearGradient
-        colors={[colors.secondary.main, colors.secondary.light]}
+        colors={barColors}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
         style={styles.accentBar}
       />
 
-      {/* Image */}
+      {/* Image area */}
       <View style={styles.imageContainer}>
-        <ImageBackground
-          source={require('../../../assets/ProductBackground.png')}
-          style={styles.imageBg}
-          resizeMode="cover"
-        >
-          <Image
-            source={{ uri: product.thumbnailUrl || product.imageUrls?.[0] || 'https://via.placeholder.com/150' }}
-            style={styles.image}
-            resizeMode="contain"
-            accessibilityLabel={product.name}
-          />
-        </ImageBackground>
+        <Image
+          source={{ uri: product.thumbnailUrl || product.imageUrls?.[0] }}
+          style={styles.image}
+          resizeMode="contain"
+          accessibilityLabel={product.name}
+        />
 
         {/* Badges */}
-        <View style={styles.badges}>
-          {hasDiscount && (
-            <View style={styles.discountBadge}>
-              <Text style={styles.discountText}>{discountPct}% OFF</Text>
-            </View>
-          )}
-          {product.isFeatured && !hasDiscount && (
-            <View style={styles.featuredBadge}>
-              <Text style={styles.featuredText}>TOP</Text>
-            </View>
-          )}
-        </View>
+        {hasDiscount ? (
+          <View style={styles.discountBadge}>
+            <Text style={styles.badgeText}>{discountPct}% OFF</Text>
+          </View>
+        ) : product.isFeatured ? (
+          <View style={styles.featuredBadge}>
+            <Text style={styles.badgeText}>TOP</Text>
+          </View>
+        ) : null}
 
-        {/* Cart button */}
+        {/* Quick-add button */}
         <TouchableOpacity
           style={[styles.cartBtn, inCart && styles.cartBtnAdded]}
           onPress={handleAddToCart}
@@ -82,7 +75,7 @@ const ProductCard = ({ product, onPress }) => {
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           accessibilityLabel={inCart ? 'Added to cart' : 'Add to cart'}
         >
-          <Ionicons name={inCart ? 'checkmark' : 'add'} size={16} color="#fff" />
+          <Ionicons name={inCart ? 'checkmark' : 'add'} size={18} color="#fff" />
         </TouchableOpacity>
       </View>
 
@@ -94,13 +87,7 @@ const ProductCard = ({ product, onPress }) => {
         <Text style={styles.name} numberOfLines={2}>
           {product.name}
         </Text>
-
-        <View style={styles.ratingRow}>
-          <Ionicons name="star" size={10} color={colors.accent.saffron} />
-          <Text style={styles.ratingText}> 4.8 </Text>
-          <Text style={styles.ratingCount}>(120)</Text>
-        </View>
-
+        <Text style={styles.stars}>★★★★★</Text>
         <View style={styles.priceRow}>
           <Text style={styles.price}>
             ₹{hasDiscount ? discountedPrice : price}
@@ -117,16 +104,16 @@ const ProductCard = ({ product, onPress }) => {
 const styles = StyleSheet.create({
   container: {
     width: CARD_WIDTH,
-    borderRadius: borderRadius.lg,
+    borderRadius: 22,
     marginBottom: spacing.md,
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: colors.card.border,
     overflow: 'hidden',
-    backgroundColor: colors.background.paper,
-    shadowColor: '#1f4f40',
+    backgroundColor: '#fff',
+    shadowColor: colors.primary.main,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.07,
-    shadowRadius: 12,
+    shadowRadius: 16,
     elevation: 3,
   },
   accentBar: {
@@ -135,113 +122,93 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     width: '100%',
-    height: CARD_WIDTH * 0.88,
-    position: 'relative',
+    height: 120,
     backgroundColor: colors.background.cream,
-  },
-  imageBg: {
-    width: '100%',
-    height: '100%',
     alignItems: 'center',
     justifyContent: 'center',
+    position: 'relative',
   },
   image: {
-    width: '100%',
-    height: '100%',
-  },
-  badges: {
-    position: 'absolute',
-    top: spacing.xs,
-    left: spacing.xs,
-    gap: 4,
+    width: '85%',
+    height: '85%',
   },
   discountBadge: {
-    backgroundColor: colors.accent.orange,
-    paddingHorizontal: 7,
+    position: 'absolute',
+    top: 8,
+    left: 8,
+    backgroundColor: colors.primary.main,
+    paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: borderRadius.full,
   },
-  discountText: {
+  featuredBadge: {
+    position: 'absolute',
+    top: 8,
+    left: 8,
+    backgroundColor: colors.primary.light,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: borderRadius.full,
+  },
+  badgeText: {
     color: '#fff',
-    fontSize: 11,
+    fontSize: 10,
     fontFamily: fonts.body.extrabold,
     letterSpacing: 0.4,
   },
-  featuredBadge: {
-    backgroundColor: '#1B4D3E',
-    paddingHorizontal: 7,
-    paddingVertical: 3,
-    borderRadius: borderRadius.full,
-  },
-  featuredText: {
-    color: '#fff',
-    fontSize: 11,
-    fontFamily: fonts.body.extrabold,
-    letterSpacing: 0.3,
-  },
   cartBtn: {
     position: 'absolute',
-    bottom: spacing.xs,
-    right: spacing.xs,
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: colors.accent.orange,
+    bottom: 8,
+    right: 8,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: colors.primary.main,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: colors.accent.orange,
-    shadowOffset: { width: 0, height: 2 },
+    shadowColor: colors.primary.main,
+    shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.35,
-    shadowRadius: 6,
+    shadowRadius: 10,
     elevation: 4,
   },
   cartBtnAdded: {
-    backgroundColor: '#1B4D3E',
+    backgroundColor: colors.success,
   },
   info: {
-    padding: spacing.sm,
-    paddingTop: spacing.xs + 2,
-    backgroundColor: 'rgba(0,0,0,0.02)',
+    padding: 10,
+    paddingTop: 10,
+    paddingBottom: 12,
   },
   category: {
-    fontSize: 11,
-    fontFamily: fonts.body.medium,
+    fontSize: 10,
+    fontFamily: fonts.body.semibold,
     color: colors.text.muted,
     textTransform: 'uppercase',
     letterSpacing: 0.8,
-    marginBottom: 2,
+    marginBottom: 3,
   },
   name: {
-    fontSize: fontSize.sm,
+    fontSize: 14,
     fontFamily: fonts.heading.bold,
     color: colors.text.primary,
-    lineHeight: 20,
-    marginBottom: 4,
+    lineHeight: 18,
+    marginBottom: 5,
   },
-  ratingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 6,
-  },
-  ratingText: {
-    fontSize: 11,
-    fontFamily: fonts.body.bold,
-    color: colors.text.secondary,
-  },
-  ratingCount: {
-    fontSize: 11,
-    fontFamily: fonts.body.regular,
-    color: colors.text.muted,
+  stars: {
+    fontSize: 10,
+    color: colors.secondary.main,
+    marginBottom: 5,
   },
   priceRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
+    alignItems: 'baseline',
+    gap: 5,
   },
   price: {
-    fontSize: fontSize.md,
+    fontSize: 17,
     fontFamily: fonts.heading.extrabold,
-    color: colors.secondary.light,
+    color: colors.primary.main,
   },
   strikePrice: {
     fontSize: 11,

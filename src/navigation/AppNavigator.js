@@ -4,7 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, borderRadius, fonts } from '../config/theme';
+import { colors, fonts } from '../config/theme';
 import { useCart } from '../context/CartContext';
 
 // Screens
@@ -26,62 +26,55 @@ const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 const TAB_CONFIG = [
-  { name: 'Home',     icon: 'home',       iconOutline: 'home-outline',     label: 'Home' },
-  { name: 'Products', icon: 'grid',        iconOutline: 'grid-outline',      label: 'Shop' },
-  { name: 'Cart',     icon: 'cart',        iconOutline: 'cart-outline',      label: 'Cart' },
-  { name: 'Profile',  icon: 'person',      iconOutline: 'person-outline',    label: 'Profile' },
+  { name: 'Home',     icon: 'home',        iconOutline: 'home-outline',     label: 'Home' },
+  { name: 'Products', icon: 'grid',         iconOutline: 'grid-outline',     label: 'Shop' },
+  { name: 'Cart',     icon: 'cart',         iconOutline: 'cart-outline',     label: 'Cart' },
+  { name: 'Profile',  icon: 'person',       iconOutline: 'person-outline',   label: 'Profile' },
 ];
 
 const CustomTabBar = ({ state, descriptors, navigation }) => {
   const { itemCount } = useCart();
 
   return (
-    <View style={styles.tabBarWrapper}>
-      <View style={styles.tabBar}>
-        {state.routes.map((route, index) => {
-          const { options } = descriptors[route.key];
-          const focused = state.index === index;
-          const cfg = TAB_CONFIG.find(t => t.name === route.name) || TAB_CONFIG[0];
+    <View style={styles.tabBar}>
+      {state.routes.map((route, index) => {
+        const focused = state.index === index;
+        const cfg = TAB_CONFIG.find(t => t.name === route.name) || TAB_CONFIG[0];
+        const isCart = route.name === 'Cart';
 
-          const onPress = () => {
-            const event = navigation.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
-            if (!focused && !event.defaultPrevented) {
-              navigation.navigate(route.name);
-            }
-          };
+        const onPress = () => {
+          const event = navigation.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
+          if (!focused && !event.defaultPrevented) navigation.navigate(route.name);
+        };
 
-          const isCart = route.name === 'Cart';
-          const cartBadge = isCart && itemCount > 0;
-
-          return (
-            <TouchableOpacity
-              key={route.key}
-              onPress={onPress}
-              activeOpacity={0.8}
-              style={styles.tabItem}
-              accessibilityLabel={cfg.label}
-              accessibilityRole="tab"
-              accessibilityState={{ selected: focused }}
-            >
-              <View style={[styles.tabIconWrap, focused && styles.tabIconWrapActive]}>
-                <Ionicons
-                  name={focused ? cfg.icon : cfg.iconOutline}
-                  size={22}
-                  color={focused ? '#fff' : 'rgba(31,79,64,0.5)'}
-                />
-                {cartBadge && (
-                  <View style={styles.badge}>
-                    <Text style={styles.badgeText}>{itemCount > 99 ? '99+' : itemCount}</Text>
-                  </View>
-                )}
-              </View>
-              <Text style={[styles.tabLabel, focused && styles.tabLabelActive]}>
-                {cfg.label}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
-      </View>
+        return (
+          <TouchableOpacity
+            key={route.key}
+            onPress={onPress}
+            activeOpacity={0.7}
+            style={styles.tabItem}
+            accessibilityLabel={cfg.label}
+            accessibilityRole="tab"
+            accessibilityState={{ selected: focused }}
+          >
+            <View style={styles.iconWrap}>
+              <Ionicons
+                name={focused ? cfg.icon : cfg.iconOutline}
+                size={19}
+                color={focused ? colors.primary.main : colors.text.disabled}
+              />
+              {isCart && itemCount > 0 && (
+                <View style={styles.badge}>
+                  <Text style={styles.badgeText}>{itemCount > 99 ? '99+' : itemCount}</Text>
+                </View>
+              )}
+            </View>
+            <Text style={[styles.tabLabel, focused && styles.tabLabelActive]}>
+              {cfg.label}
+            </Text>
+          </TouchableOpacity>
+        );
+      })}
     </View>
   );
 };
@@ -151,75 +144,53 @@ const AppNavigator = () => (
 );
 
 const styles = StyleSheet.create({
-  tabBarWrapper: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    paddingHorizontal: 16,
-    paddingBottom: Platform.OS === 'ios' ? 24 : 12,
-    paddingTop: 8,
-    backgroundColor: 'transparent',
-  },
   tabBar: {
     flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
-    borderRadius: borderRadius.xxl,
-    paddingVertical: 8,
-    paddingHorizontal: 8,
-    shadowColor: '#1f4f40',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.14,
-    shadowRadius: 20,
+    backgroundColor: colors.background.warm,
+    borderTopWidth: 1.5,
+    borderTopColor: colors.card.border,
+    height: Platform.OS === 'ios' ? 78 : 58,
+    paddingBottom: Platform.OS === 'ios' ? 20 : 0,
+    shadowColor: colors.primary.main,
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.07,
+    shadowRadius: 24,
     elevation: 12,
-    borderWidth: 1,
-    borderColor: 'rgba(31,79,64,0.1)',
   },
   tabItem: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 4,
+    paddingTop: 6,
   },
-  tabIconWrap: {
-    width: 44,
-    height: 36,
-    borderRadius: 18,
-    alignItems: 'center',
-    justifyContent: 'center',
+  iconWrap: {
     position: 'relative',
-  },
-  tabIconWrapActive: {
-    backgroundColor: colors.secondary.main,
-  },
-  badge: {
-    position: 'absolute',
-    top: -4,
-    right: -4,
-    backgroundColor: colors.accent.orange,
-    borderRadius: 9,
-    minWidth: 18,
-    height: 18,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 2,
-    borderColor: '#FFFFFF',
-    paddingHorizontal: 3,
-  },
-  badgeText: {
-    color: '#fff',
-    fontSize: 11,
-    fontFamily: fonts.body.extrabold,
+    marginBottom: 3,
   },
   tabLabel: {
-    fontSize: 11,
+    fontSize: 10,
     fontFamily: fonts.body.semibold,
-    color: 'rgba(31,79,64,0.45)',
-    marginTop: 2,
+    color: colors.text.disabled,
     letterSpacing: 0.3,
   },
   tabLabelActive: {
     color: colors.primary.main,
+    fontFamily: fonts.body.extrabold,
+  },
+  badge: {
+    position: 'absolute',
+    top: -4,
+    right: -6,
+    width: 15,
+    height: 15,
+    borderRadius: 8,
+    backgroundColor: colors.primary.main,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  badgeText: {
+    color: '#fff',
+    fontSize: 8,
     fontFamily: fonts.body.extrabold,
   },
 });

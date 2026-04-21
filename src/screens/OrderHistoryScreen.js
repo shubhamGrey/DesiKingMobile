@@ -14,6 +14,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Header from '../components/common/Header';
 import Loading from '../components/common/Loading';
 import Button from '../components/common/Button';
+import LottieView from 'lottie-react-native';
 import { colors, spacing, fontSize, borderRadius, fonts, shadows } from '../config/theme';
 import apiService from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -158,9 +159,12 @@ const OrderHistoryScreen = () => {
         }
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <View style={styles.emptyIconCircle}>
-              <Ionicons name="bag-handle-outline" size={40} color={colors.text.muted} />
-            </View>
+            <LottieView
+              source={require('../../assets/lottie/chili.json')}
+              autoPlay
+              loop
+              style={styles.emptyLottie}
+            />
             <Text style={styles.emptyTitle}>No orders yet</Text>
             <Text style={styles.emptySubtitle}>When you place an order, it will appear here.</Text>
             <Button title="Browse Spices" onPress={() => navigation.navigate('Products')} style={styles.shopButton} />
@@ -241,17 +245,10 @@ const styles = StyleSheet.create({
   detailsBtnText: { fontSize: 11, color: colors.secondary.main, fontFamily: fonts.body.bold, marginRight: 2 },
 
   emptyContainer: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: 100 },
-  emptyIconCircle: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: colors.background.paper,
-    borderWidth: 1,
-    borderColor: colors.card.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: spacing.md,
-    ...shadows.card,
+  emptyLottie: {
+    width: 160,
+    height: 160,
+    marginBottom: spacing.sm,
   },
   emptyTitle: { fontSize: fontSize.lg, fontFamily: fonts.body.bold, color: colors.text.primary },
   emptySubtitle: {

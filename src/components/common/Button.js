@@ -1,7 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, ActivityIndicator, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, spacing, fontSize, borderRadius, shadows, fonts } from '../../config/theme';
+import { colors, spacing, fontSize, borderRadius, fonts } from '../../config/theme';
 
 const Button = ({
   title,
@@ -32,7 +32,9 @@ const Button = ({
     textStyle,
   ];
 
-  const spinnerColor = variant === 'primary' || variant === 'secondary' ? '#fff' : colors.primary.main;
+  const spinnerColor = variant === 'primary' || variant === 'secondary' || variant === 'danger'
+    ? '#fff'
+    : colors.primary.main;
 
   return (
     <TouchableOpacity
@@ -79,15 +81,23 @@ const styles = StyleSheet.create({
   // --- Variants ---
   primary: {
     backgroundColor: colors.primary.main,
-    ...shadows.light,
+    shadowColor: colors.primary.main,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.30,
+    shadowRadius: 16,
+    elevation: 6,
   },
   secondary: {
     backgroundColor: colors.secondary.main,
-    ...shadows.gold,
+    shadowColor: colors.secondary.main,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.30,
+    shadowRadius: 16,
+    elevation: 6,
   },
   outline: {
     backgroundColor: 'transparent',
-    borderWidth: 1.5,
+    borderWidth: 2,
     borderColor: colors.primary.main,
   },
   ghost: {
@@ -96,15 +106,10 @@ const styles = StyleSheet.create({
   danger: {
     backgroundColor: colors.error.main,
   },
-  glass: {
-    backgroundColor: 'rgba(31,79,64,0.08)',
-    borderWidth: 1,
-    borderColor: 'rgba(31,79,64,0.20)',
-  },
 
   // --- Labels ---
   label: {
-    fontFamily: fonts.body.bold,
+    fontFamily: fonts.body.extrabold,
     letterSpacing: 0.3,
   },
   primaryLabel: { color: '#fff' },
@@ -112,7 +117,6 @@ const styles = StyleSheet.create({
   outlineLabel: { color: colors.primary.main },
   ghostLabel: { color: colors.primary.main },
   dangerLabel: { color: '#fff' },
-  glassLabel: { color: colors.primary.main },
 
   // --- Sizes ---
   smallSize: {
@@ -121,19 +125,19 @@ const styles = StyleSheet.create({
     minHeight: 36,
   },
   mediumSize: {
-    paddingVertical: spacing.sm + 4,
+    paddingVertical: spacing.sm + 5,
     paddingHorizontal: spacing.lg,
     minHeight: 48,
   },
   largeSize: {
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.xl,
-    minHeight: 56,
+    paddingVertical: spacing.md - 1,
+    paddingHorizontal: spacing.xl - 4,
+    minHeight: 52,
   },
 
   smallLabel: { fontSize: fontSize.xs },
-  mediumLabel: { fontSize: fontSize.md },
-  largeLabel: { fontSize: fontSize.lg },
+  mediumLabel: { fontSize: fontSize.sm },
+  largeLabel: { fontSize: fontSize.md - 1 },
 });
 
 export default Button;

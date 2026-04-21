@@ -45,14 +45,14 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   defaultSurface: {
-    backgroundColor: colors.glass.surface,
+    backgroundColor: colors.card.surface,
     borderWidth: 1,
-    borderColor: colors.glass.border,
+    borderColor: colors.card.border,
   },
   featuredSurface: {
-    backgroundColor: colors.glass.gold,
+    backgroundColor: 'rgba(201,151,90,0.10)',
     borderWidth: 1,
-    borderColor: colors.glass.goldBorder,
+    borderColor: 'rgba(201,151,90,0.30)',
   },
   topBar: {
     height: 3,

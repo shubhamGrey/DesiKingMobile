@@ -1,4 +1,4 @@
-// Modern Premium Theme — Agro Nexis / Desi King
+// DesiKing — Full Redesign Theme
 export const colors = {
   primary: {
     main: '#1f4f40',
@@ -7,54 +7,36 @@ export const colors = {
     contrastText: '#FFFFFF',
   },
   secondary: {
-    main: '#BC8141',
-    light: '#d4a265',
-    dark: '#8b5e2e',
+    main: '#c9975a',
+    light: '#e8c080',
+    dark: '#a07040',
     contrastText: '#FFFFFF',
   },
-  accent: {
-    cream: '#F5EFE1',
-    softWhite: '#FFFFFF',
-    lightGray: '#F4F4F6',
-    saffron: '#F5A623',
-    turmeric: '#E8B84B',
-    orange: '#E85D04',
-  },
   background: {
-    default: '#FAFAF8',       // warm near-white
-    paper: '#FFFFFF',         // cards, modals
-    dark: '#1f4f40',          // header / hero areas (brand green)
-    muted: 'rgba(0,0,0,0.03)',
-    subtle: 'rgba(0,0,0,0.015)',
-    cream: '#F5EFE1',         // section tints
+    default: '#fff9f2',      // ivory — screen background
+    paper: '#FFFFFF',        // cards, modals
+    dark: '#1f4f40',         // header / hero areas (brand green)
+    muted: 'rgba(31,79,64,0.03)',
+    subtle: 'rgba(31,79,64,0.015)',
+    cream: '#fdf0e0',        // section tints, image areas
+    warm: '#fffcf8',         // bottom nav, login card
   },
-  // Glass tokens — kept for any overlay components
-  glass: {
-    surface: 'rgba(255,255,255,0.85)',
-    surfaceStrong: 'rgba(255,255,255,0.95)',
-    border: 'rgba(0,0,0,0.08)',
-    borderStrong: 'rgba(0,0,0,0.14)',
-    gold: 'rgba(188,129,65,0.08)',
-    goldBorder: 'rgba(188,129,65,0.30)',
-    overlay: 'rgba(6,13,26,0.82)',
-  },
-  // Card surface token
   card: {
     surface: '#FFFFFF',
-    border: 'rgba(0,0,0,0.07)',
-    shadow: 'rgba(31,79,64,0.08)',
-    muted: '#F7F3ED',         // warm tinted card (e.g. featured)
+    border: 'rgba(31,79,64,0.09)',
+    shadow: 'rgba(31,79,64,0.07)',
+    muted: '#fdf0e0',
   },
   text: {
-    primary: '#1C1409',       // warm near-black
-    secondary: '#6B5F55',     // warm medium gray
-    muted: '#ABA39A',         // soft muted
+    primary: '#1a0a00',
+    secondary: '#5c3d2e',
+    muted: '#b09080',
     light: '#FFFFFF',
-    disabled: '#C8C0B8',
+    disabled: '#d4c0b0',
     inverse: '#FFFFFF',
   },
-  border: 'rgba(0,0,0,0.08)',
-  divider: 'rgba(0,0,0,0.06)',
+  border: 'rgba(31,79,64,0.09)',
+  divider: 'rgba(31,79,64,0.07)',
   success: '#2E8B57',
   warning: '#E8A838',
   error: {
@@ -62,12 +44,11 @@ export const colors = {
     light: '#F07167',
     dark: '#B03226',
   },
-  // Gradient stop helpers
   gradient: {
     primaryStart: '#1f4f40',
     primaryEnd: '#2d6a58',
-    goldStart: '#BC8141',
-    goldEnd: '#d4a265',
+    goldStart: '#c9975a',
+    goldEnd: '#e8c080',
     darkStart: '#0d2b22',
     darkEnd: '#1f4f40',
   },
@@ -91,7 +72,7 @@ export const fontSize = {
   xl: 22,
   xxl: 28,
   xxxl: 36,
-  hero: 44,
+  hero: 52,
 };
 
 export const fontWeight = {
@@ -105,13 +86,12 @@ export const fontWeight = {
 
 // Font families — loaded via @expo-google-fonts in App.js
 export const fonts = {
-  // Playfair Display — for headings, product names, hero text, prices
+  // Neuton — for headings, product names, hero text, prices
   heading: {
-    regular: 'PlayfairDisplay_400Regular',
-    semibold: 'PlayfairDisplay_600SemiBold',
-    bold: 'PlayfairDisplay_700Bold',
-    extrabold: 'PlayfairDisplay_800ExtraBold',
-    black: 'PlayfairDisplay_900Black',
+    regular: 'Neuton_400Regular',
+    italic: 'Neuton_400Regular_Italic',
+    bold: 'Neuton_700Bold',
+    extrabold: 'Neuton_800ExtraBold',
   },
   // Inter — for body text, labels, buttons, UI elements
   body: {
@@ -163,7 +143,7 @@ export const shadows = {
     elevation: 8,
   },
   gold: {
-    shadowColor: '#BC8141',
+    shadowColor: '#c9975a',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.20,
     shadowRadius: 12,
@@ -176,7 +156,25 @@ export const shadows = {
     shadowRadius: 12,
     elevation: 3,
   },
+  button: {
+    shadowColor: '#1f4f40',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.30,
+    shadowRadius: 16,
+    elevation: 6,
+  },
 };
+
+// Category → gradient color map for product card top bars
+export const CATEGORY_COLORS = {
+  'Powdered Spices': ['#c9923a', '#E8B84B'],
+  'Ground Spices':   ['#c9923a', '#E8B84B'],
+  'Whole Spices':    ['#c0392b', '#e04020'],
+  'Blends':          ['#1f4f40', '#2d6a58'],
+  'Seeds':           ['#8b6914', '#c9950a'],
+  'Masalas':         ['#1f4f40', '#2d6a58'],
+};
+export const CATEGORY_COLORS_DEFAULT = ['#1f4f40', '#2d6a58'];
 
 export default {
   colors,
@@ -186,4 +184,6 @@ export default {
   fonts,
   borderRadius,
   shadows,
+  CATEGORY_COLORS,
+  CATEGORY_COLORS_DEFAULT,
 };

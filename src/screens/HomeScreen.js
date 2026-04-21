@@ -11,22 +11,21 @@ import {
   TextInput,
   StatusBar,
   Platform,
-  ImageBackground,
   Animated,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import LottieView from 'lottie-react-native';
 import Header from '../components/common/Header';
-import { colors, spacing, fontSize, borderRadius, shadows, fonts } from '../config/theme';
+import { colors, spacing, fontSize, borderRadius, fonts, CATEGORY_COLORS, CATEGORY_COLORS_DEFAULT } from '../config/theme';
 import apiService from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 
 const { width } = Dimensions.get('window');
-const HERO_WIDTH = width - 32;
 
-// Shimmer skeleton
+// Skeleton block for loading state
 const SkeletonBlock = ({ w, h, radius = 12, style }) => {
   const anim = useRef(new Animated.Value(0)).current;
   useEffect(() => {
@@ -37,19 +36,43 @@ const SkeletonBlock = ({ w, h, radius = 12, style }) => {
       ])
     ).start();
   }, []);
-  const opacity = anim.interpolate({ inputRange: [0, 1], outputRange: [0.25, 0.55] });
+  const opacity = anim.interpolate({ inputRange: [0, 1], outputRange: [0.20, 0.45] });
   return (
     <Animated.View
-      style={[{ width: w, height: h, borderRadius: radius, backgroundColor: 'rgba(0,0,0,0.07)', opacity }, style]}
+      style={[{ width: w, height: h, borderRadius: radius, backgroundColor: colors.card.border, opacity }, style]}
     />
   );
 };
+
+// Section header: gold eyebrow + Neuton title + view-all link
+const SectionHeader = ({ eyebrow, title, onViewAll, lottie }) => (
+  <View style={styles.secHdr}>
+    <View style={styles.secHdrLeft}>
+      <Text style={styles.secEye}>✦ {eyebrow}</Text>
+      <View style={styles.secTtlRow}>
+        <Text style={styles.secTtl}>{title}</Text>
+        {lottie && (
+          <LottieView
+            source={lottie}
+            autoPlay
+            loop
+            style={styles.secLottie}
+          />
+        )}
+      </View>
+    </View>
+    {onViewAll && (
+      <TouchableOpacity onPress={onViewAll} accessibilityLabel={`View all ${title}`}>
+        <Text style={styles.viewAll}>View All ›</Text>
+      </TouchableOpacity>
+    )}
+  </View>
+);
 
 const HomeScreen = () => {
   const navigation = useNavigation();
   const { user } = useAuth();
   const { addItem } = useCart();
-  const heroScrollRef = useRef(null);
 
   const [allProducts, setAllProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -57,27 +80,8 @@ const HomeScreen = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [heroIndex, setHeroIndex] = useState(0);
-
-  const heroItems = [
-    { id: '1', title: 'Premium Spices', sub: 'Straight from the farm to your kitchen', bg: require('../../assets/Hero Banner 1.png') },
-    { id: '2', title: 'Pure. Natural. Authentic.', sub: 'No additives. No preservatives.', bg: require('../../assets/Hero Banner 2.png') },
-    { id: '3', title: 'Farm Fresh Direct', sub: 'Sourced from top Indian farms', bg: require('../../assets/Hero Banner 3.png') },
-    { id: '4', title: 'Taste the Tradition', sub: 'Hand-picked spices from Indian farms', bg: require('../../assets/Hero Banner 4.png') },
-    { id: '5', title: 'Agro Nexis Quality', sub: 'Certified organic. 100% pure.', bg: require('../../assets/Hero Banner 5.png') },
-  ];
 
   useEffect(() => { loadData(); }, []);
-
-  useEffect(() => {
-    if (isLoading) return;
-    const interval = setInterval(() => {
-      const next = (heroIndex + 1) % heroItems.length;
-      setHeroIndex(next);
-      heroScrollRef.current?.scrollTo({ x: next * (HERO_WIDTH + 12), animated: true });
-    }, 4500);
-    return () => clearInterval(interval);
-  }, [heroIndex, isLoading]);
 
   const loadData = async () => {
     try {
@@ -104,47 +108,22 @@ const HomeScreen = () => {
   }), [allProducts, searchQuery, activeCategory]);
 
   const dailyEssentials = useMemo(() => allProducts.filter(p => p.isFeatured).slice(0, 8), [allProducts]);
-  const immunityBoosters = useMemo(() => allProducts.filter(p => ['turmeric', 'pepper', 'ginger'].some(k => p.name.toLowerCase().includes(k))).slice(0, 8), [allProducts]);
-  const digestiveAids = useMemo(() => allProducts.filter(p => ['cumin', 'fennel'].some(k => p.name.toLowerCase().includes(k))).slice(0, 8), [allProducts]);
-  const desiKingSpecials = useMemo(() => allProducts.filter(p => ['masala', 'blend'].some(k => p.name.toLowerCase().includes(k))).slice(0, 8), [allProducts]);
+  const immunityBoosters = useMemo(() => allProducts.filter(p =>
+    ['turmeric', 'pepper', 'ginger'].some(k => p.name.toLowerCase().includes(k))
+  ).slice(0, 8), [allProducts]);
+  const digestiveAids = useMemo(() => allProducts.filter(p =>
+    ['cumin', 'fennel'].some(k => p.name.toLowerCase().includes(k))
+  ).slice(0, 8), [allProducts]);
+  const desiKingSpecials = useMemo(() => allProducts.filter(p =>
+    ['masala', 'blend'].some(k => p.name.toLowerCase().includes(k))
+  ).slice(0, 8), [allProducts]);
 
-  const renderBrandBanner = () => (
-    <ImageBackground
-      source={require('../../assets/Brand.png')}
-      style={styles.brandBanner}
-      resizeMode="cover"
-    >
-      <View style={styles.brandOverlay}>
-        <Text style={styles.brandBannerTitle}>Straight from Farm to Kitchen</Text>
-        <Text style={styles.brandBannerSub}>Premium spices crafted since 2014</Text>
-      </View>
-    </ImageBackground>
-  );
-
-  const renderAchievements = () => (
-    <ImageBackground
-      source={require('../../assets/Achievement.jpg')}
-      style={styles.achievementsBanner}
-      resizeMode="cover"
-    >
-      <View style={styles.achievementsOverlay}>
-        <View style={styles.achievementItem}>
-          <Text style={styles.achievementNum}>10+</Text>
-          <Text style={styles.achievementLabel}>Years</Text>
-        </View>
-        <View style={styles.achievementDivider} />
-        <View style={styles.achievementItem}>
-          <Text style={styles.achievementNum}>50+</Text>
-          <Text style={styles.achievementLabel}>Products</Text>
-        </View>
-        <View style={styles.achievementDivider} />
-        <View style={styles.achievementItem}>
-          <Text style={styles.achievementNum}>1000+</Text>
-          <Text style={styles.achievementLabel}>Customers</Text>
-        </View>
-      </View>
-    </ImageBackground>
-  );
+  const greeting = () => {
+    const h = new Date().getHours();
+    if (h < 12) return 'Good Morning';
+    if (h < 17) return 'Good Afternoon';
+    return 'Good Evening';
+  };
 
   const handleAddToCart = (product) => {
     const pricing = product.pricesAndSkus?.[0];
@@ -159,6 +138,78 @@ const HomeScreen = () => {
     });
   };
 
+  const renderRowCard = (product) => {
+    const pricing = product.pricesAndSkus?.[0];
+    const pay = pricing?.discountedAmount || pricing?.price || 0;
+    const orig = pricing?.price || 0;
+    const hasDis = pricing?.isDiscounted && orig > pay;
+    const discPct = hasDis ? Math.round(pricing.discountPercentage) : 0;
+    const barColors = CATEGORY_COLORS[product.categoryName] || CATEGORY_COLORS_DEFAULT;
+
+    return (
+      <TouchableOpacity
+        key={product.id}
+        style={styles.rowCard}
+        onPress={() => navigation.navigate('ProductDetails', { productId: product.id })}
+        activeOpacity={0.88}
+        accessibilityLabel={product.name}
+      >
+        <LinearGradient colors={barColors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.rowAccentBar} />
+        <View style={styles.rowCardImg}>
+          <Image source={{ uri: product.thumbnailUrl || product.imageUrls?.[0] }} style={styles.rowCardImage} resizeMode="contain" />
+          {hasDis && (
+            <View style={styles.rowBadge}>
+              <Text style={styles.rowBadgeText}>{discPct}% OFF</Text>
+            </View>
+          )}
+          {product.isFeatured && !hasDis && (
+            <View style={[styles.rowBadge, styles.rowBadgeTop]}>
+              <Text style={styles.rowBadgeText}>TOP</Text>
+            </View>
+          )}
+          <TouchableOpacity
+            style={styles.rowAddBtn}
+            onPress={() => handleAddToCart(product)}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            accessibilityLabel="Add to cart"
+          >
+            <Ionicons name="add" size={18} color="#fff" />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.rowCardBody}>
+          <Text style={styles.rowCardCat} numberOfLines={1}>{product.categoryName || 'Spices'}</Text>
+          <Text style={styles.rowCardName} numberOfLines={1}>{product.name}</Text>
+          <Text style={styles.rowCardStars}>★★★★★</Text>
+          <View style={styles.rowCardFooter}>
+            <Text style={styles.rowCardPrice}>₹{pay}</Text>
+            {hasDis && <Text style={styles.rowCardStrike}>₹{orig}</Text>}
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  const renderSection = (eyebrow, title, productList, lottie) => {
+    if (!productList.length) return null;
+    return (
+      <View style={styles.section}>
+        <SectionHeader
+          eyebrow={eyebrow}
+          title={title}
+          onViewAll={() => navigation.navigate('Products')}
+          lottie={lottie}
+        />
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.rowList}
+        >
+          {productList.map(renderRowCard)}
+        </ScrollView>
+      </View>
+    );
+  };
+
   const renderSearchResults = () => {
     if (filteredProducts.length === 0) {
       return (
@@ -168,186 +219,137 @@ const HomeScreen = () => {
         </View>
       );
     }
-    return renderSection('Search Results', 'search-outline', filteredProducts);
+    return renderSection('Results', 'Search Results', filteredProducts);
   };
 
-  const renderSection = (title, emoji, productList) => {
-    if (!productList.length) return null;
-    return (
-      <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-          <View style={styles.sectionTitleRow}>
-            <Ionicons name={emoji} size={18} color={colors.accent.orange} />
-            <Text style={styles.sectionTitle}>{title}</Text>
-          </View>
-          <TouchableOpacity onPress={() => navigation.navigate('Products')}>
-            <Text style={styles.viewAll}>View All</Text>
-          </TouchableOpacity>
+  const renderMidBanner = () => (
+    <View style={styles.midBan}>
+      <View style={styles.blobA} />
+      <View style={styles.blobB} />
+      <View style={styles.midInner}>
+        <Text style={styles.midEye}>✦ Our Promise</Text>
+        <Text style={styles.midH}>Farm to{'\n'}<Text style={styles.midHEm}>Kitchen,</Text>{'\n'}Pure & Simple.</Text>
+        <Text style={styles.midSub}>No additives. No preservatives.{'\n'}Just pure tradition.</Text>
+        <View style={styles.midLine} />
+        <View style={styles.midStats}>
+          {[['4+', 'Years'], ['14+', 'Products'], ['1K+', 'Customers']].map(([n, l], i) => (
+            <View key={i} style={[styles.midStat, i > 0 && styles.midStatBorder]}>
+              <Text style={styles.midN}>{n}</Text>
+              <Text style={styles.midL}>{l}</Text>
+            </View>
+          ))}
         </View>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.rowList}
-        >
-          {productList.map((product) => {
-            const pricing = product.pricesAndSkus?.[0];
-            const pay = pricing?.discountedAmount || pricing?.price || 0;
-            const orig = pricing?.price || 0;
-            const hasDis = pricing?.isDiscounted && orig > pay;
-            return (
-              <TouchableOpacity
-                key={product.id}
-                style={styles.rowCard}
-                onPress={() => navigation.navigate('ProductDetails', { productId: product.id })}
-                activeOpacity={0.88}
-                accessibilityLabel={product.name}
-              >
-                {/* Orange top accent bar */}
-                <LinearGradient
-                  colors={['#1B4D3E', colors.accent.orange]}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
-                  style={styles.rowAccentBar}
-                />
-                <View style={styles.rowCardImg}>
-                  <Image source={{ uri: product.thumbnailUrl }} style={styles.rowCardImage} resizeMode="cover" />
-                  {hasDis && (
-                    <View style={styles.rowBadge}>
-                      <Text style={styles.rowBadgeText}>{Math.round(pricing.discountPercentage)}%</Text>
-                    </View>
-                  )}
-                </View>
-                <View style={styles.rowCardBody}>
-                  <Text style={styles.rowCardName} numberOfLines={1}>{product.name}</Text>
-                  <View style={styles.rowCardFooter}>
-                    <Text style={styles.rowCardPrice}>₹{pay}</Text>
-                    {hasDis && <Text style={styles.rowCardStrike}>₹{orig}</Text>}
-                    <TouchableOpacity
-                      style={styles.rowAddBtn}
-                      onPress={() => handleAddToCart(product)}
-                      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                      accessibilityLabel="Add to cart"
-                    >
-                      <Ionicons name="add" size={16} color="#fff" />
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              </TouchableOpacity>
-            );
-          })}
-        </ScrollView>
       </View>
-    );
-  };
+    </View>
+  );
 
-  const greeting = () => {
-    const h = new Date().getHours();
-    if (h < 12) return 'Good Morning';
-    if (h < 17) return 'Good Afternoon';
-    return 'Good Evening';
-  };
+  const renderAchieveGrid = () => (
+    <View style={styles.achieve}>
+      <Text style={styles.achieveEye}>✦ Why choose us</Text>
+      <Text style={styles.achieveH}>Trusted by Kitchens{'\n'}Across India</Text>
+      <View style={styles.achieveGrid}>
+        {[['4+', 'Years'], ['14+', 'Products'], ['1K+', 'Customers']].map(([n, l], i) => (
+          <View key={i} style={styles.aItem}>
+            <Text style={styles.aNum}>{n}</Text>
+            <Text style={styles.aLbl}>{l}</Text>
+          </View>
+        ))}
+      </View>
+    </View>
+  );
 
   if (isLoading && !refreshing) {
     return (
       <View style={styles.container}>
-        <Header />
-        <View style={{ padding: spacing.md, gap: 16 }}>
-          <SkeletonBlock w={200} h={24} radius={8} />
-          <SkeletonBlock w={HERO_WIDTH} h={180} radius={20} />
-          <View style={{ flexDirection: 'row', gap: 10 }}>
-            {[1, 2, 3, 4].map(i => <SkeletonBlock key={i} w={60} h={28} radius={14} />)}
+        <StatusBar barStyle="light-content" backgroundColor={colors.primary.main} />
+        <Header showCart />
+        <ScrollView contentContainerStyle={{ padding: spacing.md, gap: 16 }}>
+          <SkeletonBlock w={220} h={28} radius={8} />
+          <SkeletonBlock w={width - 32} h={48} radius={24} />
+          <View style={{ flexDirection: 'row', gap: 8 }}>
+            {[1, 2, 3, 4].map(i => <SkeletonBlock key={i} w={72} h={32} radius={16} />)}
           </View>
           <View style={{ flexDirection: 'row', gap: 12 }}>
-            <SkeletonBlock w={(width - 56) / 2} h={200} radius={16} />
-            <SkeletonBlock w={(width - 56) / 2} h={200} radius={16} />
+            <SkeletonBlock w={154} h={210} radius={22} />
+            <SkeletonBlock w={154} h={210} radius={22} />
           </View>
-        </View>
+        </ScrollView>
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={colors.background.default} />
-      <Header />
+      <StatusBar barStyle="light-content" backgroundColor={colors.primary.main} />
+      <Header showCart showSearch />
 
       <ScrollView
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary.main]} />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary.main]} tintColor={colors.primary.main} />
         }
       >
+        {/* Hero section */}
+        <View style={styles.hero}>
+          <View style={styles.heroBlobA} />
+          <View style={styles.heroBlobB} />
+          <LottieView
+            source={require('../../assets/lottie/star.json')}
+            autoPlay
+            loop
+            style={styles.heroStarLottie}
+          />
+          <View style={styles.heroInner}>
+            <View style={styles.heroPill}>
+              <View style={styles.pillDot} />
+              <Text style={styles.heroPillText}>New Arrivals · 2026</Text>
+            </View>
+            <Text style={styles.heroH}>
+              Pure{'\n'}<Text style={styles.heroHEm}>Indian</Text>{'\n'}Spices.
+            </Text>
+            <Text style={styles.heroSub}>Straight from farm to your kitchen</Text>
+            <TouchableOpacity
+              style={styles.heroCta}
+              onPress={() => navigation.navigate('Products')}
+              accessibilityLabel="Shop Collection"
+            >
+              <Text style={styles.heroCtaText}>Shop Collection</Text>
+              <View style={styles.ctaArrow}>
+                <Ionicons name="arrow-forward" size={15} color="#fff" />
+              </View>
+            </TouchableOpacity>
+          </View>
+          {/* Wave cutout bottom */}
+          <View style={styles.heroWave} />
+        </View>
+
         {/* Greeting */}
         <View style={styles.greeting}>
-          <View>
-            <Text style={styles.greetHi}>{greeting()}, {user?.firstName || 'Guest'} 👋</Text>
-            <Text style={styles.greetSub}>Bring purity to your kitchen today.</Text>
-          </View>
+          <Text style={styles.greetHi}>{greeting()}, {user?.firstName || 'Guest'} 👋</Text>
+          <Text style={styles.greetSub}>What are you cooking today?</Text>
         </View>
 
         {/* Search bar */}
         <View style={styles.searchWrap}>
           <View style={styles.searchBar}>
-            <Ionicons name="search-outline" size={18} color={colors.text.muted} />
+            <Ionicons name="search-outline" size={16} color={colors.text.muted} />
             <TextInput
-              placeholder="Search premium spices..."
+              placeholder="Search premium spices…"
               style={styles.searchInput}
               value={searchQuery}
               onChangeText={setSearchQuery}
               placeholderTextColor={colors.text.disabled}
             />
-            {searchQuery.length > 0 && (
+            {searchQuery.length > 0 ? (
               <TouchableOpacity onPress={() => setSearchQuery('')}>
-                <Ionicons name="close-circle" size={18} color={colors.text.muted} />
+                <Ionicons name="close-circle" size={16} color={colors.text.muted} />
               </TouchableOpacity>
+            ) : (
+              <View style={styles.searchFlt}>
+                <Ionicons name="options-outline" size={14} color="#fff" />
+              </View>
             )}
           </View>
-        </View>
-
-        {/* Hero carousel */}
-        <ScrollView
-          ref={heroScrollRef}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          snapToInterval={HERO_WIDTH + 12}
-          snapToAlignment="center"
-          decelerationRate="fast"
-          contentContainerStyle={{ paddingHorizontal: 16 }}
-          style={styles.heroScroll}
-        >
-          {heroItems.map((item, idx) => (
-            <View key={item.id} style={{ width: HERO_WIDTH, marginRight: 12 }}>
-              <ImageBackground
-                source={item.bg}
-                style={styles.heroCard}
-                imageStyle={{ borderRadius: borderRadius.xl }}
-              >
-                <View style={styles.heroOverlay}>
-                  <LinearGradient
-                    colors={[colors.secondary.main, colors.secondary.light]}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
-                    style={styles.heroPill}
-                  >
-                    <Text style={styles.heroPillText}>NEW ARRIVAL</Text>
-                  </LinearGradient>
-                  <Text style={styles.heroTitle}>{item.title}</Text>
-                  <Text style={styles.heroSub}>{item.sub}</Text>
-                  <TouchableOpacity style={styles.heroBtn} onPress={() => navigation.navigate('Products')} accessibilityLabel="Shop Now">
-                    <Text style={styles.heroBtnText}>Shop Now</Text>
-                    <Ionicons name="arrow-forward" size={14} color={colors.primary.main} />
-                  </TouchableOpacity>
-                </View>
-              </ImageBackground>
-            </View>
-          ))}
-        </ScrollView>
-
-        {/* Dots indicator */}
-        <View style={styles.dots}>
-          {heroItems.map((_, i) => (
-            <View key={i} style={[styles.dot, i === heroIndex && styles.dotActive]} />
-          ))}
         </View>
 
         {/* Category chips */}
@@ -363,27 +365,27 @@ const HomeScreen = () => {
               style={[styles.chip, activeCategory === cat && styles.chipActive]}
               onPress={() => setActiveCategory(cat)}
               accessibilityRole="button"
-              accessibilityLabel={cat}
               accessibilityState={{ selected: activeCategory === cat }}
             >
               <Text style={[styles.chipText, activeCategory === cat && styles.chipTextActive]}>{cat}</Text>
             </TouchableOpacity>
           ))}
+          <View style={{ width: 6 }} />
         </ScrollView>
 
         {/* Product sections */}
         {searchQuery.length > 0 ? renderSearchResults() : (
           <>
-            {renderSection('Daily Essentials', 'flame', dailyEssentials)}
-            {renderBrandBanner()}
-            {renderSection('Immunity Boosters', 'shield-checkmark', immunityBoosters)}
-            {renderAchievements()}
-            {renderSection('Digestive Aids', 'leaf', digestiveAids)}
-            {renderSection('DesiKing Specials', 'sparkles', desiKingSpecials)}
+            {renderSection('Handpicked for you', 'Daily Essentials', dailyEssentials, require('../../assets/lottie/fire.json'))}
+            {renderMidBanner()}
+            {renderSection('Wellness picks', 'Immunity Boosters', immunityBoosters)}
+            {renderAchieveGrid()}
+            {renderSection('Good for digestion', 'Digestive Aids', digestiveAids)}
+            {renderSection('Our bestsellers', 'DesiKing Specials', desiKingSpecials)}
           </>
         )}
 
-        <View style={{ height: 120 }} />
+        <View style={{ height: 100 }} />
       </ScrollView>
     </View>
   );
@@ -394,37 +396,173 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background.default,
   },
+
+  // Hero
+  hero: {
+    backgroundColor: colors.primary.main,
+    paddingHorizontal: 22,
+    paddingTop: 18,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  heroBlobA: {
+    position: 'absolute',
+    width: 240,
+    height: 240,
+    borderRadius: 120,
+    backgroundColor: 'rgba(255,255,255,0.055)',
+    top: -70,
+    right: -50,
+  },
+  heroBlobB: {
+    position: 'absolute',
+    width: 170,
+    height: 170,
+    borderRadius: 85,
+    backgroundColor: 'rgba(201,151,90,0.14)',
+    bottom: 10,
+    left: -40,
+  },
+  heroInner: {
+    position: 'relative',
+    zIndex: 2,
+    paddingBottom: 40,
+  },
+  heroPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 7,
+    backgroundColor: 'rgba(255,255,255,0.10)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.20)',
+    borderRadius: borderRadius.full,
+    paddingHorizontal: 13,
+    paddingVertical: 5,
+    alignSelf: 'flex-start',
+    marginBottom: 16,
+  },
+  pillDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: colors.secondary.light,
+  },
+  heroPillText: {
+    fontFamily: fonts.body.bold,
+    fontSize: 10,
+    color: 'rgba(255,255,255,0.8)',
+    letterSpacing: 1.5,
+    textTransform: 'uppercase',
+  },
+  heroH: {
+    fontFamily: fonts.heading.extrabold,
+    fontSize: 52,
+    color: '#fff',
+    lineHeight: 50,
+    letterSpacing: -1,
+    marginBottom: 12,
+  },
+  heroHEm: {
+    color: colors.secondary.light,
+    fontFamily: fonts.heading.italic,
+  },
+  heroSub: {
+    fontFamily: fonts.heading.italic,
+    fontSize: 16,
+    color: 'rgba(255,255,255,0.6)',
+    marginBottom: 24,
+    lineHeight: 22,
+  },
+  heroCta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    backgroundColor: '#fff',
+    borderRadius: borderRadius.full,
+    paddingVertical: 13,
+    paddingLeft: 22,
+    paddingRight: 10,
+    gap: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.28,
+    shadowRadius: 24,
+    elevation: 8,
+  },
+  heroCtaText: {
+    fontFamily: fonts.body.extrabold,
+    fontSize: 13,
+    color: colors.primary.main,
+  },
+  ctaArrow: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: colors.primary.main,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  heroStarLottie: {
+    position: 'absolute',
+    width: 140,
+    height: 140,
+    right: -10,
+    bottom: 28,
+    opacity: 0.22,
+    zIndex: 1,
+  },
+  heroWave: {
+    height: 28,
+    backgroundColor: colors.background.default,
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    marginHorizontal: -22,
+    position: 'relative',
+    zIndex: 3,
+  },
+
+  // Greeting
   greeting: {
-    paddingHorizontal: spacing.md,
+    paddingHorizontal: spacing.md + 4,
     paddingTop: spacing.sm,
-    paddingBottom: spacing.xs,
+    paddingBottom: 4,
   },
   greetHi: {
-    fontSize: fontSize.xl,
-    fontFamily: fonts.heading.black,
+    fontFamily: fonts.heading.extrabold,
+    fontSize: 27,
     color: colors.text.primary,
     letterSpacing: -0.3,
+    lineHeight: 30,
   },
   greetSub: {
-    fontSize: fontSize.sm,
     fontFamily: fonts.body.regular,
+    fontSize: 13,
     color: colors.text.muted,
     marginTop: 3,
   },
+
+  // Search
   searchWrap: {
     paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
+    paddingTop: spacing.md,
+    paddingBottom: 0,
   },
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.background.paper,
+    backgroundColor: '#fff',
     height: 48,
     borderRadius: borderRadius.full,
-    paddingHorizontal: spacing.md,
-    gap: 8,
-    borderWidth: 1,
-    borderColor: colors.border,
+    paddingHorizontal: 18,
+    paddingRight: 8,
+    gap: 10,
+    borderWidth: 1.5,
+    borderColor: colors.card.border,
+    shadowColor: colors.primary.main,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.07,
+    shadowRadius: 16,
+    elevation: 2,
   },
   searchInput: {
     flex: 1,
@@ -432,210 +570,355 @@ const styles = StyleSheet.create({
     fontFamily: fonts.body.regular,
     color: colors.text.primary,
   },
-  heroScroll: {
-    marginTop: spacing.xs,
-  },
-  heroCard: {
-    width: '100%',
-    height: 180,
-    overflow: 'hidden',
-    borderRadius: borderRadius.xl,
-  },
-  heroOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(6,13,26,0.70)',
-    padding: spacing.lg,
-    justifyContent: 'flex-end',
-  },
-  heroPill: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: borderRadius.full,
-    alignSelf: 'flex-start',
-    marginBottom: 8,
-  },
-  heroPillText: {
-    color: '#fff',
-    fontSize: 11,
-    fontFamily: fonts.body.extrabold,
-    letterSpacing: 1,
-  },
-  heroTitle: {
-    color: '#fff',
-    fontSize: 22,
-    fontFamily: fonts.heading.black,
-    letterSpacing: -0.3,
-    lineHeight: 28,
-  },
-  heroSub: {
-    color: 'rgba(255,255,255,0.75)',
-    fontSize: 12,
-    fontFamily: fonts.body.regular,
-    marginTop: 4,
-    marginBottom: 12,
-  },
-  heroBtn: {
-    flexDirection: 'row',
+  searchFlt: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: colors.primary.main,
     alignItems: 'center',
-    backgroundColor: '#fff',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: borderRadius.full,
-    alignSelf: 'flex-start',
-    gap: 6,
-  },
-  heroBtnText: {
-    color: colors.primary.main,
-    fontFamily: fonts.body.extrabold,
-    fontSize: 12,
-  },
-  dots: {
-    flexDirection: 'row',
     justifyContent: 'center',
-    gap: 6,
-    marginTop: spacing.sm,
   },
-  dot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: colors.border,
-  },
-  dotActive: {
-    width: 18,
-    backgroundColor: colors.secondary.main,
-  },
+
+  // Chips
   chipScroll: {
-    marginTop: spacing.md,
+    marginTop: 14,
   },
   chipList: {
-    paddingHorizontal: spacing.md,
+    paddingLeft: spacing.md,
     gap: 8,
+    paddingBottom: 4,
   },
   chip: {
     paddingHorizontal: 18,
-    paddingVertical: 12,
+    paddingVertical: 9,
     borderRadius: borderRadius.full,
-    backgroundColor: colors.card.muted,
-    borderWidth: 1,
+    backgroundColor: '#fff',
+    borderWidth: 1.5,
     borderColor: colors.card.border,
   },
   chipActive: {
-    backgroundColor: colors.secondary.main,
-    borderColor: colors.secondary.main,
+    backgroundColor: colors.primary.main,
+    borderColor: colors.primary.main,
+    shadowColor: colors.primary.main,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.28,
+    shadowRadius: 14,
+    elevation: 4,
   },
   chipText: {
-    color: colors.text.secondary,
     fontFamily: fonts.body.semibold,
     fontSize: 13,
+    color: colors.text.secondary,
   },
   chipTextActive: {
     color: '#fff',
     fontFamily: fonts.body.extrabold,
   },
+
+  // Section header
   section: {
-    marginTop: spacing.lg,
+    marginTop: 28,
   },
-  sectionHeader: {
+  secHdr: {
     flexDirection: 'row',
+    alignItems: 'flex-end',
     justifyContent: 'space-between',
-    alignItems: 'center',
     paddingHorizontal: spacing.md,
-    marginBottom: spacing.sm,
+    marginBottom: 14,
   },
-  sectionTitleRow: {
+  secHdrLeft: {
+    flex: 1,
+  },
+  secTtlRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    borderLeftWidth: 3,
-    borderLeftColor: colors.accent.orange,
-    paddingLeft: 8,
   },
-  sectionTitle: {
-    fontSize: fontSize.lg,
-    fontFamily: fonts.heading.bold,
+  secLottie: {
+    width: 36,
+    height: 36,
+    marginLeft: 4,
+    marginBottom: -2,
+  },
+  secEye: {
+    fontFamily: fonts.body.bold,
+    fontSize: 10,
+    color: colors.secondary.main,
+    textTransform: 'uppercase',
+    letterSpacing: 1.8,
+    marginBottom: 1,
+  },
+  secTtl: {
+    fontFamily: fonts.heading.extrabold,
+    fontSize: 24,
     color: colors.text.primary,
     letterSpacing: -0.2,
+    lineHeight: 24,
   },
   viewAll: {
-    fontSize: 13,
-    color: colors.secondary.main,
     fontFamily: fonts.body.extrabold,
+    fontSize: 12,
+    color: colors.primary.main,
+    borderBottomWidth: 1.5,
+    borderBottomColor: colors.primary.main,
+    paddingBottom: 1,
   },
+
+  // Row product cards
   rowList: {
     paddingLeft: spacing.md,
     paddingRight: spacing.sm,
-    paddingBottom: 4,
+    paddingBottom: 6,
   },
   rowCard: {
-    width: 155,
-    borderRadius: borderRadius.lg,
-    marginRight: spacing.md,
-    borderWidth: 1,
+    width: 154,
+    borderRadius: 22,
+    marginRight: 14,
+    borderWidth: 1.5,
     borderColor: colors.card.border,
     overflow: 'hidden',
-    backgroundColor: colors.background.paper,
-    ...shadows.card,
+    backgroundColor: '#fff',
+    shadowColor: colors.primary.main,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.07,
+    shadowRadius: 16,
+    elevation: 3,
+  },
+  rowAccentBar: {
+    height: 3,
+    width: '100%',
   },
   rowCardImg: {
-    height: 115,
-    backgroundColor: colors.accent.lightGray,
+    height: 120,
+    backgroundColor: colors.background.cream,
     position: 'relative',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   rowCardImage: {
-    width: '100%',
-    height: '100%',
+    width: '80%',
+    height: '80%',
   },
   rowBadge: {
     position: 'absolute',
-    top: 6,
-    left: 6,
-    backgroundColor: colors.accent.orange,
-    paddingHorizontal: 6,
+    top: 8,
+    left: 8,
+    backgroundColor: colors.primary.main,
+    paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: borderRadius.full,
   },
+  rowBadgeTop: {
+    backgroundColor: colors.primary.light,
+  },
   rowBadgeText: {
     color: '#fff',
-    fontSize: 11,
+    fontSize: 10,
     fontFamily: fonts.body.extrabold,
+    letterSpacing: 0.4,
   },
-
+  rowAddBtn: {
+    position: 'absolute',
+    bottom: 8,
+    right: 8,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: colors.primary.main,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: colors.primary.main,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.35,
+    shadowRadius: 10,
+    elevation: 4,
+  },
   rowCardBody: {
-    padding: spacing.sm,
-    backgroundColor: colors.background.paper,
+    padding: 10,
+    paddingBottom: 12,
+  },
+  rowCardCat: {
+    fontSize: 10,
+    fontFamily: fonts.body.semibold,
+    color: colors.text.muted,
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
+    marginBottom: 3,
   },
   rowCardName: {
-    fontSize: 13,
+    fontSize: 14,
     fontFamily: fonts.heading.bold,
     color: colors.text.primary,
-    marginBottom: 6,
+    marginBottom: 5,
+  },
+  rowCardStars: {
+    fontSize: 10,
+    color: colors.secondary.main,
+    marginBottom: 5,
   },
   rowCardFooter: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'baseline',
+    gap: 5,
   },
   rowCardPrice: {
-    fontSize: 15,
+    fontSize: 17,
     fontFamily: fonts.heading.extrabold,
-    color: colors.secondary.light,
-    flex: 1,
+    color: colors.primary.main,
   },
   rowCardStrike: {
     fontSize: 11,
     fontFamily: fonts.body.regular,
     color: colors.text.disabled,
     textDecorationLine: 'line-through',
-    marginRight: 6,
   },
-  rowAddBtn: {
-    backgroundColor: colors.accent.orange,
-    width: 28,
-    height: 28,
-    borderRadius: 14,
+
+  // Mid banner
+  midBan: {
+    backgroundColor: colors.primary.main,
+    paddingHorizontal: 24,
+    paddingVertical: 34,
+    marginTop: 28,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  blobA: {
+    position: 'absolute',
+    width: 260,
+    height: 260,
+    borderRadius: 130,
+    backgroundColor: 'rgba(255,255,255,0.055)',
+    top: -80,
+    right: -60,
+  },
+  blobB: {
+    position: 'absolute',
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    backgroundColor: 'rgba(201,151,90,0.10)',
+    bottom: -60,
+    left: -50,
+  },
+  midInner: {
+    position: 'relative',
+    zIndex: 2,
+  },
+  midEye: {
+    fontFamily: fonts.body.bold,
+    fontSize: 10,
+    color: colors.secondary.light,
+    textTransform: 'uppercase',
+    letterSpacing: 2,
+    marginBottom: 12,
+  },
+  midH: {
+    fontFamily: fonts.heading.extrabold,
+    fontSize: 36,
+    color: '#fff',
+    lineHeight: 36,
+    letterSpacing: -0.5,
+    marginBottom: 8,
+  },
+  midHEm: {
+    fontFamily: fonts.heading.italic,
+    color: colors.secondary.light,
+  },
+  midSub: {
+    fontFamily: fonts.heading.italic,
+    fontSize: 15,
+    color: 'rgba(255,255,255,0.5)',
+    marginBottom: 26,
+    lineHeight: 22,
+  },
+  midLine: {
+    height: 1,
+    backgroundColor: 'rgba(255,255,255,0.12)',
+    marginBottom: 22,
+  },
+  midStats: {
+    flexDirection: 'row',
+  },
+  midStat: {
+    flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
   },
+  midStatBorder: {
+    borderLeftWidth: 1,
+    borderLeftColor: 'rgba(255,255,255,0.12)',
+  },
+  midN: {
+    fontFamily: fonts.heading.extrabold,
+    fontSize: 32,
+    color: '#fff',
+    letterSpacing: -0.5,
+  },
+  midL: {
+    fontFamily: fonts.body.semibold,
+    fontSize: 10,
+    color: 'rgba(255,255,255,0.45)',
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
+    marginTop: 2,
+  },
+
+  // Achieve grid
+  achieve: {
+    paddingHorizontal: spacing.md,
+    paddingTop: 28,
+    paddingBottom: 10,
+    backgroundColor: colors.background.default,
+    marginTop: 28,
+  },
+  achieveEye: {
+    fontFamily: fonts.body.bold,
+    fontSize: 10,
+    color: colors.secondary.main,
+    textTransform: 'uppercase',
+    letterSpacing: 1.8,
+    marginBottom: 8,
+  },
+  achieveH: {
+    fontFamily: fonts.heading.extrabold,
+    fontSize: 27,
+    color: colors.text.primary,
+    letterSpacing: -0.3,
+    marginBottom: 20,
+    lineHeight: 31,
+  },
+  achieveGrid: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  aItem: {
+    flex: 1,
+    backgroundColor: '#fff',
+    borderRadius: 18,
+    paddingVertical: 16,
+    alignItems: 'center',
+    borderWidth: 1.5,
+    borderColor: colors.card.border,
+    shadowColor: colors.primary.main,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.07,
+    shadowRadius: 16,
+    elevation: 2,
+  },
+  aNum: {
+    fontFamily: fonts.heading.extrabold,
+    fontSize: 32,
+    color: colors.primary.main,
+    letterSpacing: -0.5,
+    lineHeight: 34,
+  },
+  aLbl: {
+    fontFamily: fonts.body.semibold,
+    fontSize: 10,
+    color: colors.text.muted,
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
+    marginTop: 4,
+  },
+
   emptySearch: {
     alignItems: 'center',
     justifyContent: 'center',
@@ -647,77 +930,6 @@ const styles = StyleSheet.create({
     fontFamily: fonts.body.regular,
     color: colors.text.muted,
     textAlign: 'center',
-  },
-  rowAccentBar: {
-    height: 3,
-    width: '100%',
-  },
-  brandBanner: {
-    marginHorizontal: spacing.md,
-    marginTop: spacing.lg,
-    height: 140,
-    borderRadius: borderRadius.lg,
-    overflow: 'hidden',
-  },
-  brandOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(10,30,22,0.80)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: spacing.lg,
-  },
-  brandBannerTitle: {
-    color: '#fff',
-    fontSize: 18,
-    fontFamily: fonts.heading.extrabold,
-    letterSpacing: 0.2,
-    textAlign: 'center',
-  },
-
-  brandBannerSub: {
-    color: 'rgba(255,255,255,0.72)',
-    fontSize: 12,
-    fontFamily: fonts.body.regular,
-    marginTop: 6,
-    textAlign: 'center',
-  },
-  achievementsBanner: {
-    marginTop: spacing.lg,
-    height: 110,
-    overflow: 'hidden',
-  },
-  achievementsOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(10,30,22,0.82)',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: spacing.xl,
-  },
-  achievementItem: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  achievementNum: {
-    color: '#fff',
-    fontSize: 24,
-    fontFamily: fonts.heading.black,
-    letterSpacing: -0.5,
-  },
-
-  achievementLabel: {
-    color: 'rgba(255,255,255,0.72)',
-    fontSize: 11,
-    fontFamily: fonts.body.medium,
-    marginTop: 2,
-    textTransform: 'uppercase',
-    letterSpacing: 0.8,
-  },
-  achievementDivider: {
-    width: 1,
-    height: 40,
-    backgroundColor: 'rgba(255,255,255,0.25)',
-    marginHorizontal: spacing.md,
   },
 });
 

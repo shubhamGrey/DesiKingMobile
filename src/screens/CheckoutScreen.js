@@ -269,8 +269,8 @@ const styles = StyleSheet.create({
     ...shadows.card,
   },
   selectedCard: {
-    borderColor: colors.glass.goldBorder,
-    backgroundColor: colors.glass.gold,
+    borderColor: 'rgba(201,151,90,0.45)',
+    backgroundColor: 'rgba(201,151,90,0.08)',
   },
   radio: {
     width: 20,
@@ -325,7 +325,7 @@ const styles = StyleSheet.create({
   divider: { height: 1, backgroundColor: colors.divider, marginVertical: spacing.sm },
   grandTotalRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   grandTotalLabel: { fontSize: 14, fontFamily: fonts.body.extrabold, color: colors.text.secondary, textTransform: 'uppercase', letterSpacing: 0.5 },
-  grandTotalValue: { fontSize: 24, fontFamily: fonts.heading.black, color: colors.secondary.light, letterSpacing: -0.5 },
+  grandTotalValue: { fontSize: 24, fontFamily: fonts.heading.extrabold, color: colors.primary.main, letterSpacing: -0.5 },
 
   secureNote: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: spacing.lg, opacity: 0.7 },
   secureText: { fontSize: 11, color: colors.text.muted, marginLeft: 6 },

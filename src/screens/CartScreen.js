@@ -8,13 +8,14 @@ import {
   Alert,
   RefreshControl,
   StatusBar,
+  Platform,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import Header from '../components/common/Header';
 import CartItem from '../components/cart/CartItem';
 import Button from '../components/common/Button';
 import { colors, spacing, fontSize, borderRadius, shadows, fonts } from '../config/theme';
+import LottieView from 'lottie-react-native';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import apiService from '../services/api';
@@ -94,15 +95,28 @@ const CartScreen = () => {
     setRefreshing(false);
   };
 
+  const displayItems = enrichedItems.length > 0 ? enrichedItems : items;
+
   if (items.length === 0) {
     return (
       <View style={styles.container}>
-        <StatusBar barStyle="light-content" backgroundColor={colors.background.default} />
-        <Header title="My Cart" showBack showCart={false} />
-        <View style={styles.emptyState}>
-          <View style={styles.emptyIconWrap}>
-            <Ionicons name="cart-outline" size={48} color={colors.primary.main} />
+        <StatusBar barStyle="light-content" backgroundColor={colors.primary.main} />
+        <View style={styles.header}>
+          <View style={styles.blobA} />
+          <View style={styles.headerInner}>
+            <Text style={styles.headerEye}>✦ Shopping</Text>
+            <Text style={styles.headerTitle}>My Cart</Text>
+            <Text style={styles.headerSub}>0 items</Text>
           </View>
+          <View style={styles.headerWave} />
+        </View>
+        <View style={styles.emptyState}>
+          <LottieView
+            source={require('../../assets/lottie/fork.json')}
+            autoPlay
+            loop
+            style={styles.emptyLottie}
+          />
           <Text style={styles.emptyTitle}>Your cart is empty</Text>
           <Text style={styles.emptySub}>Let's find some amazing spices for your kitchen!</Text>
           <Button
@@ -117,12 +131,20 @@ const CartScreen = () => {
     );
   }
 
-  const displayItems = enrichedItems.length > 0 ? enrichedItems : items;
-
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={colors.background.default} />
-      <Header title="My Cart" showBack showCart={false} />
+      <StatusBar barStyle="light-content" backgroundColor={colors.primary.main} />
+
+      {/* Green header */}
+      <View style={styles.header}>
+        <View style={styles.blobA} />
+        <View style={styles.headerInner}>
+          <Text style={styles.headerEye}>✦ Shopping</Text>
+          <Text style={styles.headerTitle}>My Cart</Text>
+          <Text style={styles.headerSub}>{itemCount} {itemCount === 1 ? 'item' : 'items'}</Text>
+        </View>
+        <View style={styles.headerWave} />
+      </View>
 
       <FlatList
         data={displayItems}
@@ -132,11 +154,8 @@ const CartScreen = () => {
         )}
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
-        ListHeaderComponent={
-          <Text style={styles.countLabel}>{itemCount} {itemCount === 1 ? 'item' : 'items'}</Text>
-        }
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary.main]} />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary.main]} tintColor={colors.primary.main} />
         }
       />
 
@@ -144,21 +163,21 @@ const CartScreen = () => {
       <View style={styles.summarySheet}>
         <View style={styles.summaryRow}>
           <Text style={styles.summaryLabel}>Subtotal</Text>
-          <Text style={styles.summaryValue}>₹{(cartTotal + totalDiscount).toFixed(2)}</Text>
+          <Text style={styles.summaryValue}>₹{(cartTotal + totalDiscount).toFixed(0)}</Text>
         </View>
         {totalDiscount > 0 && (
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>Savings</Text>
-            <Text style={[styles.summaryValue, { color: colors.success }]}>−₹{totalDiscount.toFixed(2)}</Text>
+            <Text style={[styles.summaryValue, styles.savingsValue]}>−₹{totalDiscount.toFixed(0)}</Text>
           </View>
         )}
         <View style={styles.summaryRow}>
           <Text style={styles.summaryLabel}>Shipping</Text>
-          <Text style={styles.summaryValue}>₹{shippingFee.toFixed(2)}</Text>
+          <Text style={styles.summaryValue}>₹{shippingFee.toFixed(0)}</Text>
         </View>
         <View style={styles.summaryRow}>
           <Text style={styles.summaryLabel}>GST (5%)</Text>
-          <Text style={styles.summaryValue}>₹{taxAmount.toFixed(2)}</Text>
+          <Text style={styles.summaryValue}>₹{taxAmount.toFixed(0)}</Text>
         </View>
 
         <View style={styles.divider} />
@@ -166,7 +185,7 @@ const CartScreen = () => {
         <View style={styles.totalRow}>
           <View>
             <Text style={styles.totalCaption}>Total Payable</Text>
-            <Text style={styles.totalAmount}>₹{orderTotal.toFixed(2)}</Text>
+            <Text style={styles.totalAmount}>₹{orderTotal.toFixed(0)}</Text>
           </View>
           <Button
             title="Checkout"
@@ -186,41 +205,83 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background.default,
   },
-  listContent: {
-    padding: spacing.md,
-    paddingBottom: 300,
+
+  // Green header
+  header: {
+    backgroundColor: colors.primary.main,
+    paddingTop: Platform.OS === 'ios' ? 54 : 38,
+    paddingHorizontal: 20,
+    overflow: 'hidden',
+    position: 'relative',
   },
-  countLabel: {
-    fontSize: 11,
-    fontFamily: fonts.body.extrabold,
-    color: colors.text.muted,
+  blobA: {
+    position: 'absolute',
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    backgroundColor: 'rgba(255,255,255,0.055)',
+    top: -60,
+    right: -40,
+  },
+  headerInner: {
+    position: 'relative',
+    zIndex: 2,
+    paddingBottom: 30,
+  },
+  headerEye: {
+    fontFamily: fonts.body.bold,
+    fontSize: 10,
+    color: 'rgba(255,255,255,0.5)',
     textTransform: 'uppercase',
-    letterSpacing: 1.2,
-    marginBottom: spacing.md,
+    letterSpacing: 1.8,
+    marginBottom: 4,
   },
+  headerTitle: {
+    fontFamily: fonts.heading.extrabold,
+    fontSize: 32,
+    color: '#fff',
+    letterSpacing: -0.3,
+    marginBottom: 2,
+  },
+  headerSub: {
+    fontFamily: fonts.body.regular,
+    fontSize: 12,
+    color: 'rgba(255,255,255,0.5)',
+  },
+  headerWave: {
+    height: 24,
+    backgroundColor: colors.background.default,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    marginHorizontal: -20,
+    position: 'relative',
+    zIndex: 3,
+  },
+
+  // List
+  listContent: {
+    paddingHorizontal: spacing.md,
+    paddingTop: spacing.sm,
+    paddingBottom: 280,
+  },
+
+  // Empty state
   emptyState: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     padding: spacing.xl,
   },
-  emptyIconWrap: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: colors.card.surface,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: spacing.lg,
-    borderWidth: 1,
-    borderColor: colors.card.border,
-    ...shadows.card,
+  emptyLottie: {
+    width: 160,
+    height: 160,
+    marginBottom: spacing.md,
   },
   emptyTitle: {
-    fontSize: fontSize.xl,
+    fontSize: 20,
     fontFamily: fonts.heading.extrabold,
     color: colors.text.primary,
-    marginBottom: spacing.xs,
+    marginBottom: 6,
   },
   emptySub: {
     fontSize: fontSize.sm,
@@ -233,18 +294,25 @@ const styles = StyleSheet.create({
   shopBtn: {
     paddingHorizontal: spacing.xl,
   },
+
+  // Summary sheet
   summarySheet: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
     backgroundColor: colors.background.cream,
-    borderTopLeftRadius: borderRadius.xxl,
-    borderTopRightRadius: borderRadius.xxl,
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
     padding: spacing.lg,
     paddingBottom: spacing.xl + 8,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(188,129,65,0.25)',
+    borderTopWidth: 1.5,
+    borderTopColor: colors.card.border,
+    shadowColor: colors.primary.main,
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 20,
+    elevation: 8,
   },
   summaryRow: {
     flexDirection: 'row',
@@ -260,6 +328,9 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontFamily: fonts.body.bold,
     color: colors.text.primary,
+  },
+  savingsValue: {
+    color: colors.success,
   },
   divider: {
     height: 1,
@@ -277,11 +348,12 @@ const styles = StyleSheet.create({
     color: colors.text.muted,
     textTransform: 'uppercase',
     letterSpacing: 0.8,
+    marginBottom: 2,
   },
   totalAmount: {
-    fontSize: 26,
-    fontFamily: fonts.heading.black,
-    color: colors.secondary.light,
+    fontSize: 30,
+    fontFamily: fonts.heading.extrabold,
+    color: colors.primary.main,
     letterSpacing: -0.5,
   },
   checkoutBtn: {

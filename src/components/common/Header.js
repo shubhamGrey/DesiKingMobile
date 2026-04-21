@@ -1,84 +1,107 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, Platform } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import { View, Text, Image, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { colors, spacing, fontSize, borderRadius, fonts } from '../../config/theme';
 import { useCart } from '../../context/CartContext';
 
-const Header = ({ title, showBack = false, showCart = true, rightIcon, onRightPress, rightIconAccessibilityLabel = 'Action' }) => {
+/**
+ * Main app header — two modes:
+ *  - Brand mode (showBack=false): logo circle + "DESI KING" brand left, search + cart right
+ *  - Back mode (showBack=true): back button left, title center, optional right action
+ */
+const Header = ({
+  title,
+  showBack = false,
+  showCart = true,
+  showSearch = false,
+  onSearchPress,
+  rightIcon,
+  onRightPress,
+  rightIconAccessibilityLabel = 'Action',
+  subtitle,
+}) => {
   const navigation = useNavigation();
   const { itemCount } = useCart();
 
-  return (
-    <LinearGradient
-      colors={[colors.primary.main, colors.primary.light]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 0 }}
-      style={styles.container}
-    >
-      {/* Left */}
-      <View style={styles.side}>
-        {showBack ? (
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            style={styles.iconBtn}
-            accessibilityLabel="Go back"
-            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-          >
-            <Ionicons name="chevron-back" size={22} color="#fff" />
-          </TouchableOpacity>
-        ) : (
-          <View style={styles.logoWrap}>
-            <Image
-              source={require('../../../assets/AgroNexisWhite.png')}
-              style={styles.logo}
-              resizeMode="contain"
-              accessibilityLabel="Agro Nexis logo"
-            />
-          </View>
-        )}
-      </View>
+  if (showBack) {
+    return (
+      <View style={styles.container}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.ghostBtn}
+          accessibilityLabel="Go back"
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
+          <Ionicons name="chevron-back" size={22} color="#fff" />
+        </TouchableOpacity>
 
-      {/* Center */}
-      <View style={styles.center}>
-        {title ? (
-          <Text style={styles.title} numberOfLines={1}>{title}</Text>
-        ) : !showBack ? (
-          <Text style={styles.brandTitle}>DESI KING</Text>
-        ) : null}
-      </View>
+        <Text style={styles.backTitle} numberOfLines={1}>
+          {title || ''}
+        </Text>
 
-      {/* Right */}
-      <View style={[styles.side, styles.sideRight]}>
         {rightIcon ? (
           <TouchableOpacity
             onPress={onRightPress}
-            style={styles.iconBtn}
+            style={styles.ghostBtn}
             accessibilityLabel={rightIconAccessibilityLabel}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
             <Ionicons name={rightIcon} size={22} color="#fff" />
           </TouchableOpacity>
-        ) : showCart ? (
+        ) : (
+          <View style={styles.ghostBtnPlaceholder} />
+        )}
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles.container}>
+      {/* Brand left */}
+      <View style={styles.brand}>
+        <Image
+          source={require('../../../assets/DesiKing.png')}
+          style={styles.logoImg}
+          resizeMode="contain"
+        />
+        <View>
+          <Text style={styles.brandName}>DESI KING</Text>
+          <Text style={styles.brandSub}>
+            {subtitle || 'Premium Spices · Est. 2025'}
+          </Text>
+        </View>
+      </View>
+
+      {/* Actions right */}
+      <View style={styles.actions}>
+        {showSearch && (
           <TouchableOpacity
+            style={styles.ghostBtn}
+            onPress={onSearchPress}
+            accessibilityLabel="Search"
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <Ionicons name="search-outline" size={18} color="#fff" />
+          </TouchableOpacity>
+        )}
+        {showCart && (
+          <TouchableOpacity
+            style={styles.ghostBtn}
             onPress={() => navigation.navigate('Cart')}
-            style={styles.iconBtn}
             accessibilityLabel="Open cart"
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
-            <Ionicons name="cart-outline" size={22} color="#fff" />
+            <Ionicons name="cart-outline" size={18} color="#fff" />
             {itemCount > 0 && (
               <View style={styles.badge}>
                 <Text style={styles.badgeText}>{itemCount > 99 ? '99+' : itemCount}</Text>
               </View>
             )}
           </TouchableOpacity>
-        ) : (
-          <View style={{ width: 40 }} />
         )}
       </View>
-    </LinearGradient>
+    </View>
   );
 };
 
@@ -87,84 +110,83 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    paddingTop: Platform.OS === 'ios' ? 56 : 38,
-    height: Platform.OS === 'ios' ? 106 : 86,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(188,129,65,0.25)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.35,
-    shadowRadius: 12,
-    elevation: 8,
+    backgroundColor: colors.primary.main,
+    paddingHorizontal: spacing.md + 2,
+    paddingTop: Platform.OS === 'ios' ? 52 : 36,
+    paddingBottom: spacing.sm + 6,
   },
-  side: {
-    width: 44,
+
+  // Brand mode
+  brand: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 11,
   },
-  sideRight: {
-    alignItems: 'flex-end',
+  logoImg: {
+    width: 42,
+    height: 42,
   },
-  center: {
-    flex: 1,
+  brandName: {
+    fontFamily: fonts.heading.extrabold,
+    fontSize: 21,
+    color: '#fff',
+    letterSpacing: 2,
+    lineHeight: 24,
+  },
+  brandSub: {
+    fontFamily: fonts.body.medium,
+    fontSize: 10,
+    color: 'rgba(255,255,255,0.5)',
+    letterSpacing: 0.5,
+    marginTop: 1,
+  },
+
+  // Actions
+  actions: {
+    flexDirection: 'row',
+    gap: spacing.sm,
     alignItems: 'center',
   },
-  iconBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: borderRadius.sm,
-    backgroundColor: 'rgba(255,255,255,0.08)',
+  ghostBtn: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: 'rgba(255,255,255,0.10)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.18)',
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.12)',
   },
-  logoWrap: {
-    width: 40,
-    height: 40,
-    borderRadius: borderRadius.sm,
-    backgroundColor: 'rgba(255,255,255,0.08)',
-    padding: 6,
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.15)',
+  ghostBtnPlaceholder: {
+    width: 38,
+    height: 38,
   },
-  logo: {
-    width: '100%',
-    height: '100%',
-  },
-  title: {
-    fontSize: fontSize.lg,
+
+  // Back mode
+  backTitle: {
     fontFamily: fonts.heading.bold,
+    fontSize: fontSize.lg,
     color: '#fff',
-    letterSpacing: -0.3,
+    flex: 1,
+    textAlign: 'center',
   },
-  brandTitle: {
-    fontSize: 15,
-    fontFamily: fonts.body.extrabold,
-    color: '#fff',
-    letterSpacing: 2.5,
-  },
+
+  // Cart badge
   badge: {
     position: 'absolute',
-    top: -2,
-    right: -2,
-    backgroundColor: colors.accent.orange,
+    top: -3,
+    right: -3,
+    width: 17,
+    height: 17,
     borderRadius: 9,
-    minWidth: 18,
-    height: 18,
+    backgroundColor: colors.secondary.light,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 2,
-    borderColor: colors.primary.main,
-    paddingHorizontal: 3,
   },
   badgeText: {
-    color: '#fff',
-    fontSize: 11,
+    color: colors.primary.main,
+    fontSize: 9,
     fontFamily: fonts.body.extrabold,
   },
 });

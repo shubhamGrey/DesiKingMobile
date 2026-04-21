@@ -5,6 +5,7 @@ import {
   StyleSheet,
   ScrollView,
   Image,
+  ImageBackground,
   Linking,
   TouchableOpacity,
   Alert,
@@ -79,42 +80,49 @@ const ContactScreen = () => {
         <ScrollView showsVerticalScrollIndicator={false}>
 
           {/* Info banner */}
-          <View style={styles.infoSection}>
-            <Image
-              source={{ uri: 'https://www.agronexis.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FAgroNexisWhite.2e4065d9.png&w=384&q=75' }}
-              style={styles.logo}
-              resizeMode="contain"
-            />
-            <Text style={styles.infoTitle}>Let's Get In Touch</Text>
+          <ImageBackground
+            source={require('../../assets/Dark Spice Illustration.png')}
+            style={styles.infoSection}
+            imageStyle={styles.infoBgImage}
+            resizeMode="cover"
+          >
+            <View style={styles.infoOverlay}>
+              <Image
+                source={require('../../assets/AgroNexisWhite.png')}
+                style={styles.logo}
+                resizeMode="contain"
+              />
+              <Text style={styles.infoTitle}>Let's Get In Touch</Text>
 
-            {contactDetails.map((item, index) => (
-              <TouchableOpacity
-                key={index}
-                style={styles.contactItem}
-                onPress={item.action}
-                disabled={!item.action}
-                activeOpacity={item.action ? 0.7 : 1}
-              >
-                <View style={styles.contactIconCircle}>
-                  <Ionicons name={item.icon} size={18} color={colors.secondary.main} />
-                </View>
-                <Text style={styles.contactLabel}>{item.label}</Text>
-              </TouchableOpacity>
-            ))}
-
-            <View style={styles.socialContainer}>
-              {socialMedia.map((item, index) => (
+              {contactDetails.map((item, index) => (
                 <TouchableOpacity
                   key={index}
-                  style={styles.socialButton}
-                  onPress={() => Linking.openURL(item.url)}
-                  activeOpacity={0.75}
+                  style={styles.contactItem}
+                  onPress={item.action}
+                  disabled={!item.action}
+                  activeOpacity={item.action ? 0.7 : 1}
                 >
-                  <Ionicons name={item.icon} size={22} color="#fff" />
+                  <View style={styles.contactIconCircle}>
+                    <Ionicons name={item.icon} size={18} color={colors.secondary.main} />
+                  </View>
+                  <Text style={styles.contactLabel}>{item.label}</Text>
                 </TouchableOpacity>
               ))}
+
+              <View style={styles.socialContainer}>
+                {socialMedia.map((item, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    style={styles.socialButton}
+                    onPress={() => Linking.openURL(item.url)}
+                    activeOpacity={0.75}
+                  >
+                    <Ionicons name={item.icon} size={22} color="#fff" />
+                  </TouchableOpacity>
+                ))}
+              </View>
             </View>
-          </View>
+          </ImageBackground>
 
           {/* Contact Form */}
           <View style={styles.formSection}>
@@ -146,13 +154,19 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background.default },
 
   infoSection: {
-    backgroundColor: colors.primary.main,
+    overflow: 'hidden',
+  },
+  infoBgImage: {
+    opacity: 1,
+  },
+  infoOverlay: {
+//    backgroundColor: 'rgba(20,56,43,0.82)',
     padding: spacing.xl,
     alignItems: 'center',
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(188,129,65,0.2)',
+    borderBottomColor: 'rgba(201,151,90,0.25)',
   },
-  logo: { width: 120, height: 80, marginBottom: spacing.md },
+  logo: { width: 130, height: 80, marginBottom: spacing.md },
   infoTitle: {
     fontSize: fontSize.lg,
     fontFamily: fonts.heading.bold,
@@ -182,9 +196,9 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: 'rgba(31,79,64,0.1)',
+    backgroundColor: 'rgba(255,255,255,0.1)',
     borderWidth: 1,
-    borderColor: 'rgba(31,79,64,0.25)',
+    borderColor: 'rgba(255,255,255,0.2)',
     alignItems: 'center',
     justifyContent: 'center',
     marginHorizontal: spacing.xs,

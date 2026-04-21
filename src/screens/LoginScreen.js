@@ -9,18 +9,14 @@ import {
   Platform,
   Alert,
   StatusBar,
-  Dimensions,
-  Image,
-  ImageBackground,
 } from 'react-native';
+import LottieView from 'lottie-react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import Input from '../components/common/Input';
 import Button from '../components/common/Button';
-import { colors, spacing, fontSize, borderRadius, shadows, fonts } from '../config/theme';
+import { colors, spacing, fontSize, borderRadius, fonts } from '../config/theme';
 import { useAuth } from '../context/AuthContext';
-
-const { height } = Dimensions.get('window');
 
 const LoginScreen = () => {
   const navigation = useNavigation();
@@ -100,48 +96,38 @@ const LoginScreen = () => {
 
   return (
     <View style={styles.root}>
-      <StatusBar barStyle="light-content" backgroundColor={colors.background.default} />
+      <StatusBar barStyle="light-content" backgroundColor={colors.primary.main} />
 
-      {/* Hero banner */}
-      <ImageBackground
-        source={require('../../assets/Login.png')}
-        style={styles.heroBanner}
-        resizeMode="cover"
-      >
-        <View style={styles.heroImageOverlay}>
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            style={styles.backBtn}
-            accessibilityLabel="Go back"
-            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-          >
-            <Ionicons name="chevron-back" size={22} color="#fff" />
-          </TouchableOpacity>
-          <View style={styles.heroContent}>
-            <View style={styles.logoCircle}>
-              <Image
-                source={require('../../assets/AgroNexisWhite.png')}
-                style={{ width: 40, height: 40 }}
-                resizeMode="contain"
-                accessibilityLabel="Agro Nexis logo"
-              />
-            </View>
-            <Text style={styles.heroTitle}>DESI KING</Text>
-            <Text style={styles.heroSub}>Premium Spices, Pure Tradition</Text>
+      {/* Hero */}
+      <View style={styles.hero}>
+        {/* Blobs */}
+        <View style={styles.blobA} />
+        <View style={styles.blobB} />
+
+        {/* Back button */}
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.backBtn}
+          accessibilityLabel="Go back"
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
+          <Ionicons name="chevron-back" size={22} color="#fff" />
+        </TouchableOpacity>
+
+        {/* Brand */}
+        <View style={styles.heroContent}>
+          <View style={styles.logoCircle}>
+            <LottieView
+              source={require('../../assets/lottie/leaf.json')}
+              autoPlay
+              loop
+              style={styles.logoLottie}
+            />
           </View>
-          {/* Decorative circles */}
-          <View style={styles.decCircle1} />
-          <View style={styles.decCircle2} />
-          {/* Premium watermark */}
-          <Image
-            source={require('../../assets/premium symbol.png')}
-            style={styles.premiumWatermark}
-            resizeMode="contain"
-            accessible={false}
-            accessibilityIgnoresInvertColors
-          />
+          <Text style={styles.heroTitle}>DESI KING</Text>
+          <Text style={styles.heroSub}>Premium Spices, Pure Tradition</Text>
         </View>
-      </ImageBackground>
+      </View>
 
       {/* Card */}
       <KeyboardAvoidingView
@@ -286,7 +272,6 @@ const LoginScreen = () => {
             </View>
           )}
 
-          {/* Toggle */}
           <View style={styles.toggleRow}>
             <Text style={styles.toggleText}>
               {isLogin ? "Don't have an account? " : 'Already have an account? '}
@@ -305,112 +290,111 @@ const LoginScreen = () => {
   );
 };
 
-const HERO_HEIGHT = height * 0.32;
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: colors.background.default,
   },
-  heroBanner: {
-    height: HERO_HEIGHT,
-    overflow: 'hidden',
-  },
-  heroImageOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(6,13,26,0.88)',
+
+  // Hero
+  hero: {
+    backgroundColor: colors.primary.main,
+    height: 300,
+    alignItems: 'center',
     justifyContent: 'flex-end',
-    paddingBottom: spacing.xl,
-    paddingHorizontal: spacing.lg,
+    paddingBottom: 36,
+    overflow: 'hidden',
+    position: 'relative',
   },
-  premiumWatermark: {
+  blobA: {
     position: 'absolute',
-    bottom: spacing.lg,
-    right: spacing.lg,
-    width: 40,
-    height: 40,
-    opacity: 0.22,
+    width: 240,
+    height: 240,
+    borderRadius: 120,
+    backgroundColor: 'rgba(255,255,255,0.055)',
+    top: -70,
+    right: -50,
+  },
+  blobB: {
+    position: 'absolute',
+    width: 170,
+    height: 170,
+    borderRadius: 85,
+    backgroundColor: `rgba(${parseInt(colors.secondary.main.slice(1,3),16)},${parseInt(colors.secondary.main.slice(3,5),16)},${parseInt(colors.secondary.main.slice(5,7),16)},0.14)`,
+    bottom: 10,
+    left: -40,
   },
   backBtn: {
     position: 'absolute',
     top: Platform.OS === 'ios' ? 54 : 36,
-    left: spacing.md,
+    left: spacing.md + 2,
     width: 38,
     height: 38,
     borderRadius: 19,
-    backgroundColor: 'rgba(255,255,255,0.15)',
+    backgroundColor: 'rgba(255,255,255,0.12)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.18)',
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 10,
   },
   heroContent: {
     alignItems: 'center',
+    position: 'relative',
+    zIndex: 2,
   },
   logoCircle: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
+    width: 68,
+    height: 68,
+    borderRadius: 34,
     backgroundColor: 'rgba(255,255,255,0.12)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: spacing.sm,
     borderWidth: 1.5,
     borderColor: 'rgba(255,255,255,0.25)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 14,
+  },
+  logoLottie: {
+    width: 48,
+    height: 48,
   },
   heroTitle: {
-    fontSize: 26,
-    fontFamily: fonts.heading.black,
+    fontFamily: fonts.heading.extrabold,
+    fontSize: 30,
     color: '#fff',
     letterSpacing: 4,
   },
   heroSub: {
-    fontSize: 12,
-    fontFamily: fonts.body.regular,
-    color: 'rgba(255,255,255,0.7)',
-    marginTop: 4,
-    letterSpacing: 0.5,
+    fontFamily: fonts.heading.italic,
+    fontSize: 14,
+    color: 'rgba(255,255,255,0.6)',
+    marginTop: 5,
   },
-  decCircle1: {
-    position: 'absolute',
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    backgroundColor: 'rgba(255,255,255,0.05)',
-    top: -60,
-    right: -40,
-  },
-  decCircle2: {
-    position: 'absolute',
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    backgroundColor: 'rgba(188,129,65,0.2)',
-    bottom: -30,
-    right: 40,
-  },
+
+  // Card
   cardWrapper: {
     flex: 1,
     marginTop: -24,
   },
   card: {
     flex: 1,
-    backgroundColor: colors.background.paper,
-    borderTopLeftRadius: borderRadius.xxl,
-    borderTopRightRadius: borderRadius.xxl,
-    borderTopWidth: 1,
-    borderTopColor: colors.card.border,
+    backgroundColor: colors.background.warm,
+    borderTopLeftRadius: 36,
+    borderTopRightRadius: 36,
   },
   cardContent: {
     padding: spacing.lg,
     paddingTop: spacing.xl,
   },
+
+  // Tab switcher
   tabRow: {
     flexDirection: 'row',
     backgroundColor: colors.background.cream,
     borderRadius: borderRadius.full,
     padding: 4,
     marginBottom: spacing.xl,
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: colors.card.border,
   },
   tab: {
@@ -431,8 +415,10 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontFamily: fonts.body.extrabold,
   },
+
+  // Form
   formTitle: {
-    fontSize: fontSize.xl,
+    fontSize: 24,
     fontFamily: fonts.heading.extrabold,
     color: colors.text.primary,
     marginBottom: 4,
@@ -463,7 +449,7 @@ const styles = StyleSheet.create({
   toggleLink: {
     fontSize: fontSize.sm,
     fontFamily: fonts.body.extrabold,
-    color: colors.secondary.light,
+    color: colors.secondary.dark,
   },
 });
 

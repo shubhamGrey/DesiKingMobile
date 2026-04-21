@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
 
   summaryRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.sm },
   totalLabel: { fontSize: 14, fontFamily: fonts.body.extrabold, color: colors.text.secondary },
-  totalValue: { fontSize: 22, fontFamily: fonts.heading.black, color: colors.secondary.light, letterSpacing: -0.5 },
+  totalValue: { fontSize: 22, fontFamily: fonts.heading.extrabold, color: colors.primary.main, letterSpacing: -0.5 },
   paymentMethod: { fontSize: 10, color: colors.text.muted, textAlign: 'right', fontFamily: fonts.body.regular, marginTop: 2 },
 });
 
