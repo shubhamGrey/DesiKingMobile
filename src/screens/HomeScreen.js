@@ -22,6 +22,7 @@ import { colors, spacing, fontSize, borderRadius, fonts, CATEGORY_COLORS, CATEGO
 import apiService from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import { getImageUrl } from '../utils/imageUrl';
 
 const { width } = Dimensions.get('window');
 
@@ -156,7 +157,7 @@ const HomeScreen = () => {
       >
         <LinearGradient colors={barColors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.rowAccentBar} />
         <View style={styles.rowCardImg}>
-          <Image source={{ uri: product.thumbnailUrl || product.imageUrls?.[0] }} style={styles.rowCardImage} resizeMode="contain" />
+          <Image source={{ uri: getImageUrl(product.thumbnailUrl || product.imageUrls?.[0]) }} style={styles.rowCardImage} resizeMode="contain" />
           {hasDis && (
             <View style={styles.rowBadge}>
               <Text style={styles.rowBadgeText}>{discPct}% OFF</Text>

@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, fontSize, fonts } from '../../config/theme';
+import { getImageUrl } from '../../utils/imageUrl';
 
 const CartItem = ({ item, onRemove, onUpdateQuantity }) => {
   const hasDiscount = item.originalPrice && item.originalPrice > item.price;
@@ -11,7 +12,7 @@ const CartItem = ({ item, onRemove, onUpdateQuantity }) => {
       {/* Image */}
       <View style={styles.imageWrap}>
         <Image
-          source={{ uri: item.image }}
+          source={{ uri: getImageUrl(item.image) }}
           style={styles.image}
           resizeMode="contain"
         />

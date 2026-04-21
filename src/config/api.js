@@ -1,6 +1,6 @@
 // API configuration
 // Updated based on web app network calls: https://agronexis.com/app/...
-export const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'https://agronexis.com/app';
+export const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'https://desikingspices.com/app';
 
 // API endpoints
 export const endpoints = {

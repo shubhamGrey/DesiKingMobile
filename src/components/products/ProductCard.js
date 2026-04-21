@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Image, Dimensions } from 'rea
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, fontSize, borderRadius, fonts, CATEGORY_COLORS, CATEGORY_COLORS_DEFAULT } from '../../config/theme';
+import { getImageUrl } from '../../utils/imageUrl';
 import { useCart } from '../../context/CartContext';
 
 const { width } = Dimensions.get('window');
@@ -50,7 +51,7 @@ const ProductCard = ({ product, onPress }) => {
       {/* Image area */}
       <View style={styles.imageContainer}>
         <Image
-          source={{ uri: product.thumbnailUrl || product.imageUrls?.[0] }}
+          source={{ uri: getImageUrl(product.thumbnailUrl || product.imageUrls?.[0]) }}
           style={styles.image}
           resizeMode="contain"
           accessibilityLabel={product.name}

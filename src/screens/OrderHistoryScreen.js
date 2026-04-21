@@ -16,6 +16,7 @@ import Loading from '../components/common/Loading';
 import Button from '../components/common/Button';
 import LottieView from 'lottie-react-native';
 import { colors, spacing, fontSize, borderRadius, fonts, shadows } from '../config/theme';
+import { getImageUrl } from '../utils/imageUrl';
 import apiService from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
@@ -108,7 +109,7 @@ const OrderHistoryScreen = () => {
           {item.items?.slice(0, 2).map((orderItem, index) => (
             <View key={index} style={styles.productRow}>
               {orderItem.productImage ? (
-                <Image source={{ uri: orderItem.productImage }} style={styles.productThumb} />
+                <Image source={{ uri: getImageUrl(orderItem.productImage) }} style={styles.productThumb} />
               ) : (
                 <View style={styles.productThumbPlaceholder}>
                   <Ionicons name="image-outline" size={16} color={colors.text.disabled} />

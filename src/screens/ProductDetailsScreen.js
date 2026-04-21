@@ -18,6 +18,7 @@ import Button from '../components/common/Button';
 import Loading from '../components/common/Loading';
 import ProductCard from '../components/products/ProductCard';
 import { colors, spacing, fontSize, borderRadius, fonts } from '../config/theme';
+import { getImageUrl } from '../utils/imageUrl';
 import apiService from '../services/api';
 import { useCart } from '../context/CartContext';
 
@@ -106,7 +107,7 @@ const ProductDetailsScreen = () => {
   const price = pricing?.price || 0;
   const discountedPrice = pricing?.discountedAmount;
   const hasDiscount = pricing?.isDiscounted && discountedPrice;
-  const images = product.imageUrls || [product.thumbnailUrl];
+  const images = (product.imageUrls?.length ? product.imageUrls : [product.thumbnailUrl]).map(getImageUrl).filter(Boolean);
   const totalPrice = ((hasDiscount ? discountedPrice : price) * quantity).toFixed(2);
 
   return (

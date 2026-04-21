@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Header from '../components/common/Header';
 import Loading from '../components/common/Loading';
 import { colors, spacing, fontSize, borderRadius, fonts, shadows } from '../config/theme';
+import { getImageUrl } from '../utils/imageUrl';
 import apiService from '../services/api';
 
 const OrderDetailsScreen = () => {
@@ -128,7 +129,7 @@ const OrderDetailsScreen = () => {
           {order.items?.map((item, i) => (
             <View key={i} style={[styles.itemRow, i < order.items.length - 1 && styles.itemRowBorder]}>
               <Image
-                source={{ uri: item.productImage || 'https://via.placeholder.com/60' }}
+                source={{ uri: getImageUrl(item.productImage) || 'https://via.placeholder.com/60' }}
                 style={styles.itemImage}
               />
               <View style={styles.itemInfo}>

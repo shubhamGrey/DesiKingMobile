@@ -25,7 +25,8 @@
         "backgroundColor": "#1f4f40"
       },
       "package": "com.desiking.app",
-      "versionCode": 2
+      "versionCode": 4,
+      "usesCleartextTraffic": true
     },
     "web": {
       "favicon": "./assets/icon.png"
